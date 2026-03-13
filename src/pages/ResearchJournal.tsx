@@ -1,12 +1,16 @@
-import { useState } from "react";
+import { useState, memo } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { ChevronDown, ChevronUp, BookOpen } from "lucide-react";
-import { journalEntries } from "@/lib/mockData";
 import { AppLayout } from "@/components/AppLayout";
+import { ListSkeleton } from "@/components/LoadingSkeletons";
+import { ErrorState, EmptyState } from "@/components/StateDisplays";
+import { getJournalEntries } from "@/services/researchService";
+import type { JournalEntry } from "@/types";
 
-function JournalCard({ entry }: { entry: typeof journalEntries[0] }) {
+const JournalCard = memo(function JournalCard({ entry }: { entry: JournalEntry }) {
   const [expanded, setExpanded] = useState(false);
 
-  const confidenceColor = {
+  const confidenceColor: Record<string, string> = {
     High: "bg-success/10 text-success",
     Moderate: "bg-warning/10 text-warning",
     Low: "bg-danger/10 text-danger",
@@ -14,10 +18,7 @@ function JournalCard({ entry }: { entry: typeof journalEntries[0] }) {
 
   return (
     <div className="terminal-card">
-      <div
-        className="p-4 cursor-pointer flex items-start gap-3"
-        onClick={() => setExpanded(!expanded)}
-      >
+      <div className="p-4 cursor-pointer flex items-start gap-3" onClick={() => setExpanded(!expanded)}>
         <div className="shrink-0 mt-0.5">
           <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
             <BookOpen className="h-4 w-4 text-primary" />
@@ -49,12 +50,10 @@ function JournalCard({ entry }: { entry: typeof journalEntries[0] }) {
               ))}
             </ul>
           </div>
-
           <div>
             <h4 className="text-xs font-semibold text-foreground mb-1.5">Observed Patterns</h4>
             <p className="text-xs text-muted-foreground leading-relaxed">{entry.patterns}</p>
           </div>
-
           <div className="bg-muted/30 rounded-lg p-3 border-l-2 border-primary/50">
             <h4 className="text-xs font-semibold text-foreground mb-1">Hypothesis</h4>
             <p className="text-xs text-muted-foreground leading-relaxed italic">{entry.hypothesis}</p>
@@ -63,9 +62,11 @@ function JournalCard({ entry }: { entry: typeof journalEntries[0] }) {
       )}
     </div>
   );
-}
+});
 
 export default function ResearchJournal() {
+  const { data: entries, isLoading, isError, refetch } = useQuery({ queryKey: ["research", "journal"], queryFn: getJournalEntries });
+
   return (
     <AppLayout>
       <div className="space-y-6">
@@ -74,11 +75,19 @@ export default function ResearchJournal() {
           <p className="text-sm text-muted-foreground mt-1">Chronological log of detected patterns and hypotheses</p>
         </div>
 
-        <div className="space-y-3">
-          {journalEntries.map((entry) => (
-            <JournalCard key={entry.id} entry={entry} />
-          ))}
-        </div>
+        {isLoading ? (
+          <ListSkeleton count={3} />
+        ) : isError ? (
+          <ErrorState onRetry={() => refetch()} />
+        ) : !entries?.length ? (
+          <EmptyState title="No entries" description="No journal entries yet." />
+        ) : (
+          <div className="space-y-3">
+            {entries.map((entry) => (
+              <JournalCard key={entry.id} entry={entry} />
+            ))}
+          </div>
+        )}
       </div>
     </AppLayout>
   );
