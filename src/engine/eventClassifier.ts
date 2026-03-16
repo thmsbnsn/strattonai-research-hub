@@ -13,7 +13,7 @@ export const CANONICAL_EVENT_CATEGORIES = [
   "Management Change",
 ] as const;
 
-const categoryOrder = new Map(CANONICAL_EVENT_CATEGORIES.map((category, index) => [category, index]));
+const categoryOrder = new Map<string, number>(CANONICAL_EVENT_CATEGORIES.map((category, index) => [category, index]));
 
 export function buildDefaultClassificationToggles(): ClassificationToggle[] {
   return CANONICAL_EVENT_CATEGORIES.map((category) => ({ category, enabled: true }));
