@@ -44,7 +44,7 @@ export default function Dashboard() {
   const vix = useQuery({ queryKey: ["market", "volatility"], queryFn: getVolatilityData });
   const events = useQuery({ queryKey: ["events"], queryFn: getEvents });
   const insights = useQuery({ queryKey: ["research", "insights"], queryFn: getResearchInsights });
-  const signals = useQuery({ queryKey: ["signals", "scores"], queryFn: getSignalScores });
+  const signals = useQuery({ queryKey: ["signals", "scores"], queryFn: () => getSignalScores() });
 
   return (
     <AppLayout>

@@ -1,7 +1,7 @@
 import type { Event, EventStudyResult } from "@/models";
 
 export type MarketEvent = Event;
-export type { EventStudyResult };
+export type { Event, EventStudyResult };
 
 export interface ReturnDistributionPoint {
   id: number;
