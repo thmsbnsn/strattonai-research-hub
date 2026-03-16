@@ -1,0 +1,109 @@
+{
+  "events": [
+    {
+      "source_name": "manual_seed",
+      "source_record_id": "nvda-blackwell-ultra-20260313",
+      "headline": "NVIDIA announces next-gen AI training chips with 2x performance",
+      "primary_ticker": "nvda",
+      "event_type": "product_launch",
+      "sentiment": "bullish",
+      "occurred_at": "2026-03-13T08:32:00Z",
+      "historical_analog": "12 similar events detected. Supplier stocks averaged +1.8% return over 5 days.",
+      "sample_size": 12,
+      "avg_return": 1.8,
+      "details": "NVIDIA unveiled its Blackwell Ultra architecture at GTC 2026, featuring 2x training performance improvements. The new B300 chips are expected to ship Q3 2026. Major cloud providers have already placed advance orders.",
+      "related_companies": [
+        { "ticker": "tsm", "name": "Taiwan Semi", "relationship": "supplier", "strength": 0.9 },
+        { "ticker": "AMD", "name": "AMD", "relationship": "competitor", "strength": 0.85 },
+        { "ticker": "avgo", "name": "Broadcom", "relationship": "sector_peer", "strength": 0.6 }
+      ],
+      "research_insight": {
+        "title": "AI Chip Supply Chain Pattern",
+        "summary": "Supplier stocks outperform by +1.8% avg within 5 days of major chip announcements.",
+        "confidence": "high",
+        "event_count": 12
+      },
+      "metadata": {
+        "source_batch": "sample-v1"
+      }
+    },
+    {
+      "source_name": "manual_seed",
+      "source_record_id": "lly-fda-expanded-approval-20260313",
+      "headline": "FDA approves Eli Lilly's new weight loss drug for expanded indications",
+      "primary_ticker": "lly",
+      "event_type": "regulatory approval",
+      "sentiment": "positive",
+      "occurred_at": "2026-03-13T07:15:00-00:00",
+      "historical_analog": "8 similar FDA approvals detected. Primary company averaged +3.2% over 3 days.",
+      "sample_size": 8,
+      "avg_return": 3.2,
+      "details": "FDA granted expanded approval for tirzepatide for cardiovascular risk reduction in obese patients. This broadens the addressable market significantly.",
+      "related_companies": [
+        { "ticker": "nvo", "name": "Novo Nordisk", "relationship": "competitor", "strength": 0.72 },
+        { "ticker": "AMGN", "name": "Amgen", "relationship": "competitor", "strength": 0.61 }
+      ],
+      "research_insight": {
+        "title": "FDA Approval Momentum",
+        "summary": "Pharma stocks show sustained momentum for 10 days post-approval. Competitors show mild weakness.",
+        "confidence": "moderate",
+        "event_count": 8
+      }
+    },
+    {
+      "source_name": "manual_seed",
+      "source_record_id": "tsla-shanghai-halt-20260313",
+      "headline": "Tesla reports production halt at Shanghai Gigafactory due to supply chain issues",
+      "primary_ticker": "tsla",
+      "event_type": "supply chain disruption",
+      "sentiment": "negative",
+      "occurred_at": "2026-03-13T06:45:00Z",
+      "historical_analog": "15 similar disruptions detected. Stock averaged -2.1% over 5 days, competitors +0.5%.",
+      "sample_size": 15,
+      "avg_return": -2.1,
+      "related_companies": [
+        { "ticker": "rivn", "name": "Rivian", "relationship": "competitor", "strength": 0.7 },
+        { "ticker": "panw", "name": "Panasonic", "relationship": "supplier", "strength": 0.54 }
+      ],
+      "research_insight": {
+        "title": "Supply Chain Disruption Recovery",
+        "summary": "EV makers recover from production halts within 15 days on average. Competitors see brief lift.",
+        "confidence": "moderate",
+        "event_count": 15
+      }
+    },
+    {
+      "source_name": "manual_seed",
+      "source_record_id": "msft-asia-ai-capex-20260313",
+      "headline": "Microsoft announces $10B AI infrastructure investment in Southeast Asia",
+      "primary_ticker": "msft",
+      "event_type": "capex",
+      "sentiment": "favorable",
+      "occurred_at": "2026-03-13 05:20:00+00:00",
+      "historical_analog": "6 similar capex announcements. Stock averaged +0.8% over 10 days.",
+      "sample_size": 6,
+      "avg_return": 0.8,
+      "related_companies": [
+        { "ticker": "googl", "name": "Alphabet", "relationship": "competitor", "strength": 0.78 },
+        { "ticker": "amzn", "name": "Amazon", "relationship": "competitor", "strength": 0.82 },
+        { "ticker": "orcl", "name": "Oracle", "relationship": "sector peer", "strength": 0.58 }
+      ]
+    },
+    {
+      "source_name": "manual_seed",
+      "source_record_id": "aapl-eu-antitrust-fine-20260312",
+      "headline": "Apple loses antitrust case in EU, faces $4.5B fine",
+      "primary_ticker": "aapl",
+      "event_type": "legal/regulatory",
+      "sentiment": "adverse",
+      "occurred_at": "2026-03-12T18:30:00Z",
+      "historical_analog": "9 similar antitrust rulings. Stock averaged -1.4% over 3 days, recovered by day 10.",
+      "sample_size": 9,
+      "avg_return": -1.4,
+      "related_companies": [
+        { "ticker": "GOOGL", "name": "Alphabet", "relationship": "sector peer", "strength": 0.65 },
+        { "ticker": "META", "name": "Meta", "relationship": "sector peer", "strength": 0.63 }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "events": [
+    {
+      "source_name": "historical_backfill_wave3",
+      "source_record_id": "consumer-device-tariff-relief-20260216",
+      "headline": "Consumer-device tariff relief is extended for premium hardware imports used in AI-enabled endpoints",
+      "primary_ticker": "AAPL",
+      "event_type": "macro event",
+      "sentiment": "positive",
+      "occurred_at": "2026-02-16T14:05:00Z",
+      "related_companies": [
+        { "ticker": "GOOGL", "name": "Alphabet", "relationship": "Sector Peer", "strength": 0.52 },
+        { "ticker": "META", "name": "Meta", "relationship": "Sector Peer", "strength": 0.48 }
+      ],
+      "metadata": {
+        "source_batch": "precision-expansion-wave-1-market",
+        "targeted_gap_keys": ["primary::Macro Event::AAPL"],
+        "wave_focus": "Macro Event primary depth"
+      }
+    },
+    {
+      "source_name": "historical_backfill_wave3",
+      "source_record_id": "accelerator-credit-expansion-20260302",
+      "headline": "Accelerator tax credits are widened for domestic AI infrastructure buildouts",
+      "primary_ticker": "NVDA",
+      "event_type": "macro event",
+      "sentiment": "positive",
+      "occurred_at": "2026-03-02T15:10:00Z",
+      "related_companies": [
+        { "ticker": "TSM", "name": "Taiwan Semi", "relationship": "Supplier", "strength": 0.79 },
+        { "ticker": "AMD", "name": "AMD", "relationship": "Sector Peer", "strength": 0.61 }
+      ],
+      "metadata": {
+        "source_batch": "precision-expansion-wave-1-market",
+        "targeted_gap_keys": ["primary::Macro Event::NVDA"],
+        "wave_focus": "Macro Event primary depth"
+      }
+    },
+    {
+      "source_name": "historical_backfill_wave3",
+      "source_record_id": "qcom-enterprise-ai-modem-stack-20260309",
+      "headline": "Qualcomm launches an enterprise modem and edge AI stack for private carrier deployments",
+      "primary_ticker": "QCOM",
+      "event_type": "product launch",
+      "sentiment": "positive",
+      "occurred_at": "2026-03-09T13:20:00Z",
+      "related_companies": [
+        { "ticker": "TSM", "name": "Taiwan Semi", "relationship": "Supplier", "strength": 0.77 },
+        { "ticker": "GOOGL", "name": "Alphabet", "relationship": "Competitor", "strength": 0.55 },
+        { "ticker": "MSFT", "name": "Microsoft", "relationship": "Customer", "strength": 0.58 },
+        { "ticker": "AMD", "name": "AMD", "relationship": "Competitor", "strength": 0.49 }
+      ],
+      "metadata": {
+        "source_batch": "precision-expansion-wave-1-market",
+        "targeted_gap_keys": [
+          "related::Product Launch::GOOGL::Competitor",
+          "related::Product Launch::TSM::Supplier",
+          "related::Product Launch::MSFT::Customer",
+          "related::Product Launch::AMD::Competitor"
+        ],
+        "wave_focus": "Product Launch exact related slices"
+      }
+    }
+  ]
+}

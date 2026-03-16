@@ -1,23 +1,7 @@
-export interface MarketEvent {
-  id: string;
-  headline: string;
-  ticker: string;
-  category: string;
-  sentiment: "positive" | "negative" | "neutral";
-  timestamp: string;
-  relatedCompanies: { ticker: string; name: string; relationship: string }[];
-  historicalAnalog: string;
-  sampleSize: number;
-  avgReturn: number;
-  details?: string;
-}
+import type { Event, EventStudyResult } from "@/models";
 
-export interface EventStudyResult {
-  horizon: string;
-  avgReturn: number;
-  winRate: number;
-  sampleSize: number;
-}
+export type MarketEvent = Event;
+export type { EventStudyResult };
 
 export interface ReturnDistributionPoint {
   id: number;

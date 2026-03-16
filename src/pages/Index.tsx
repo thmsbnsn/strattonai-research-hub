@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Activity } from "lucide-react";
 import { AppLayout } from "@/components/AppLayout";
+import { DataSourceStatusBadge } from "@/components/DataSourceStatusBadge";
 import { MarketIndexCard } from "@/components/MarketIndexCard";
 import { InsightCard } from "@/components/InsightCard";
 import { CardSkeleton, ListSkeleton } from "@/components/LoadingSkeletons";
@@ -8,6 +9,7 @@ import { ErrorState, EmptyState } from "@/components/StateDisplays";
 import { getMarketIndexes, getSectorPerformance, getVolatilityData } from "@/services/marketService";
 import { getEvents } from "@/services/eventService";
 import { getResearchInsights } from "@/services/researchService";
+import { getTopSignals } from "@/services/signalService";
 
 function SentimentBadge({ sentiment }: { sentiment: string }) {
   const colors: Record<string, string> = {
@@ -28,6 +30,7 @@ export default function Dashboard() {
   const vix = useQuery({ queryKey: ["market", "volatility"], queryFn: getVolatilityData });
   const events = useQuery({ queryKey: ["events"], queryFn: getEvents });
   const insights = useQuery({ queryKey: ["research", "insights"], queryFn: getResearchInsights });
+  const signals = useQuery({ queryKey: ["signals", "top"], queryFn: () => getTopSignals(5) });
 
   return (
     <AppLayout>
@@ -37,6 +40,9 @@ export default function Dashboard() {
           <p className="text-sm text-muted-foreground mt-1">
             Morning market overview — {new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" })}
           </p>
+          <div className="mt-3">
+            <DataSourceStatusBadge />
+          </div>
         </div>
 
         {/* Market Indexes */}
@@ -141,6 +147,41 @@ export default function Dashboard() {
               </div>
             )}
           </div>
+        </div>
+
+        <div className="terminal-card p-4">
+          <h3 className="text-sm font-semibold text-foreground mb-3">Top Signals</h3>
+          {signals.isLoading ? (
+            <ListSkeleton count={4} />
+          ) : signals.data?.length === 0 ? (
+            <EmptyState title="No signals" description="No scored event signals are available yet." />
+          ) : (
+            <div className="space-y-3">
+              {signals.data?.map((signal) => (
+                <div key={signal.id} className="flex items-start justify-between gap-4 p-3 rounded-lg bg-muted/30">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="font-mono text-xs font-bold text-primary bg-primary/10 px-2 py-1 rounded">
+                        {signal.targetTicker}
+                      </span>
+                      <span className="text-xs text-muted-foreground">
+                        {signal.targetType === "primary" ? "Primary" : signal.relationshipType || "Related"} · {signal.horizon}
+                      </span>
+                      <span className="text-xs text-muted-foreground">{signal.confidenceBand}</span>
+                    </div>
+                    <p className="text-sm text-foreground mt-1 line-clamp-2">{signal.evidenceSummary}</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {signal.eventCategory} · Sample {signal.sampleSize} · Avg {signal.avgReturn.toFixed(2)}%
+                    </p>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <p className="font-mono text-lg font-semibold text-foreground">{signal.score.toFixed(1)}</p>
+                    <p className="text-xs text-muted-foreground">{signal.originType}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </AppLayout>

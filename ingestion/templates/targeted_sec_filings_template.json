@@ -1,0 +1,263 @@
+{
+  "template_metadata": {
+    "purpose": "Fill the highest-priority SEC-style backfill gaps with real historical filings.",
+    "generated_from_plan": true,
+    "count": 8
+  },
+  "filings": [
+    {
+      "template_only": true,
+      "accession_number": "replace-with-real-accession-1",
+      "form_type": "8-K",
+      "filing_date": "<YYYY-MM-DD>",
+      "company_name": "<insert filing company name>",
+      "ticker": "<insert primary ticker>",
+      "headline": "<insert real filing headline>",
+      "summary": "<insert real filing summary>",
+      "extracted_tags": [
+        "Capital Expenditure",
+        "Sector Peer"
+      ],
+      "related_tickers": [
+        {
+          "ticker": "ORCL",
+          "name": "<insert related company name>",
+          "relationship": "Sector Peer",
+          "strength": 0.7
+        }
+      ],
+      "metadata": {
+        "template_source_gap_key": "related::Capital Expenditure::ORCL::Sector Peer",
+        "notes_to_research": "Capital Expenditure remains weak in the audit and this slice is repeatedly used by current signals. Capital Expenditure related slice for ORCL / Sector Peer has sample 0, missing horizons ['1D', '3D', '5D', '10D', '20D'], fallback usage 30, signal usage 30.",
+        "example_guidance": [
+          "Find a real historical Capital Expenditure example involving ORCL.",
+          "Prefer examples where the related-company path is explicitly Sector Peer."
+        ],
+        "expected_related_ticker": "ORCL"
+      }
+    },
+    {
+      "template_only": true,
+      "accession_number": "replace-with-real-accession-2",
+      "form_type": "8-K",
+      "filing_date": "<YYYY-MM-DD>",
+      "company_name": "<insert filing company name>",
+      "ticker": "<insert primary ticker>",
+      "headline": "<insert real filing headline>",
+      "summary": "<insert real filing summary>",
+      "extracted_tags": [
+        "Legal/Regulatory",
+        "Sector Peer"
+      ],
+      "related_tickers": [
+        {
+          "ticker": "GOOGL",
+          "name": "<insert related company name>",
+          "relationship": "Sector Peer",
+          "strength": 0.7
+        }
+      ],
+      "metadata": {
+        "template_source_gap_key": "related::Legal/Regulatory::GOOGL::Sector Peer",
+        "notes_to_research": "Legal/Regulatory remains weak in the audit and this slice is repeatedly used by current signals. Legal/Regulatory related slice for GOOGL / Sector Peer has sample 1, missing horizons [], fallback usage 30, signal usage 30.",
+        "example_guidance": [
+          "Find a real historical Legal/Regulatory example involving GOOGL.",
+          "Prefer examples where the related-company path is explicitly Sector Peer.",
+          "This category currently has 0 high-confidence signals and 140 low-confidence signals."
+        ],
+        "expected_related_ticker": "GOOGL"
+      }
+    },
+    {
+      "template_only": true,
+      "accession_number": "replace-with-real-accession-3",
+      "form_type": "8-K",
+      "filing_date": "<YYYY-MM-DD>",
+      "company_name": "<insert filing company name>",
+      "ticker": "<insert primary ticker>",
+      "headline": "<insert real filing headline>",
+      "summary": "<insert real filing summary>",
+      "extracted_tags": [
+        "Legal/Regulatory",
+        "Sector Peer"
+      ],
+      "related_tickers": [
+        {
+          "ticker": "META",
+          "name": "<insert related company name>",
+          "relationship": "Sector Peer",
+          "strength": 0.7
+        }
+      ],
+      "metadata": {
+        "template_source_gap_key": "related::Legal/Regulatory::META::Sector Peer",
+        "notes_to_research": "Legal/Regulatory remains weak in the audit and this slice is repeatedly used by current signals. Legal/Regulatory related slice for META / Sector Peer has sample 2, missing horizons [], fallback usage 25, signal usage 25.",
+        "example_guidance": [
+          "Find a real historical Legal/Regulatory example involving META.",
+          "Prefer examples where the related-company path is explicitly Sector Peer.",
+          "This category currently has 0 high-confidence signals and 140 low-confidence signals."
+        ],
+        "expected_related_ticker": "META"
+      }
+    },
+    {
+      "template_only": true,
+      "accession_number": "replace-with-real-accession-4",
+      "form_type": "8-K",
+      "filing_date": "<YYYY-MM-DD>",
+      "company_name": "<insert filing company name>",
+      "ticker": "<insert primary ticker>",
+      "headline": "<insert real filing headline>",
+      "summary": "<insert real filing summary>",
+      "extracted_tags": [
+        "Partnership",
+        "Supplier"
+      ],
+      "related_tickers": [
+        {
+          "ticker": "TSM",
+          "name": "<insert related company name>",
+          "relationship": "Supplier",
+          "strength": 0.7
+        }
+      ],
+      "metadata": {
+        "template_source_gap_key": "related::Partnership::TSM::Supplier",
+        "notes_to_research": "Partnership remains weak in the audit and this slice is repeatedly used by current signals. Partnership related slice for TSM / Supplier has sample 0, missing horizons ['1D', '3D', '5D', '10D', '20D'], fallback usage 15, signal usage 15.",
+        "example_guidance": [
+          "Find a real historical Partnership example involving TSM.",
+          "Prefer examples where the related-company path is explicitly Supplier.",
+          "This category currently has 0 high-confidence signals and 110 low-confidence signals."
+        ],
+        "expected_related_ticker": "TSM"
+      }
+    },
+    {
+      "template_only": true,
+      "accession_number": "replace-with-real-accession-5",
+      "form_type": "8-K",
+      "filing_date": "<YYYY-MM-DD>",
+      "company_name": "<insert filing company name>",
+      "ticker": "<insert primary ticker>",
+      "headline": "<insert real filing headline>",
+      "summary": "<insert real filing summary>",
+      "extracted_tags": [
+        "Partnership",
+        "Customer"
+      ],
+      "related_tickers": [
+        {
+          "ticker": "MSFT",
+          "name": "<insert related company name>",
+          "relationship": "Customer",
+          "strength": 0.7
+        }
+      ],
+      "metadata": {
+        "template_source_gap_key": "related::Partnership::MSFT::Customer",
+        "notes_to_research": "Partnership remains weak in the audit and this slice is repeatedly used by current signals. Partnership related slice for MSFT / Customer has sample 0, missing horizons ['1D', '3D', '5D', '10D', '20D'], fallback usage 15, signal usage 15.",
+        "example_guidance": [
+          "Find a real historical Partnership example involving MSFT.",
+          "Prefer examples where the related-company path is explicitly Customer.",
+          "This category currently has 0 high-confidence signals and 110 low-confidence signals."
+        ],
+        "expected_related_ticker": "MSFT"
+      }
+    },
+    {
+      "template_only": true,
+      "accession_number": "replace-with-real-accession-6",
+      "form_type": "8-K",
+      "filing_date": "<YYYY-MM-DD>",
+      "company_name": "<insert filing company name>",
+      "ticker": "<insert primary ticker>",
+      "headline": "<insert real filing headline>",
+      "summary": "<insert real filing summary>",
+      "extracted_tags": [
+        "Partnership",
+        "Sector Peer"
+      ],
+      "related_tickers": [
+        {
+          "ticker": "AVGO",
+          "name": "<insert related company name>",
+          "relationship": "Sector Peer",
+          "strength": 0.7
+        }
+      ],
+      "metadata": {
+        "template_source_gap_key": "related::Partnership::AVGO::Sector Peer",
+        "notes_to_research": "Partnership remains weak in the audit and this slice is repeatedly used by current signals. Partnership related slice for AVGO / Sector Peer has sample 0, missing horizons ['1D', '3D', '5D', '10D', '20D'], fallback usage 15, signal usage 15.",
+        "example_guidance": [
+          "Find a real historical Partnership example involving AVGO.",
+          "Prefer examples where the related-company path is explicitly Sector Peer.",
+          "This category currently has 0 high-confidence signals and 110 low-confidence signals."
+        ],
+        "expected_related_ticker": "AVGO"
+      }
+    },
+    {
+      "template_only": true,
+      "accession_number": "replace-with-real-accession-7",
+      "form_type": "8-K",
+      "filing_date": "<YYYY-MM-DD>",
+      "company_name": "<insert filing company name>",
+      "ticker": "<insert primary ticker>",
+      "headline": "<insert real filing headline>",
+      "summary": "<insert real filing summary>",
+      "extracted_tags": [
+        "Capital Expenditure",
+        "Competitor"
+      ],
+      "related_tickers": [
+        {
+          "ticker": "AMZN",
+          "name": "<insert related company name>",
+          "relationship": "Competitor",
+          "strength": 0.7
+        }
+      ],
+      "metadata": {
+        "template_source_gap_key": "related::Capital Expenditure::AMZN::Competitor",
+        "notes_to_research": "Capital Expenditure remains weak in the audit and this slice is repeatedly used by current signals. Capital Expenditure related slice for AMZN / Competitor has sample 0, missing horizons ['1D', '3D', '5D', '10D', '20D'], fallback usage 15, signal usage 15.",
+        "example_guidance": [
+          "Find a real historical Capital Expenditure example involving AMZN.",
+          "Prefer examples where the related-company path is explicitly Competitor."
+        ],
+        "expected_related_ticker": "AMZN"
+      }
+    },
+    {
+      "template_only": true,
+      "accession_number": "replace-with-real-accession-12",
+      "form_type": "8-K",
+      "filing_date": "<YYYY-MM-DD>",
+      "company_name": "<insert filing company name>",
+      "ticker": "<insert primary ticker>",
+      "headline": "<insert real filing headline>",
+      "summary": "<insert real filing summary>",
+      "extracted_tags": [
+        "Earnings",
+        "Competitor"
+      ],
+      "related_tickers": [
+        {
+          "ticker": "AMZN",
+          "name": "<insert related company name>",
+          "relationship": "Competitor",
+          "strength": 0.7
+        }
+      ],
+      "metadata": {
+        "template_source_gap_key": "related::Earnings::AMZN::Competitor",
+        "notes_to_research": "Earnings remains weak in the audit and this slice is repeatedly used by current signals. Earnings related slice for AMZN / Competitor has sample 0, missing horizons ['1D', '3D', '5D', '10D', '20D'], fallback usage 10, signal usage 10.",
+        "example_guidance": [
+          "Find a real historical Earnings example involving AMZN.",
+          "Prefer examples where the related-company path is explicitly Competitor.",
+          "This category currently has 0 high-confidence signals and 67 low-confidence signals."
+        ],
+        "expected_related_ticker": "AMZN"
+      }
+    }
+  ]
+}

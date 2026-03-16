@@ -1,0 +1,348 @@
+{
+  "generated_from_report": "coverage_audit.json",
+  "plan_items": [
+    {
+      "priority_rank": 1,
+      "event_category": "Unknown",
+      "primary_ticker": null,
+      "related_ticker": "TTM",
+      "relationship_type": null,
+      "target_type": "category",
+      "current_sample_size": 0,
+      "desired_min_sample_size": 40,
+      "gap_size": 40,
+      "why_it_matters": "Unknown remains weak in the audit and this slice is repeatedly used by current signals. TTM has 0 price rows, appears as primary 287 times and related 0 times.",
+      "suggested_source_type": "market-events",
+      "suggested_historical_examples_needed": [
+        "Find a real historical Unknown example involving TTM."
+      ],
+      "planner_score": 923.2,
+      "source_gap_key": "price::TTM",
+      "notes": {
+        "audit_gap_score": 911.0,
+        "required_additional_examples": 40
+      }
+    },
+    {
+      "priority_rank": 2,
+      "event_category": "Capital Expenditure",
+      "primary_ticker": null,
+      "related_ticker": "ORCL",
+      "relationship_type": "Sector Peer",
+      "target_type": "related",
+      "current_sample_size": 7,
+      "desired_min_sample_size": 8,
+      "gap_size": 1,
+      "why_it_matters": "Capital Expenditure remains weak in the audit and this slice is repeatedly used by current signals. Capital Expenditure related slice for ORCL / Sector Peer has sample 7, missing horizons [], fallback usage 65, signal usage 65.",
+      "suggested_source_type": "sec-filings",
+      "suggested_historical_examples_needed": [
+        "Find a real historical Capital Expenditure example involving ORCL.",
+        "Prefer examples where the related-company path is explicitly Sector Peer."
+      ],
+      "planner_score": 217.99,
+      "source_gap_key": "related::Capital Expenditure::ORCL::Sector Peer",
+      "notes": {
+        "audit_gap_score": 203.43,
+        "required_additional_examples": 1
+      }
+    },
+    {
+      "priority_rank": 3,
+      "event_category": "Legal/Regulatory",
+      "primary_ticker": null,
+      "related_ticker": "GOOGL",
+      "relationship_type": "Sector Peer",
+      "target_type": "related",
+      "current_sample_size": 5,
+      "desired_min_sample_size": 6,
+      "gap_size": 1,
+      "why_it_matters": "Legal/Regulatory remains weak in the audit and this slice is repeatedly used by current signals. Legal/Regulatory related slice for GOOGL / Sector Peer has sample 5, missing horizons [], fallback usage 60, signal usage 60.",
+      "suggested_source_type": "sec-filings",
+      "suggested_historical_examples_needed": [
+        "Find a real historical Legal/Regulatory example involving GOOGL.",
+        "Prefer examples where the related-company path is explicitly Sector Peer.",
+        "This category currently has 9 high-confidence signals and 237 low-confidence signals."
+      ],
+      "planner_score": 217.18,
+      "source_gap_key": "related::Legal/Regulatory::GOOGL::Sector Peer",
+      "notes": {
+        "audit_gap_score": 189.64,
+        "required_additional_examples": 1
+      }
+    },
+    {
+      "priority_rank": 4,
+      "event_category": "Partnership",
+      "primary_ticker": null,
+      "related_ticker": "TSM",
+      "relationship_type": "Supplier",
+      "target_type": "related",
+      "current_sample_size": 7,
+      "desired_min_sample_size": 8,
+      "gap_size": 1,
+      "why_it_matters": "Partnership remains weak in the audit and this slice is repeatedly used by current signals. Partnership related slice for TSM / Supplier has sample 7, missing horizons [], fallback usage 55, signal usage 55.",
+      "suggested_source_type": "sec-filings",
+      "suggested_historical_examples_needed": [
+        "Find a real historical Partnership example involving TSM.",
+        "Prefer examples where the related-company path is explicitly Supplier."
+      ],
+      "planner_score": 192.65,
+      "source_gap_key": "related::Partnership::TSM::Supplier",
+      "notes": {
+        "audit_gap_score": 176.49,
+        "required_additional_examples": 1
+      }
+    },
+    {
+      "priority_rank": 5,
+      "event_category": "Partnership",
+      "primary_ticker": null,
+      "related_ticker": "MSFT",
+      "relationship_type": "Customer",
+      "target_type": "related",
+      "current_sample_size": 7,
+      "desired_min_sample_size": 8,
+      "gap_size": 1,
+      "why_it_matters": "Partnership remains weak in the audit and this slice is repeatedly used by current signals. Partnership related slice for MSFT / Customer has sample 7, missing horizons [], fallback usage 55, signal usage 55.",
+      "suggested_source_type": "sec-filings",
+      "suggested_historical_examples_needed": [
+        "Find a real historical Partnership example involving MSFT.",
+        "Prefer examples where the related-company path is explicitly Customer."
+      ],
+      "planner_score": 192.17,
+      "source_gap_key": "related::Partnership::MSFT::Customer",
+      "notes": {
+        "audit_gap_score": 175.53,
+        "required_additional_examples": 1
+      }
+    },
+    {
+      "priority_rank": 6,
+      "event_category": "Partnership",
+      "primary_ticker": null,
+      "related_ticker": "AVGO",
+      "relationship_type": "Sector Peer",
+      "target_type": "related",
+      "current_sample_size": 7,
+      "desired_min_sample_size": 8,
+      "gap_size": 1,
+      "why_it_matters": "Partnership remains weak in the audit and this slice is repeatedly used by current signals. Partnership related slice for AVGO / Sector Peer has sample 7, missing horizons [], fallback usage 55, signal usage 55.",
+      "suggested_source_type": "sec-filings",
+      "suggested_historical_examples_needed": [
+        "Find a real historical Partnership example involving AVGO.",
+        "Prefer examples where the related-company path is explicitly Sector Peer."
+      ],
+      "planner_score": 189.13,
+      "source_gap_key": "related::Partnership::AVGO::Sector Peer",
+      "notes": {
+        "audit_gap_score": 174.09,
+        "required_additional_examples": 1
+      }
+    },
+    {
+      "priority_rank": 7,
+      "event_category": "Legal/Regulatory",
+      "primary_ticker": null,
+      "related_ticker": "META",
+      "relationship_type": "Sector Peer",
+      "target_type": "related",
+      "current_sample_size": 6,
+      "desired_min_sample_size": 7,
+      "gap_size": 1,
+      "why_it_matters": "Legal/Regulatory remains weak in the audit and this slice is repeatedly used by current signals. Legal/Regulatory related slice for META / Sector Peer has sample 6, missing horizons [], fallback usage 50, signal usage 50.",
+      "suggested_source_type": "sec-filings",
+      "suggested_historical_examples_needed": [
+        "Find a real historical Legal/Regulatory example involving META.",
+        "Prefer examples where the related-company path is explicitly Sector Peer.",
+        "This category currently has 9 high-confidence signals and 237 low-confidence signals."
+      ],
+      "planner_score": 186.64,
+      "source_gap_key": "related::Legal/Regulatory::META::Sector Peer",
+      "notes": {
+        "audit_gap_score": 160.14,
+        "required_additional_examples": 1
+      }
+    },
+    {
+      "priority_rank": 8,
+      "event_category": "Capital Expenditure",
+      "primary_ticker": null,
+      "related_ticker": "AMZN",
+      "relationship_type": "Competitor",
+      "target_type": "related",
+      "current_sample_size": 24,
+      "desired_min_sample_size": 25,
+      "gap_size": 1,
+      "why_it_matters": "Capital Expenditure remains weak in the audit and this slice is repeatedly used by current signals. Capital Expenditure related slice for AMZN / Competitor has sample 24, missing horizons [], fallback usage 50, signal usage 50.",
+      "suggested_source_type": "sec-filings",
+      "suggested_historical_examples_needed": [
+        "Find a real historical Capital Expenditure example involving AMZN.",
+        "Prefer examples where the related-company path is explicitly Competitor."
+      ],
+      "planner_score": 176.06,
+      "source_gap_key": "related::Capital Expenditure::AMZN::Competitor",
+      "notes": {
+        "audit_gap_score": 161.18,
+        "required_additional_examples": 1
+      }
+    },
+    {
+      "priority_rank": 9,
+      "event_category": "Product Launch",
+      "primary_ticker": null,
+      "related_ticker": "GOOGL",
+      "relationship_type": "Competitor",
+      "target_type": "related",
+      "current_sample_size": 56,
+      "desired_min_sample_size": 57,
+      "gap_size": 1,
+      "why_it_matters": "Product Launch remains weak in the audit and this slice is repeatedly used by current signals. Product Launch related slice for GOOGL / Competitor has sample 56, missing horizons [], fallback usage 45, signal usage 45.",
+      "suggested_source_type": "market-events",
+      "suggested_historical_examples_needed": [
+        "Find a real historical Product Launch example involving GOOGL.",
+        "Prefer examples where the related-company path is explicitly Competitor.",
+        "This category currently has 12 high-confidence signals and 292 low-confidence signals."
+      ],
+      "planner_score": 175.9,
+      "source_gap_key": "related::Product Launch::GOOGL::Competitor",
+      "notes": {
+        "audit_gap_score": 147.95,
+        "required_additional_examples": 1
+      }
+    },
+    {
+      "priority_rank": 10,
+      "event_category": "Product Launch",
+      "primary_ticker": null,
+      "related_ticker": "TSM",
+      "relationship_type": "Supplier",
+      "target_type": "related",
+      "current_sample_size": 4,
+      "desired_min_sample_size": 5,
+      "gap_size": 1,
+      "why_it_matters": "Product Launch remains weak in the audit and this slice is repeatedly used by current signals. Product Launch related slice for TSM / Supplier has sample 4, missing horizons [], fallback usage 40, signal usage 40.",
+      "suggested_source_type": "market-events",
+      "suggested_historical_examples_needed": [
+        "Find a real historical Product Launch example involving TSM.",
+        "Prefer examples where the related-company path is explicitly Supplier.",
+        "This category currently has 12 high-confidence signals and 292 low-confidence signals."
+      ],
+      "planner_score": 165.97,
+      "source_gap_key": "related::Product Launch::TSM::Supplier",
+      "notes": {
+        "audit_gap_score": 138.1,
+        "required_additional_examples": 1
+      }
+    },
+    {
+      "priority_rank": 11,
+      "event_category": "Product Launch",
+      "primary_ticker": null,
+      "related_ticker": "AMD",
+      "relationship_type": "Competitor",
+      "target_type": "related",
+      "current_sample_size": 4,
+      "desired_min_sample_size": 5,
+      "gap_size": 1,
+      "why_it_matters": "Product Launch remains weak in the audit and this slice is repeatedly used by current signals. Product Launch related slice for AMD / Competitor has sample 4, missing horizons [], fallback usage 35, signal usage 35.",
+      "suggested_source_type": "market-events",
+      "suggested_historical_examples_needed": [
+        "Find a real historical Product Launch example involving AMD.",
+        "Prefer examples where the related-company path is explicitly Competitor.",
+        "This category currently has 12 high-confidence signals and 292 low-confidence signals."
+      ],
+      "planner_score": 150.66,
+      "source_gap_key": "related::Product Launch::AMD::Competitor",
+      "notes": {
+        "audit_gap_score": 122.95,
+        "required_additional_examples": 1
+      }
+    },
+    {
+      "priority_rank": 12,
+      "event_category": "Capital Expenditure",
+      "primary_ticker": null,
+      "related_ticker": "GOOGL",
+      "relationship_type": "Competitor",
+      "target_type": "related",
+      "current_sample_size": 22,
+      "desired_min_sample_size": 23,
+      "gap_size": 1,
+      "why_it_matters": "Capital Expenditure remains weak in the audit and this slice is repeatedly used by current signals. Capital Expenditure related slice for GOOGL / Competitor has sample 22, missing horizons [], fallback usage 35, signal usage 35.",
+      "suggested_source_type": "sec-filings",
+      "suggested_historical_examples_needed": [
+        "Find a real historical Capital Expenditure example involving GOOGL.",
+        "Prefer examples where the related-company path is explicitly Competitor."
+      ],
+      "planner_score": 132.37,
+      "source_gap_key": "related::Capital Expenditure::GOOGL::Competitor",
+      "notes": {
+        "audit_gap_score": 116.93,
+        "required_additional_examples": 1
+      }
+    }
+  ],
+  "groups": [
+    {
+      "group_key": "market-events::Product Launch",
+      "source_type": "market-events",
+      "event_category": "Product Launch",
+      "plan_item_keys": [
+        "related::Product Launch::GOOGL::Competitor",
+        "related::Product Launch::TSM::Supplier",
+        "related::Product Launch::AMD::Competitor"
+      ],
+      "total_gap_size": 3,
+      "rationale": "Collect this set together because all items share Product Launch and are best sourced through market-events."
+    },
+    {
+      "group_key": "market-events::Unknown",
+      "source_type": "market-events",
+      "event_category": "Unknown",
+      "plan_item_keys": [
+        "price::TTM"
+      ],
+      "total_gap_size": 40,
+      "rationale": "Collect this set together because all items share Unknown and are best sourced through market-events."
+    },
+    {
+      "group_key": "sec-filings::Capital Expenditure",
+      "source_type": "sec-filings",
+      "event_category": "Capital Expenditure",
+      "plan_item_keys": [
+        "related::Capital Expenditure::ORCL::Sector Peer",
+        "related::Capital Expenditure::AMZN::Competitor",
+        "related::Capital Expenditure::GOOGL::Competitor"
+      ],
+      "total_gap_size": 3,
+      "rationale": "Collect this set together because all items share Capital Expenditure and are best sourced through sec-filings."
+    },
+    {
+      "group_key": "sec-filings::Legal/Regulatory",
+      "source_type": "sec-filings",
+      "event_category": "Legal/Regulatory",
+      "plan_item_keys": [
+        "related::Legal/Regulatory::GOOGL::Sector Peer",
+        "related::Legal/Regulatory::META::Sector Peer"
+      ],
+      "total_gap_size": 2,
+      "rationale": "Collect this set together because all items share Legal/Regulatory and are best sourced through sec-filings."
+    },
+    {
+      "group_key": "sec-filings::Partnership",
+      "source_type": "sec-filings",
+      "event_category": "Partnership",
+      "plan_item_keys": [
+        "related::Partnership::TSM::Supplier",
+        "related::Partnership::MSFT::Customer",
+        "related::Partnership::AVGO::Sector Peer"
+      ],
+      "total_gap_size": 3,
+      "rationale": "Collect this set together because all items share Partnership and are best sourced through sec-filings."
+    }
+  ],
+  "notes": {
+    "input_top_gap_candidates": 12,
+    "included_macro_category_item": false
+  }
+}

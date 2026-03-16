@@ -1,0 +1,33 @@
+{
+  "base_parquet_path": "C:\\Users\\tlben\\Bentlas\\StrattonAI\\data\\prices\\all_stock_data.parquet",
+  "base_csv_path": "C:\\Users\\tlben\\Bentlas\\StrattonAI\\data\\prices\\all_stock_data.csv",
+  "extended_parquet_path": "C:\\Users\\tlben\\Bentlas\\StrattonAI\\data\\prices\\all_stock_data_extended.parquet",
+  "extended_csv_path": "C:\\Users\\tlben\\Bentlas\\StrattonAI\\data\\prices\\all_stock_data_extended.csv",
+  "backfill_parquet_path": "C:\\Users\\tlben\\Bentlas\\StrattonAI\\data\\prices\\backfills\\massive_daily_backfill.parquet",
+  "backfill_csv_path": "C:\\Users\\tlben\\Bentlas\\StrattonAI\\data\\prices\\backfills\\massive_daily_backfill.csv",
+  "previous_price_max_date": "2024-11-04",
+  "new_price_max_date": "2024-11-04",
+  "requested_tickers": [
+    "TTM"
+  ],
+  "tickers_with_new_rows": [],
+  "tickers_without_results": [
+    "TTM"
+  ],
+  "fetched_row_count": 0,
+  "backfill_row_count": 7098,
+  "covered_ticker_count": 0,
+  "uncovered_tickers_after_merge": [
+    "TTM"
+  ],
+  "target_start_date": "2024-11-05",
+  "target_end_date": "2026-05-02",
+  "config_summary": {
+    "base_url": "https://api.massive.com",
+    "has_api_key": true,
+    "has_access_key_id": true,
+    "has_secret_access_key": true,
+    "s3_endpoint": "https://files.massive.com",
+    "bucket": "flatfiles"
+  }
+}

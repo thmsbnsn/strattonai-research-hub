@@ -1,0 +1,317 @@
+{
+  "total_events": {
+    "before": 48,
+    "after": 70,
+    "delta": 22
+  },
+  "event_counts_by_category": [
+    {
+      "event_category": "Capital Expenditure",
+      "before": 7,
+      "after": 12,
+      "delta": 5
+    },
+    {
+      "event_category": "Earnings",
+      "before": 6,
+      "after": 6,
+      "delta": 0
+    },
+    {
+      "event_category": "Legal/Regulatory",
+      "before": 9,
+      "after": 13,
+      "delta": 4
+    },
+    {
+      "event_category": "Macro Event",
+      "before": 2,
+      "after": 6,
+      "delta": 4
+    },
+    {
+      "event_category": "Partnership",
+      "before": 7,
+      "after": 12,
+      "delta": 5
+    },
+    {
+      "event_category": "Product Launch",
+      "before": 7,
+      "after": 11,
+      "delta": 4
+    },
+    {
+      "event_category": "Regulatory Approval",
+      "before": 5,
+      "after": 5,
+      "delta": 0
+    },
+    {
+      "event_category": "Supply Disruption",
+      "before": 5,
+      "after": 5,
+      "delta": 0
+    }
+  ],
+  "macro_event_depth": {
+    "event_count_before": 2,
+    "event_count_after": 6,
+    "primary_slices": {
+      "Macro Event::MSFT": {
+        "before": {
+          "event_category": "Macro Event",
+          "primary_ticker": "MSFT",
+          "horizon_count": 5,
+          "min_sample_size": 1
+        },
+        "after": {
+          "event_category": "Macro Event",
+          "primary_ticker": "MSFT",
+          "horizon_count": 5,
+          "min_sample_size": 3
+        }
+      },
+      "Macro Event::NVDA": {
+        "before": {
+          "event_category": "Macro Event",
+          "primary_ticker": "NVDA",
+          "horizon_count": 5,
+          "min_sample_size": 1
+        },
+        "after": {
+          "event_category": "Macro Event",
+          "primary_ticker": "NVDA",
+          "horizon_count": 5,
+          "min_sample_size": 2
+        }
+      }
+    }
+  },
+  "study_rows": {
+    "detailed_before": 795,
+    "detailed_after": 1010,
+    "detailed_delta": 215,
+    "summary_before": 40,
+    "summary_after": 40,
+    "summary_delta": 0
+  },
+  "signals": {
+    "count_before": 865,
+    "count_after": 1340,
+    "count_delta": 475,
+    "confidence_bands_before": {
+      "High": 9,
+      "Moderate": 166,
+      "Low": 690
+    },
+    "confidence_bands_after": {
+      "High": 91,
+      "Moderate": 264,
+      "Low": 985
+    },
+    "audit_confidence_bands_before": {
+      "High": 9,
+      "Moderate": 166,
+      "Low": 690
+    },
+    "audit_confidence_bands_after": {
+      "High": 91,
+      "Moderate": 264,
+      "Low": 985
+    }
+  },
+  "focused_related_slices": {
+    "Capital Expenditure::ORCL::Sector Peer": {
+      "before": {
+        "event_category": "Capital Expenditure",
+        "related_ticker": "ORCL",
+        "relationship_type": "Sector Peer",
+        "horizon_count": 5,
+        "min_sample_size": 6
+      },
+      "after": {
+        "event_category": "Capital Expenditure",
+        "related_ticker": "ORCL",
+        "relationship_type": "Sector Peer",
+        "horizon_count": 5,
+        "min_sample_size": 11
+      },
+      "delta_sample_size": 5
+    },
+    "Capital Expenditure::AMZN::Competitor": {
+      "before": {
+        "event_category": "Capital Expenditure",
+        "related_ticker": "AMZN",
+        "relationship_type": "Competitor",
+        "horizon_count": 5,
+        "min_sample_size": 3
+      },
+      "after": {
+        "event_category": "Capital Expenditure",
+        "related_ticker": "AMZN",
+        "relationship_type": "Competitor",
+        "horizon_count": 5,
+        "min_sample_size": 8
+      },
+      "delta_sample_size": 5
+    },
+    "Legal/Regulatory::GOOGL::Sector Peer": {
+      "before": {
+        "event_category": "Legal/Regulatory",
+        "related_ticker": "GOOGL",
+        "relationship_type": "Sector Peer",
+        "horizon_count": 5,
+        "min_sample_size": 6
+      },
+      "after": {
+        "event_category": "Legal/Regulatory",
+        "related_ticker": "GOOGL",
+        "relationship_type": "Sector Peer",
+        "horizon_count": 5,
+        "min_sample_size": 10
+      },
+      "delta_sample_size": 4
+    },
+    "Legal/Regulatory::META::Sector Peer": {
+      "before": {
+        "event_category": "Legal/Regulatory",
+        "related_ticker": "META",
+        "relationship_type": "Sector Peer",
+        "horizon_count": 5,
+        "min_sample_size": 5
+      },
+      "after": {
+        "event_category": "Legal/Regulatory",
+        "related_ticker": "META",
+        "relationship_type": "Sector Peer",
+        "horizon_count": 5,
+        "min_sample_size": 8
+      },
+      "delta_sample_size": 3
+    },
+    "Partnership::TSM::Supplier": {
+      "before": {
+        "event_category": "Partnership",
+        "related_ticker": "TSM",
+        "relationship_type": "Supplier",
+        "horizon_count": 5,
+        "min_sample_size": 3
+      },
+      "after": {
+        "event_category": "Partnership",
+        "related_ticker": "TSM",
+        "relationship_type": "Supplier",
+        "horizon_count": 5,
+        "min_sample_size": 8
+      },
+      "delta_sample_size": 5
+    }
+  },
+  "remaining_top_gap_candidates": [
+    {
+      "candidate_key": "related::Capital Expenditure::ORCL::Sector Peer",
+      "priority_rank": 1,
+      "gap_score": 173.93,
+      "title": "Need 1 more Capital Expenditure examples for ORCL related slices",
+      "recommendation": "Target Capital Expenditure examples that attach ORCL as a Sector Peer related company.",
+      "event_category": "Capital Expenditure",
+      "target_type": "related",
+      "ticker": "ORCL",
+      "relationship_type": "Sector Peer",
+      "required_additional_examples": 1,
+      "rationale": "Capital Expenditure related slice for ORCL / Sector Peer has sample 11, missing horizons [], fallback usage 55, signal usage 55."
+    },
+    {
+      "candidate_key": "related::Legal/Regulatory::GOOGL::Sector Peer",
+      "priority_rank": 2,
+      "gap_score": 160.14,
+      "title": "Need 1 more Legal/Regulatory examples for GOOGL related slices",
+      "recommendation": "Target Legal/Regulatory examples that attach GOOGL as a Sector Peer related company.",
+      "event_category": "Legal/Regulatory",
+      "target_type": "related",
+      "ticker": "GOOGL",
+      "relationship_type": "Sector Peer",
+      "required_additional_examples": 1,
+      "rationale": "Legal/Regulatory related slice for GOOGL / Sector Peer has sample 10, missing horizons [], fallback usage 50, signal usage 50."
+    },
+    {
+      "candidate_key": "related::Partnership::TSM::Supplier",
+      "priority_rank": 3,
+      "gap_score": 132.24,
+      "title": "Need 1 more Partnership examples for TSM related slices",
+      "recommendation": "Target Partnership examples that attach TSM as a Supplier related company.",
+      "event_category": "Partnership",
+      "target_type": "related",
+      "ticker": "TSM",
+      "relationship_type": "Supplier",
+      "required_additional_examples": 1,
+      "rationale": "Partnership related slice for TSM / Supplier has sample 8, missing horizons [], fallback usage 40, signal usage 40."
+    },
+    {
+      "candidate_key": "related::Capital Expenditure::AMZN::Competitor",
+      "priority_rank": 4,
+      "gap_score": 131.68,
+      "title": "Need 1 more Capital Expenditure examples for AMZN related slices",
+      "recommendation": "Target Capital Expenditure examples that attach AMZN as a Competitor related company.",
+      "event_category": "Capital Expenditure",
+      "target_type": "related",
+      "ticker": "AMZN",
+      "relationship_type": "Competitor",
+      "required_additional_examples": 1,
+      "rationale": "Capital Expenditure related slice for AMZN / Competitor has sample 8, missing horizons [], fallback usage 40, signal usage 40."
+    },
+    {
+      "candidate_key": "related::Partnership::MSFT::Customer",
+      "priority_rank": 5,
+      "gap_score": 131.28,
+      "title": "Need 1 more Partnership examples for MSFT related slices",
+      "recommendation": "Target Partnership examples that attach MSFT as a Customer related company.",
+      "event_category": "Partnership",
+      "target_type": "related",
+      "ticker": "MSFT",
+      "relationship_type": "Customer",
+      "required_additional_examples": 1,
+      "rationale": "Partnership related slice for MSFT / Customer has sample 8, missing horizons [], fallback usage 40, signal usage 40."
+    },
+    {
+      "candidate_key": "related::Legal/Regulatory::META::Sector Peer",
+      "priority_rank": 6,
+      "gap_score": 130.64,
+      "title": "Need 1 more Legal/Regulatory examples for META related slices",
+      "recommendation": "Target Legal/Regulatory examples that attach META as a Sector Peer related company.",
+      "event_category": "Legal/Regulatory",
+      "target_type": "related",
+      "ticker": "META",
+      "relationship_type": "Sector Peer",
+      "required_additional_examples": 1,
+      "rationale": "Legal/Regulatory related slice for META / Sector Peer has sample 8, missing horizons [], fallback usage 40, signal usage 40."
+    },
+    {
+      "candidate_key": "related::Partnership::AVGO::Sector Peer",
+      "priority_rank": 7,
+      "gap_score": 129.84,
+      "title": "Need 1 more Partnership examples for AVGO related slices",
+      "recommendation": "Target Partnership examples that attach AVGO as a Sector Peer related company.",
+      "event_category": "Partnership",
+      "target_type": "related",
+      "ticker": "AVGO",
+      "relationship_type": "Sector Peer",
+      "required_additional_examples": 1,
+      "rationale": "Partnership related slice for AVGO / Sector Peer has sample 8, missing horizons [], fallback usage 40, signal usage 40."
+    },
+    {
+      "candidate_key": "related::Product Launch::GOOGL::Competitor",
+      "priority_rank": 8,
+      "gap_score": 103.7,
+      "title": "Need 1 more Product Launch examples for GOOGL related slices",
+      "recommendation": "Target Product Launch examples that attach GOOGL as a Competitor related company.",
+      "event_category": "Product Launch",
+      "target_type": "related",
+      "ticker": "GOOGL",
+      "relationship_type": "Competitor",
+      "required_additional_examples": 1,
+      "rationale": "Product Launch related slice for GOOGL / Competitor has sample 6, missing horizons [], fallback usage 30, signal usage 30."
+    }
+  ]
+}

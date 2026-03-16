@@ -1,0 +1,1046 @@
+{
+  "total_events": {
+    "before": 2024,
+    "after": 2317,
+    "delta": 293
+  },
+  "events_unlocked_by_mapping_expansion": 287,
+  "normalized_events_unlocked_by_mapping_expansion": 289,
+  "event_counts_by_category": [
+    {
+      "event_category": "Capital Expenditure",
+      "before": 169,
+      "after": 189,
+      "delta": 20
+    },
+    {
+      "event_category": "Earnings",
+      "before": 175,
+      "after": 201,
+      "delta": 26
+    },
+    {
+      "event_category": "Legal/Regulatory",
+      "before": 190,
+      "after": 219,
+      "delta": 29
+    },
+    {
+      "event_category": "Macro Event",
+      "before": 971,
+      "after": 1117,
+      "delta": 146
+    },
+    {
+      "event_category": "Partnership",
+      "before": 13,
+      "after": 15,
+      "delta": 2
+    },
+    {
+      "event_category": "Product Launch",
+      "before": 347,
+      "after": 395,
+      "delta": 48
+    },
+    {
+      "event_category": "Regulatory Approval",
+      "before": 31,
+      "after": 37,
+      "delta": 6
+    },
+    {
+      "event_category": "Supply Disruption",
+      "before": 128,
+      "after": 144,
+      "delta": 16
+    }
+  ],
+  "partnership_count": {
+    "before": 13,
+    "after": 15,
+    "delta": 2
+  },
+  "study_recompute": {
+    "observations_before": 17607,
+    "observations_after": 17747,
+    "observation_delta": 140,
+    "detailed_rows_before": 1203,
+    "detailed_rows_after": 1217,
+    "detailed_row_delta": 14
+  },
+  "signals": {
+    "before": 1480,
+    "after": 1620,
+    "delta": 140,
+    "confidence_before": {
+      "High": 98,
+      "Moderate": 240,
+      "Low": 1142
+    },
+    "confidence_after": {
+      "High": 148,
+      "Moderate": 213,
+      "Low": 1259
+    }
+  },
+  "focused_slice_improvements": {
+    "Product Launch::GOOGL::Competitor": {
+      "before": {
+        "event_category": "Product Launch",
+        "related_ticker": "GOOGL",
+        "relationship_type": "Competitor",
+        "horizon_count": 5,
+        "min_sample_size": 54
+      },
+      "after": {
+        "event_category": "Product Launch",
+        "related_ticker": "GOOGL",
+        "relationship_type": "Competitor",
+        "horizon_count": 5,
+        "min_sample_size": 56
+      },
+      "delta_sample_size": 2
+    },
+    "Product Launch::TSM::Supplier": {
+      "before": {
+        "event_category": "Product Launch",
+        "related_ticker": "TSM",
+        "relationship_type": "Supplier",
+        "horizon_count": 5,
+        "min_sample_size": 2
+      },
+      "after": {
+        "event_category": "Product Launch",
+        "related_ticker": "TSM",
+        "relationship_type": "Supplier",
+        "horizon_count": 5,
+        "min_sample_size": 4
+      },
+      "delta_sample_size": 2
+    },
+    "Product Launch::AMD::Competitor": {
+      "before": {
+        "event_category": "Product Launch",
+        "related_ticker": "AMD",
+        "relationship_type": "Competitor",
+        "horizon_count": 5,
+        "min_sample_size": 2
+      },
+      "after": {
+        "event_category": "Product Launch",
+        "related_ticker": "AMD",
+        "relationship_type": "Competitor",
+        "horizon_count": 5,
+        "min_sample_size": 4
+      },
+      "delta_sample_size": 2
+    },
+    "Partnership::TSM::Supplier": {
+      "before": {
+        "event_category": "Partnership",
+        "related_ticker": "TSM",
+        "relationship_type": "Supplier",
+        "horizon_count": 5,
+        "min_sample_size": 5
+      },
+      "after": {
+        "event_category": "Partnership",
+        "related_ticker": "TSM",
+        "relationship_type": "Supplier",
+        "horizon_count": 5,
+        "min_sample_size": 7
+      },
+      "delta_sample_size": 2
+    },
+    "Partnership::MSFT::Customer": {
+      "before": {
+        "event_category": "Partnership",
+        "related_ticker": "MSFT",
+        "relationship_type": "Customer",
+        "horizon_count": 5,
+        "min_sample_size": 5
+      },
+      "after": {
+        "event_category": "Partnership",
+        "related_ticker": "MSFT",
+        "relationship_type": "Customer",
+        "horizon_count": 5,
+        "min_sample_size": 7
+      },
+      "delta_sample_size": 2
+    },
+    "Partnership::AVGO::Sector Peer": {
+      "before": {
+        "event_category": "Partnership",
+        "related_ticker": "AVGO",
+        "relationship_type": "Sector Peer",
+        "horizon_count": 5,
+        "min_sample_size": 5
+      },
+      "after": {
+        "event_category": "Partnership",
+        "related_ticker": "AVGO",
+        "relationship_type": "Sector Peer",
+        "horizon_count": 5,
+        "min_sample_size": 7
+      },
+      "delta_sample_size": 2
+    },
+    "Legal/Regulatory::GOOGL::Sector Peer": {
+      "before": {
+        "event_category": "Legal/Regulatory",
+        "related_ticker": "GOOGL",
+        "relationship_type": "Sector Peer",
+        "horizon_count": 5,
+        "min_sample_size": 4
+      },
+      "after": {
+        "event_category": "Legal/Regulatory",
+        "related_ticker": "GOOGL",
+        "relationship_type": "Sector Peer",
+        "horizon_count": 5,
+        "min_sample_size": 5
+      },
+      "delta_sample_size": 1
+    },
+    "Legal/Regulatory::META::Sector Peer": {
+      "before": {
+        "event_category": "Legal/Regulatory",
+        "related_ticker": "META",
+        "relationship_type": "Sector Peer",
+        "horizon_count": 5,
+        "min_sample_size": 5
+      },
+      "after": {
+        "event_category": "Legal/Regulatory",
+        "related_ticker": "META",
+        "relationship_type": "Sector Peer",
+        "horizon_count": 5,
+        "min_sample_size": 6
+      },
+      "delta_sample_size": 1
+    },
+    "Capital Expenditure::ORCL::Sector Peer": {
+      "before": {
+        "event_category": "Capital Expenditure",
+        "related_ticker": "ORCL",
+        "relationship_type": "Sector Peer",
+        "horizon_count": 5,
+        "min_sample_size": 6
+      },
+      "after": {
+        "event_category": "Capital Expenditure",
+        "related_ticker": "ORCL",
+        "relationship_type": "Sector Peer",
+        "horizon_count": 5,
+        "min_sample_size": 7
+      },
+      "delta_sample_size": 1
+    },
+    "Capital Expenditure::AMZN::Competitor": {
+      "before": {
+        "event_category": "Capital Expenditure",
+        "related_ticker": "AMZN",
+        "relationship_type": "Competitor",
+        "horizon_count": 5,
+        "min_sample_size": 23
+      },
+      "after": {
+        "event_category": "Capital Expenditure",
+        "related_ticker": "AMZN",
+        "relationship_type": "Competitor",
+        "horizon_count": 5,
+        "min_sample_size": 24
+      },
+      "delta_sample_size": 1
+    },
+    "Capital Expenditure::GOOGL::Competitor": {
+      "before": {
+        "event_category": "Capital Expenditure",
+        "related_ticker": "GOOGL",
+        "relationship_type": "Competitor",
+        "horizon_count": 5,
+        "min_sample_size": 21
+      },
+      "after": {
+        "event_category": "Capital Expenditure",
+        "related_ticker": "GOOGL",
+        "relationship_type": "Competitor",
+        "horizon_count": 5,
+        "min_sample_size": 22
+      },
+      "delta_sample_size": 1
+    }
+  },
+  "macro_event_depth": {
+    "event_count_before": 971,
+    "event_count_after": 1117,
+    "primary_slices": {}
+  },
+  "exact_slice_changes": [
+    {
+      "slice_key": "related::Capital Expenditure::ORCL::Sector Peer",
+      "low_before": 48,
+      "low_after": 52,
+      "low_delta": 4,
+      "low_ratio_before": 0.8,
+      "low_ratio_after": 0.8,
+      "sample_before": 46.75,
+      "sample_after": 47.75,
+      "signal_count_before": 60,
+      "signal_count_after": 65,
+      "linked_gap_size_after": 1,
+      "dominant_causes_before": [
+        "sparse_exact_coverage",
+        "relationship_sparsity",
+        "weak_edge",
+        "weak_win_rate",
+        "older_recency_mix"
+      ],
+      "dominant_causes_after": [
+        "sparse_exact_coverage",
+        "relationship_sparsity",
+        "weak_edge",
+        "weak_win_rate",
+        "older_recency_mix"
+      ],
+      "improvement_note_after": "Depth alone is unlikely to help without stronger historical edge quality."
+    },
+    {
+      "slice_key": "related::Legal/Regulatory::GOOGL::Sector Peer",
+      "low_before": 55,
+      "low_after": 60,
+      "low_delta": 5,
+      "low_ratio_before": 1.0,
+      "low_ratio_after": 1.0,
+      "sample_before": 40,
+      "sample_after": 43,
+      "signal_count_before": 55,
+      "signal_count_after": 60,
+      "linked_gap_size_after": 1,
+      "dominant_causes_before": [
+        "sparse_exact_coverage",
+        "relationship_sparsity",
+        "weak_avg_return",
+        "weak_win_rate",
+        "older_recency_mix"
+      ],
+      "dominant_causes_after": [
+        "sparse_exact_coverage",
+        "relationship_sparsity",
+        "weak_avg_return",
+        "older_recency_mix"
+      ],
+      "improvement_note_after": "Depth alone is unlikely to help without stronger historical edge quality."
+    },
+    {
+      "slice_key": "related::Partnership::TSM::Supplier",
+      "low_before": 18,
+      "low_after": 30,
+      "low_delta": 12,
+      "low_ratio_before": 0.4,
+      "low_ratio_after": 0.5455,
+      "sample_before": 8,
+      "sample_after": 9.73,
+      "signal_count_before": 45,
+      "signal_count_after": 55,
+      "linked_gap_size_after": 1,
+      "dominant_causes_before": [
+        "sparse_exact_coverage",
+        "relationship_sparsity",
+        "weak_avg_return",
+        "older_recency_mix"
+      ],
+      "dominant_causes_after": [
+        "sparse_exact_coverage",
+        "relationship_sparsity",
+        "weak_avg_return",
+        "older_recency_mix"
+      ],
+      "improvement_note_after": "Depth alone is unlikely to help without stronger historical edge quality."
+    },
+    {
+      "slice_key": "related::Partnership::MSFT::Customer",
+      "low_before": 9,
+      "low_after": 22,
+      "low_delta": 13,
+      "low_ratio_before": 0.2,
+      "low_ratio_after": 0.4,
+      "sample_before": 12,
+      "sample_after": 13,
+      "signal_count_before": 45,
+      "signal_count_after": 55,
+      "linked_gap_size_after": 1,
+      "dominant_causes_before": [
+        "sparse_exact_coverage",
+        "relationship_sparsity",
+        "weak_avg_return",
+        "older_recency_mix"
+      ],
+      "dominant_causes_after": [
+        "sparse_exact_coverage",
+        "relationship_sparsity",
+        "older_recency_mix"
+      ],
+      "improvement_note_after": "One more exact example would likely reduce fallback reliance on this slice."
+    },
+    {
+      "slice_key": "related::Partnership::AVGO::Sector Peer",
+      "low_before": 18,
+      "low_after": 11,
+      "low_delta": -7,
+      "low_ratio_before": 0.4,
+      "low_ratio_after": 0.2,
+      "sample_before": 8,
+      "sample_after": 11,
+      "signal_count_before": 45,
+      "signal_count_after": 55,
+      "linked_gap_size_after": 1,
+      "dominant_causes_before": [
+        "sparse_exact_coverage",
+        "relationship_sparsity",
+        "weak_edge",
+        "weak_win_rate",
+        "older_recency_mix"
+      ],
+      "dominant_causes_after": [
+        "sparse_exact_coverage",
+        "relationship_sparsity",
+        "weak_edge",
+        "weak_win_rate",
+        "older_recency_mix"
+      ],
+      "improvement_note_after": "Depth alone is unlikely to help without stronger historical edge quality."
+    },
+    {
+      "slice_key": "related::Legal/Regulatory::META::Sector Peer",
+      "low_before": 45,
+      "low_after": 50,
+      "low_delta": 5,
+      "low_ratio_before": 1.0,
+      "low_ratio_after": 1.0,
+      "sample_before": 40,
+      "sample_after": 43,
+      "signal_count_before": 45,
+      "signal_count_after": 50,
+      "linked_gap_size_after": 1,
+      "dominant_causes_before": [
+        "sparse_exact_coverage",
+        "relationship_sparsity",
+        "weak_avg_return",
+        "weak_win_rate",
+        "older_recency_mix"
+      ],
+      "dominant_causes_after": [
+        "sparse_exact_coverage",
+        "relationship_sparsity",
+        "weak_avg_return",
+        "older_recency_mix"
+      ],
+      "improvement_note_after": "Depth alone is unlikely to help without stronger historical edge quality."
+    },
+    {
+      "slice_key": "related::Capital Expenditure::AMZN::Competitor",
+      "low_before": 36,
+      "low_after": 40,
+      "low_delta": 4,
+      "low_ratio_before": 0.8,
+      "low_ratio_after": 0.8,
+      "sample_before": 70.25,
+      "sample_after": 72.25,
+      "signal_count_before": 45,
+      "signal_count_after": 50,
+      "linked_gap_size_after": 1,
+      "dominant_causes_before": [
+        "sparse_exact_coverage",
+        "relationship_sparsity",
+        "weak_edge",
+        "weak_win_rate",
+        "older_recency_mix"
+      ],
+      "dominant_causes_after": [
+        "sparse_exact_coverage",
+        "relationship_sparsity",
+        "weak_edge",
+        "weak_win_rate",
+        "older_recency_mix"
+      ],
+      "improvement_note_after": "Depth alone is unlikely to help without stronger historical edge quality."
+    },
+    {
+      "slice_key": "related::Product Launch::GOOGL::Competitor",
+      "low_before": 35,
+      "low_after": 45,
+      "low_delta": 10,
+      "low_ratio_before": 1.0,
+      "low_ratio_after": 1.0,
+      "sample_before": 158.8,
+      "sample_after": 162.8,
+      "signal_count_before": 35,
+      "signal_count_after": 45,
+      "linked_gap_size_after": 1,
+      "dominant_causes_before": [
+        "sparse_exact_coverage",
+        "relationship_sparsity",
+        "weak_edge",
+        "weak_win_rate",
+        "older_recency_mix"
+      ],
+      "dominant_causes_after": [
+        "sparse_exact_coverage",
+        "relationship_sparsity",
+        "weak_edge",
+        "weak_win_rate",
+        "older_recency_mix"
+      ],
+      "improvement_note_after": "Depth alone is unlikely to help without stronger historical edge quality."
+    },
+    {
+      "slice_key": "related::Product Launch::TSM::Supplier",
+      "low_before": 30,
+      "low_after": 40,
+      "low_delta": 10,
+      "low_ratio_before": 1.0,
+      "low_ratio_after": 1.0,
+      "sample_before": 102.2,
+      "sample_after": 104.2,
+      "signal_count_before": 30,
+      "signal_count_after": 40,
+      "linked_gap_size_after": 1,
+      "dominant_causes_before": [
+        "sparse_exact_coverage",
+        "relationship_sparsity",
+        "weak_edge",
+        "weak_win_rate",
+        "older_recency_mix"
+      ],
+      "dominant_causes_after": [
+        "sparse_exact_coverage",
+        "relationship_sparsity",
+        "weak_edge",
+        "weak_win_rate",
+        "older_recency_mix"
+      ],
+      "improvement_note_after": "Depth alone is unlikely to help without stronger historical edge quality."
+    },
+    {
+      "slice_key": "primary::Partnership::NVDA",
+      "low_before": 30,
+      "low_after": 35,
+      "low_delta": 5,
+      "low_ratio_before": 1.0,
+      "low_ratio_after": 1.0,
+      "sample_before": 3.6,
+      "sample_after": 4.6,
+      "signal_count_before": 30,
+      "signal_count_after": 35,
+      "linked_gap_size_after": null,
+      "dominant_causes_before": [
+        "small_sample_size",
+        "older_recency_mix"
+      ],
+      "dominant_causes_after": [
+        "small_sample_size",
+        "weak_avg_return",
+        "older_recency_mix"
+      ],
+      "improvement_note_after": "Depth alone is unlikely to help without stronger historical edge quality."
+    },
+    {
+      "slice_key": "related::Product Launch::AMD::Competitor",
+      "low_before": 25,
+      "low_after": 35,
+      "low_delta": 10,
+      "low_ratio_before": 1.0,
+      "low_ratio_after": 1.0,
+      "sample_before": 158.8,
+      "sample_after": 162.8,
+      "signal_count_before": 25,
+      "signal_count_after": 35,
+      "linked_gap_size_after": 1,
+      "dominant_causes_before": [
+        "sparse_exact_coverage",
+        "relationship_sparsity",
+        "weak_edge",
+        "weak_win_rate",
+        "older_recency_mix"
+      ],
+      "dominant_causes_after": [
+        "sparse_exact_coverage",
+        "relationship_sparsity",
+        "weak_edge",
+        "weak_win_rate",
+        "older_recency_mix"
+      ],
+      "improvement_note_after": "Depth alone is unlikely to help without stronger historical edge quality."
+    },
+    {
+      "slice_key": "related::Capital Expenditure::GOOGL::Competitor",
+      "low_before": 24,
+      "low_after": 28,
+      "low_delta": 4,
+      "low_ratio_before": 0.8,
+      "low_ratio_after": 0.8,
+      "sample_before": 70.25,
+      "sample_after": 72.25,
+      "signal_count_before": 30,
+      "signal_count_after": 35,
+      "linked_gap_size_after": 1,
+      "dominant_causes_before": [
+        "sparse_exact_coverage",
+        "relationship_sparsity",
+        "weak_edge",
+        "weak_win_rate",
+        "older_recency_mix"
+      ],
+      "dominant_causes_after": [
+        "sparse_exact_coverage",
+        "relationship_sparsity",
+        "weak_edge",
+        "weak_win_rate",
+        "older_recency_mix"
+      ],
+      "improvement_note_after": "Depth alone is unlikely to help without stronger historical edge quality."
+    }
+  ],
+  "remaining_top_weak_slices": [
+    {
+      "slice_key": "related::Legal/Regulatory::GOOGL::Sector Peer",
+      "event_category": "Legal/Regulatory",
+      "target_type": "related",
+      "primary_ticker": null,
+      "target_ticker": "GOOGL",
+      "relationship_type": "Sector Peer",
+      "signal_count": 60,
+      "low_count": 60,
+      "moderate_count": 0,
+      "high_count": 0,
+      "low_ratio": 1.0,
+      "average_sample_size": 43,
+      "minimum_sample_size": 37,
+      "average_abs_avg_return": 0.8998,
+      "average_abs_median_return": 0.9661,
+      "average_win_rate": 55.03,
+      "average_consistency_rate": 55.03,
+      "fallback_ratio": 1.0,
+      "average_recency_multiplier": 0.9067,
+      "dominant_causes": [
+        "sparse_exact_coverage",
+        "relationship_sparsity",
+        "weak_avg_return",
+        "older_recency_mix"
+      ],
+      "linked_gap_size": 1,
+      "can_improve_with_depth": false,
+      "improvement_note": "Depth alone is unlikely to help without stronger historical edge quality."
+    },
+    {
+      "slice_key": "related::Capital Expenditure::ORCL::Sector Peer",
+      "event_category": "Capital Expenditure",
+      "target_type": "related",
+      "primary_ticker": null,
+      "target_ticker": "ORCL",
+      "relationship_type": "Sector Peer",
+      "signal_count": 65,
+      "low_count": 52,
+      "moderate_count": 13,
+      "high_count": 0,
+      "low_ratio": 0.8,
+      "average_sample_size": 47.75,
+      "minimum_sample_size": 45,
+      "average_abs_avg_return": 0.3504,
+      "average_abs_median_return": 0.4863,
+      "average_win_rate": 49.88,
+      "average_consistency_rate": 53.5,
+      "fallback_ratio": 1.0,
+      "average_recency_multiplier": 0.8985,
+      "dominant_causes": [
+        "sparse_exact_coverage",
+        "relationship_sparsity",
+        "weak_edge",
+        "weak_win_rate",
+        "older_recency_mix"
+      ],
+      "linked_gap_size": 1,
+      "can_improve_with_depth": false,
+      "improvement_note": "Depth alone is unlikely to help without stronger historical edge quality."
+    },
+    {
+      "slice_key": "related::Legal/Regulatory::META::Sector Peer",
+      "event_category": "Legal/Regulatory",
+      "target_type": "related",
+      "primary_ticker": null,
+      "target_ticker": "META",
+      "relationship_type": "Sector Peer",
+      "signal_count": 50,
+      "low_count": 50,
+      "moderate_count": 0,
+      "high_count": 0,
+      "low_ratio": 1.0,
+      "average_sample_size": 43,
+      "minimum_sample_size": 37,
+      "average_abs_avg_return": 0.8998,
+      "average_abs_median_return": 0.9661,
+      "average_win_rate": 55.03,
+      "average_consistency_rate": 55.03,
+      "fallback_ratio": 1.0,
+      "average_recency_multiplier": 0.9,
+      "dominant_causes": [
+        "sparse_exact_coverage",
+        "relationship_sparsity",
+        "weak_avg_return",
+        "older_recency_mix"
+      ],
+      "linked_gap_size": 1,
+      "can_improve_with_depth": false,
+      "improvement_note": "Depth alone is unlikely to help without stronger historical edge quality."
+    },
+    {
+      "slice_key": "related::Product Launch::GOOGL::Competitor",
+      "event_category": "Product Launch",
+      "target_type": "related",
+      "primary_ticker": null,
+      "target_ticker": "GOOGL",
+      "relationship_type": "Competitor",
+      "signal_count": 45,
+      "low_count": 45,
+      "moderate_count": 0,
+      "high_count": 0,
+      "low_ratio": 1.0,
+      "average_sample_size": 162.8,
+      "minimum_sample_size": 156,
+      "average_abs_avg_return": 0.3267,
+      "average_abs_median_return": 0.402,
+      "average_win_rate": 47.83,
+      "average_consistency_rate": 52.69,
+      "fallback_ratio": 1.0,
+      "average_recency_multiplier": 0.8889,
+      "dominant_causes": [
+        "sparse_exact_coverage",
+        "relationship_sparsity",
+        "weak_edge",
+        "weak_win_rate",
+        "older_recency_mix"
+      ],
+      "linked_gap_size": 1,
+      "can_improve_with_depth": false,
+      "improvement_note": "Depth alone is unlikely to help without stronger historical edge quality."
+    },
+    {
+      "slice_key": "related::Product Launch::TSM::Supplier",
+      "event_category": "Product Launch",
+      "target_type": "related",
+      "primary_ticker": null,
+      "target_ticker": "TSM",
+      "relationship_type": "Supplier",
+      "signal_count": 40,
+      "low_count": 40,
+      "moderate_count": 0,
+      "high_count": 0,
+      "low_ratio": 1.0,
+      "average_sample_size": 104.2,
+      "minimum_sample_size": 101,
+      "average_abs_avg_return": 0.3665,
+      "average_abs_median_return": 0.3431,
+      "average_win_rate": 52.4,
+      "average_consistency_rate": 51.26,
+      "fallback_ratio": 1.0,
+      "average_recency_multiplier": 0.9,
+      "dominant_causes": [
+        "sparse_exact_coverage",
+        "relationship_sparsity",
+        "weak_edge",
+        "weak_win_rate",
+        "older_recency_mix"
+      ],
+      "linked_gap_size": 1,
+      "can_improve_with_depth": false,
+      "improvement_note": "Depth alone is unlikely to help without stronger historical edge quality."
+    },
+    {
+      "slice_key": "related::Capital Expenditure::AMZN::Competitor",
+      "event_category": "Capital Expenditure",
+      "target_type": "related",
+      "primary_ticker": null,
+      "target_ticker": "AMZN",
+      "relationship_type": "Competitor",
+      "signal_count": 50,
+      "low_count": 40,
+      "moderate_count": 0,
+      "high_count": 10,
+      "low_ratio": 0.8,
+      "average_sample_size": 72.25,
+      "minimum_sample_size": 69,
+      "average_abs_avg_return": 0.4032,
+      "average_abs_median_return": 0.4224,
+      "average_win_rate": 54.77,
+      "average_consistency_rate": 54.77,
+      "fallback_ratio": 1.0,
+      "average_recency_multiplier": 0.904,
+      "dominant_causes": [
+        "sparse_exact_coverage",
+        "relationship_sparsity",
+        "weak_edge",
+        "weak_win_rate",
+        "older_recency_mix"
+      ],
+      "linked_gap_size": 1,
+      "can_improve_with_depth": false,
+      "improvement_note": "Depth alone is unlikely to help without stronger historical edge quality."
+    },
+    {
+      "slice_key": "primary::Partnership::NVDA",
+      "event_category": "Partnership",
+      "target_type": "primary",
+      "primary_ticker": "NVDA",
+      "target_ticker": "NVDA",
+      "relationship_type": null,
+      "signal_count": 35,
+      "low_count": 35,
+      "moderate_count": 0,
+      "high_count": 0,
+      "low_ratio": 1.0,
+      "average_sample_size": 4.6,
+      "minimum_sample_size": 4,
+      "average_abs_avg_return": 0.6319,
+      "average_abs_median_return": 1.0955,
+      "average_win_rate": 61.33,
+      "average_consistency_rate": 65.33,
+      "fallback_ratio": 0.0,
+      "average_recency_multiplier": 0.9143,
+      "dominant_causes": [
+        "small_sample_size",
+        "weak_avg_return",
+        "older_recency_mix"
+      ],
+      "linked_gap_size": null,
+      "can_improve_with_depth": false,
+      "improvement_note": "Depth alone is unlikely to help without stronger historical edge quality."
+    },
+    {
+      "slice_key": "related::Product Launch::AMD::Competitor",
+      "event_category": "Product Launch",
+      "target_type": "related",
+      "primary_ticker": null,
+      "target_ticker": "AMD",
+      "relationship_type": "Competitor",
+      "signal_count": 35,
+      "low_count": 35,
+      "moderate_count": 0,
+      "high_count": 0,
+      "low_ratio": 1.0,
+      "average_sample_size": 162.8,
+      "minimum_sample_size": 156,
+      "average_abs_avg_return": 0.3267,
+      "average_abs_median_return": 0.402,
+      "average_win_rate": 47.83,
+      "average_consistency_rate": 52.69,
+      "fallback_ratio": 1.0,
+      "average_recency_multiplier": 0.8971,
+      "dominant_causes": [
+        "sparse_exact_coverage",
+        "relationship_sparsity",
+        "weak_edge",
+        "weak_win_rate",
+        "older_recency_mix"
+      ],
+      "linked_gap_size": 1,
+      "can_improve_with_depth": false,
+      "improvement_note": "Depth alone is unlikely to help without stronger historical edge quality."
+    },
+    {
+      "slice_key": "related::Partnership::TSM::Supplier",
+      "event_category": "Partnership",
+      "target_type": "related",
+      "primary_ticker": null,
+      "target_ticker": "TSM",
+      "relationship_type": "Supplier",
+      "signal_count": 55,
+      "low_count": 30,
+      "moderate_count": 25,
+      "high_count": 0,
+      "low_ratio": 0.5455,
+      "average_sample_size": 9.73,
+      "minimum_sample_size": 9,
+      "average_abs_avg_return": 0.682,
+      "average_abs_median_return": 1.7728,
+      "average_win_rate": 52.22,
+      "average_consistency_rate": 55.19,
+      "fallback_ratio": 1.0,
+      "average_recency_multiplier": 0.8973,
+      "dominant_causes": [
+        "sparse_exact_coverage",
+        "relationship_sparsity",
+        "weak_avg_return",
+        "older_recency_mix"
+      ],
+      "linked_gap_size": 1,
+      "can_improve_with_depth": false,
+      "improvement_note": "Depth alone is unlikely to help without stronger historical edge quality."
+    },
+    {
+      "slice_key": "related::Capital Expenditure::GOOGL::Competitor",
+      "event_category": "Capital Expenditure",
+      "target_type": "related",
+      "primary_ticker": null,
+      "target_ticker": "GOOGL",
+      "relationship_type": "Competitor",
+      "signal_count": 35,
+      "low_count": 28,
+      "moderate_count": 0,
+      "high_count": 7,
+      "low_ratio": 0.8,
+      "average_sample_size": 72.25,
+      "minimum_sample_size": 69,
+      "average_abs_avg_return": 0.4032,
+      "average_abs_median_return": 0.4224,
+      "average_win_rate": 54.77,
+      "average_consistency_rate": 54.77,
+      "fallback_ratio": 1.0,
+      "average_recency_multiplier": 0.9143,
+      "dominant_causes": [
+        "sparse_exact_coverage",
+        "relationship_sparsity",
+        "weak_edge",
+        "weak_win_rate",
+        "older_recency_mix"
+      ],
+      "linked_gap_size": 1,
+      "can_improve_with_depth": false,
+      "improvement_note": "Depth alone is unlikely to help without stronger historical edge quality."
+    }
+  ],
+  "remaining_top_gap_candidates": [
+    {
+      "candidate_key": "price::TTM",
+      "priority_rank": 1,
+      "gap_score": 911.0,
+      "title": "Need broader price history for TTM",
+      "recommendation": "Extend local price history for TTM to at least 40 trading days so its study slices remain usable.",
+      "event_category": null,
+      "target_type": null,
+      "ticker": "TTM",
+      "relationship_type": null,
+      "required_additional_examples": 40,
+      "rationale": "TTM has 0 price rows, appears as primary 287 times and related 0 times."
+    },
+    {
+      "candidate_key": "related::Capital Expenditure::ORCL::Sector Peer",
+      "priority_rank": 2,
+      "gap_score": 203.43,
+      "title": "Need 1 more Capital Expenditure examples for ORCL related slices",
+      "recommendation": "Target Capital Expenditure examples that attach ORCL as a Sector Peer related company.",
+      "event_category": "Capital Expenditure",
+      "target_type": "related",
+      "ticker": "ORCL",
+      "relationship_type": "Sector Peer",
+      "required_additional_examples": 1,
+      "rationale": "Capital Expenditure related slice for ORCL / Sector Peer has sample 7, missing horizons [], fallback usage 65, signal usage 65."
+    },
+    {
+      "candidate_key": "related::Legal/Regulatory::GOOGL::Sector Peer",
+      "priority_rank": 3,
+      "gap_score": 189.64,
+      "title": "Need 1 more Legal/Regulatory examples for GOOGL related slices",
+      "recommendation": "Target Legal/Regulatory examples that attach GOOGL as a Sector Peer related company.",
+      "event_category": "Legal/Regulatory",
+      "target_type": "related",
+      "ticker": "GOOGL",
+      "relationship_type": "Sector Peer",
+      "required_additional_examples": 1,
+      "rationale": "Legal/Regulatory related slice for GOOGL / Sector Peer has sample 5, missing horizons [], fallback usage 60, signal usage 60."
+    },
+    {
+      "candidate_key": "related::Partnership::TSM::Supplier",
+      "priority_rank": 4,
+      "gap_score": 176.49,
+      "title": "Need 1 more Partnership examples for TSM related slices",
+      "recommendation": "Target Partnership examples that attach TSM as a Supplier related company.",
+      "event_category": "Partnership",
+      "target_type": "related",
+      "ticker": "TSM",
+      "relationship_type": "Supplier",
+      "required_additional_examples": 1,
+      "rationale": "Partnership related slice for TSM / Supplier has sample 7, missing horizons [], fallback usage 55, signal usage 55."
+    },
+    {
+      "candidate_key": "related::Partnership::MSFT::Customer",
+      "priority_rank": 5,
+      "gap_score": 175.53,
+      "title": "Need 1 more Partnership examples for MSFT related slices",
+      "recommendation": "Target Partnership examples that attach MSFT as a Customer related company.",
+      "event_category": "Partnership",
+      "target_type": "related",
+      "ticker": "MSFT",
+      "relationship_type": "Customer",
+      "required_additional_examples": 1,
+      "rationale": "Partnership related slice for MSFT / Customer has sample 7, missing horizons [], fallback usage 55, signal usage 55."
+    },
+    {
+      "candidate_key": "related::Partnership::AVGO::Sector Peer",
+      "priority_rank": 6,
+      "gap_score": 174.09,
+      "title": "Need 1 more Partnership examples for AVGO related slices",
+      "recommendation": "Target Partnership examples that attach AVGO as a Sector Peer related company.",
+      "event_category": "Partnership",
+      "target_type": "related",
+      "ticker": "AVGO",
+      "relationship_type": "Sector Peer",
+      "required_additional_examples": 1,
+      "rationale": "Partnership related slice for AVGO / Sector Peer has sample 7, missing horizons [], fallback usage 55, signal usage 55."
+    },
+    {
+      "candidate_key": "related::Capital Expenditure::AMZN::Competitor",
+      "priority_rank": 7,
+      "gap_score": 161.18,
+      "title": "Need 1 more Capital Expenditure examples for AMZN related slices",
+      "recommendation": "Target Capital Expenditure examples that attach AMZN as a Competitor related company.",
+      "event_category": "Capital Expenditure",
+      "target_type": "related",
+      "ticker": "AMZN",
+      "relationship_type": "Competitor",
+      "required_additional_examples": 1,
+      "rationale": "Capital Expenditure related slice for AMZN / Competitor has sample 24, missing horizons [], fallback usage 50, signal usage 50."
+    },
+    {
+      "candidate_key": "related::Legal/Regulatory::META::Sector Peer",
+      "priority_rank": 8,
+      "gap_score": 160.14,
+      "title": "Need 1 more Legal/Regulatory examples for META related slices",
+      "recommendation": "Target Legal/Regulatory examples that attach META as a Sector Peer related company.",
+      "event_category": "Legal/Regulatory",
+      "target_type": "related",
+      "ticker": "META",
+      "relationship_type": "Sector Peer",
+      "required_additional_examples": 1,
+      "rationale": "Legal/Regulatory related slice for META / Sector Peer has sample 6, missing horizons [], fallback usage 50, signal usage 50."
+    },
+    {
+      "candidate_key": "related::Product Launch::GOOGL::Competitor",
+      "priority_rank": 9,
+      "gap_score": 147.95,
+      "title": "Need 1 more Product Launch examples for GOOGL related slices",
+      "recommendation": "Target Product Launch examples that attach GOOGL as a Competitor related company.",
+      "event_category": "Product Launch",
+      "target_type": "related",
+      "ticker": "GOOGL",
+      "relationship_type": "Competitor",
+      "required_additional_examples": 1,
+      "rationale": "Product Launch related slice for GOOGL / Competitor has sample 56, missing horizons [], fallback usage 45, signal usage 45."
+    },
+    {
+      "candidate_key": "related::Product Launch::TSM::Supplier",
+      "priority_rank": 10,
+      "gap_score": 138.1,
+      "title": "Need 1 more Product Launch examples for TSM related slices",
+      "recommendation": "Target Product Launch examples that attach TSM as a Supplier related company.",
+      "event_category": "Product Launch",
+      "target_type": "related",
+      "ticker": "TSM",
+      "relationship_type": "Supplier",
+      "required_additional_examples": 1,
+      "rationale": "Product Launch related slice for TSM / Supplier has sample 4, missing horizons [], fallback usage 40, signal usage 40."
+    }
+  ]
+}

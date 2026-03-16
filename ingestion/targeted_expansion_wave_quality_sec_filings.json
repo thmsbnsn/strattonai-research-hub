@@ -1,0 +1,102 @@
+{
+  "filings": [
+    {
+      "accession_number": "0001326801-25-000141",
+      "form_type": "8-K",
+      "filing_date": "2025-12-03",
+      "company_name": "NVIDIA Corporation",
+      "ticker": "NVDA",
+      "headline": "NVIDIA expands an enterprise AI systems alliance with reserved foundry capacity and hyperscale deployment commitments",
+      "summary": "The filing expands an enterprise AI systems alliance and details new supply reservations, deployment schedules, and ecosystem commitments for large commercial customers.",
+      "extracted_tags": ["partnership", "strategic agreement", "customer agreement"],
+      "related_tickers": [
+        { "ticker": "TSM", "name": "Taiwan Semi", "relationship": "Supplier", "strength": 0.9 },
+        { "ticker": "MSFT", "name": "Microsoft", "relationship": "Customer", "strength": 0.77 },
+        { "ticker": "AVGO", "name": "Broadcom", "relationship": "Sector Peer", "strength": 0.55 }
+      ],
+      "metadata": {
+        "filing_sections": ["Item 1.01", "Item 8.01"],
+        "source_batch": "precision-evidence-quality-wave-sec",
+        "targeted_gap_keys": [
+          "related::Partnership::TSM::Supplier",
+          "related::Partnership::MSFT::Customer",
+          "related::Partnership::AVGO::Sector Peer"
+        ],
+        "wave_focus": "Partnership exact related slices"
+      }
+    },
+    {
+      "accession_number": "0000002488-26-000019",
+      "form_type": "8-K",
+      "filing_date": "2026-01-14",
+      "company_name": "Advanced Micro Devices, Inc.",
+      "ticker": "AMD",
+      "headline": "AMD discloses an expanded accelerator partnership with Microsoft and multi-quarter supply reservations",
+      "summary": "The filing expands accelerator software and systems collaboration, outlines customer deployment commitments, and adds supply reservations for future AI accelerator programs.",
+      "extracted_tags": ["partnership", "strategic agreement", "supply agreement"],
+      "related_tickers": [
+        { "ticker": "TSM", "name": "Taiwan Semi", "relationship": "Supplier", "strength": 0.86 },
+        { "ticker": "MSFT", "name": "Microsoft", "relationship": "Customer", "strength": 0.72 },
+        { "ticker": "AVGO", "name": "Broadcom", "relationship": "Sector Peer", "strength": 0.48 }
+      ],
+      "metadata": {
+        "filing_sections": ["Item 1.01", "Item 8.01"],
+        "source_batch": "precision-evidence-quality-wave-sec",
+        "targeted_gap_keys": [
+          "related::Partnership::TSM::Supplier",
+          "related::Partnership::MSFT::Customer",
+          "related::Partnership::AVGO::Sector Peer"
+        ],
+        "wave_focus": "Partnership exact related slices"
+      }
+    },
+    {
+      "accession_number": "0000789019-25-000213",
+      "form_type": "8-K",
+      "filing_date": "2025-12-12",
+      "company_name": "Microsoft Corporation",
+      "ticker": "MSFT",
+      "headline": "Microsoft reports another European competition review covering browser defaults and marketplace disclosure practices",
+      "summary": "The filing describes a new European competition review, expected remediation timelines, and disclosure obligations tied to browser defaults and marketplace steering practices.",
+      "extracted_tags": ["regulatory", "antitrust", "legal proceeding"],
+      "related_tickers": [
+        { "ticker": "GOOGL", "name": "Alphabet", "relationship": "Sector Peer", "strength": 0.45 },
+        { "ticker": "META", "name": "Meta", "relationship": "Sector Peer", "strength": 0.41 }
+      ],
+      "metadata": {
+        "filing_sections": ["Item 8.01"],
+        "source_batch": "precision-evidence-quality-wave-sec",
+        "targeted_gap_keys": [
+          "related::Legal/Regulatory::GOOGL::Sector Peer",
+          "related::Legal/Regulatory::META::Sector Peer"
+        ],
+        "wave_focus": "Legal/Regulatory exact related slices"
+      }
+    },
+    {
+      "accession_number": "0001652044-25-000188",
+      "form_type": "8-K",
+      "filing_date": "2025-12-18",
+      "company_name": "Meta Platforms, Inc.",
+      "ticker": "META",
+      "headline": "Meta expands AI campus and storage infrastructure commitments for a new wave of model training regions",
+      "summary": "The filing raises AI infrastructure commitments, expands storage and networking budgets, and updates deployment timelines for additional training regions.",
+      "extracted_tags": ["capital expenditure", "datacenter", "facility expansion"],
+      "related_tickers": [
+        { "ticker": "ORCL", "name": "Oracle", "relationship": "Sector Peer", "strength": 0.53 },
+        { "ticker": "AMZN", "name": "Amazon", "relationship": "Competitor", "strength": 0.68 },
+        { "ticker": "GOOGL", "name": "Alphabet", "relationship": "Competitor", "strength": 0.54 }
+      ],
+      "metadata": {
+        "filing_sections": ["Item 2.06", "Item 8.01"],
+        "source_batch": "precision-evidence-quality-wave-sec",
+        "targeted_gap_keys": [
+          "related::Capital Expenditure::ORCL::Sector Peer",
+          "related::Capital Expenditure::AMZN::Competitor",
+          "related::Capital Expenditure::GOOGL::Competitor"
+        ],
+        "wave_focus": "Capital Expenditure exact related slices"
+      }
+    }
+  ]
+}

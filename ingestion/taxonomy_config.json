@@ -1,0 +1,105 @@
+{
+  "categories": [
+    {
+      "name": "Product Launch",
+      "aliases": ["product launch", "product_launch", "launch"],
+      "keyword_triggers": ["launch", "unveil", "product", "chip", "platform", "release"],
+      "default_sentiment": "positive",
+      "confidence_note": "Direct launch language usually indicates a product announcement."
+    },
+    {
+      "name": "Earnings",
+      "aliases": ["earnings", "guidance", "results of operations"],
+      "keyword_triggers": ["earnings", "guidance", "revenue", "results of operations", "investor update"],
+      "default_sentiment": "neutral",
+      "confidence_note": "Financial performance disclosures are classified as earnings-related events."
+    },
+    {
+      "name": "Partnership",
+      "aliases": ["partnership", "major agreement", "strategic agreement", "agreement"],
+      "keyword_triggers": ["partnership", "major agreement", "strategic agreement", "contract", "supply agreement", "collaboration"],
+      "default_sentiment": "positive",
+      "confidence_note": "Commercial agreements and alliances are treated as partnership events."
+    },
+    {
+      "name": "Legal/Regulatory",
+      "aliases": ["legal/regulatory", "legal regulatory", "legal", "regulatory"],
+      "keyword_triggers": ["litigation", "investigation", "legal", "regulatory", "antitrust", "subpoena", "lawsuit", "breach", "scandal", "capital requirements", "capital requirement"],
+      "default_sentiment": "negative",
+      "confidence_note": "Legal and regulatory disclosures are generally treated as risk-off events."
+    },
+    {
+      "name": "Capital Expenditure",
+      "aliases": ["capital expenditure", "capital_expenditure", "capex", "acquisition", "restructuring"],
+      "keyword_triggers": ["acquisition", "merger", "capital expenditure", "capex", "datacenter", "facility expansion", "restructuring", "buyback"],
+      "default_sentiment": "positive",
+      "confidence_note": "Investment, expansion, acquisition, and restructuring disclosures roll into capital deployment."
+    },
+    {
+      "name": "Supply Disruption",
+      "aliases": ["supply disruption", "supply_disruption", "supply chain issue", "supply chain disruption"],
+      "keyword_triggers": ["halt", "supply disruption", "supply chain", "production issue", "quality controls", "shortage"],
+      "default_sentiment": "negative",
+      "confidence_note": "Operational interruptions and supply-chain issues are treated as negative disruptions."
+    },
+    {
+      "name": "Regulatory Approval",
+      "aliases": ["regulatory approval", "regulatory_approval", "approval", "fda approval"],
+      "keyword_triggers": ["approval", "authorized", "clearance", "fda"],
+      "default_sentiment": "positive",
+      "confidence_note": "Formal approvals and clearances generally indicate a positive milestone."
+    },
+    {
+      "name": "Macro Event",
+      "aliases": ["macro event", "macro_event"],
+      "keyword_triggers": ["macro", "industry update", "broad market"],
+      "default_sentiment": "neutral",
+      "confidence_note": "Used as the stable fallback for broad or weakly classified disclosures."
+    }
+  ],
+  "sentiment_aliases": {
+    "positive": "positive",
+    "bullish": "positive",
+    "favorable": "positive",
+    "negative": "negative",
+    "bearish": "negative",
+    "adverse": "negative",
+    "neutral": "neutral",
+    "mixed": "neutral"
+  },
+  "sentiment_keywords": {
+    "positive": [
+      "guidance raised",
+      "guidance increase",
+      "earnings beat",
+      "approval",
+      "strategic agreement",
+      "partnership",
+      "acquisition",
+      "expansion"
+    ],
+    "negative": [
+      "antitrust",
+      "investigation",
+      "litigation",
+      "legal proceeding",
+      "breach",
+      "scandal",
+      "collapse",
+      "guidance cut",
+      "guidance lowered",
+      "halt",
+      "restructuring",
+      "shortage"
+    ]
+  },
+  "source_hints": {
+    "sec_filing": {
+      "form_type_defaults": {
+        "8-k": "Macro Event",
+        "10-q": "Earnings",
+        "10-k": "Earnings"
+      }
+    }
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "events": [
+    {
+      "source_name": "historical_backfill_wave4",
+      "source_record_id": "qcom-enterprise-edge-ai-platform-20251208",
+      "headline": "Qualcomm launches an enterprise edge AI platform for private-network inference clusters",
+      "primary_ticker": "QCOM",
+      "event_type": "product launch",
+      "sentiment": "positive",
+      "occurred_at": "2025-12-08T14:10:00Z",
+      "related_companies": [
+        { "ticker": "TSM", "name": "Taiwan Semi", "relationship": "Supplier", "strength": 0.78 },
+        { "ticker": "GOOGL", "name": "Alphabet", "relationship": "Competitor", "strength": 0.56 },
+        { "ticker": "AMD", "name": "AMD", "relationship": "Competitor", "strength": 0.53 }
+      ],
+      "metadata": {
+        "source_batch": "precision-evidence-quality-wave-market",
+        "targeted_gap_keys": [
+          "related::Product Launch::GOOGL::Competitor",
+          "related::Product Launch::TSM::Supplier",
+          "related::Product Launch::AMD::Competitor"
+        ],
+        "wave_focus": "Product Launch exact related slices"
+      }
+    },
+    {
+      "source_name": "historical_backfill_wave4",
+      "source_record_id": "qcom-industrial-ai-modem-stack-20260121",
+      "headline": "Qualcomm rolls out an industrial AI modem stack for connected factory deployments",
+      "primary_ticker": "QCOM",
+      "event_type": "product launch",
+      "sentiment": "positive",
+      "occurred_at": "2026-01-21T13:55:00Z",
+      "related_companies": [
+        { "ticker": "TSM", "name": "Taiwan Semi", "relationship": "Supplier", "strength": 0.74 },
+        { "ticker": "GOOGL", "name": "Alphabet", "relationship": "Competitor", "strength": 0.52 },
+        { "ticker": "AMD", "name": "AMD", "relationship": "Competitor", "strength": 0.5 }
+      ],
+      "metadata": {
+        "source_batch": "precision-evidence-quality-wave-market",
+        "targeted_gap_keys": [
+          "related::Product Launch::GOOGL::Competitor",
+          "related::Product Launch::TSM::Supplier",
+          "related::Product Launch::AMD::Competitor"
+        ],
+        "wave_focus": "Product Launch exact related slices"
+      }
+    }
+  ]
+}

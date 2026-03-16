@@ -1,0 +1,84 @@
+{
+  "filings": [
+    {
+      "accession_number": "0001326801-26-000031",
+      "form_type": "8-K",
+      "filing_date": "2026-03-14",
+      "company_name": "NVIDIA Corporation",
+      "ticker": "nvda",
+      "headline": "NVIDIA discloses multi-year strategic supply agreement for AI systems expansion",
+      "summary": "The company disclosed a new multi-year strategic supply and infrastructure agreement supporting expanded AI system deployment across hyperscale partners.",
+      "extracted_tags": ["major agreement", "strategic agreement", "supply expansion"],
+      "related_tickers": [
+        { "ticker": "TSM", "name": "Taiwan Semi", "relationship": "Supplier", "strength": 0.88 },
+        { "ticker": "MSFT", "name": "Microsoft", "relationship": "Customer", "strength": 0.74 }
+      ],
+      "metadata": {
+        "filing_sections": ["Item 1.01", "Item 8.01"],
+        "sec_url": "https://www.sec.gov/Archives/edgar/data/example-nvda-8k"
+      }
+    },
+    {
+      "accession_number": "000594918-26-000044",
+      "form_type": "8-K",
+      "filing_date": "2026-03-15",
+      "company_name": "Eli Lilly and Company",
+      "ticker": "LLY",
+      "headline": "Eli Lilly furnishes investor update with raised full-year guidance",
+      "summary": "Management furnished an earnings update noting stronger obesity-treatment demand and raised full-year revenue guidance.",
+      "extracted_tags": ["earnings", "guidance raised", "investor presentation"],
+      "metadata": {
+        "filing_sections": ["Item 2.02", "Item 7.01"]
+      }
+    },
+    {
+      "accession_number": "0001318605-26-000088",
+      "form_type": "8-K",
+      "filing_date": "2026-03-16",
+      "company_name": "Tesla, Inc.",
+      "ticker": "TSLA",
+      "headline": "Tesla reports regulatory inquiry tied to supplier quality controls",
+      "summary": "The filing discloses a regulatory inquiry related to supplier quality controls and potential remediation costs.",
+      "extracted_tags": ["regulatory inquiry", "legal proceeding", "supplier"],
+      "related_tickers": [
+        { "ticker": "PANW", "name": "Panasonic", "relationship": "Supplier", "strength": 0.56 }
+      ],
+      "metadata": {
+        "filing_sections": ["Item 8.01"]
+      }
+    },
+    {
+      "accession_number": "0000789019-26-000057",
+      "form_type": "8-K",
+      "filing_date": "2026-03-17",
+      "company_name": "Microsoft Corporation",
+      "ticker": "MSFT",
+      "headline": "Microsoft announces datacenter campus acquisition and expanded capital program",
+      "summary": "The filing outlines a new datacenter campus acquisition, additional power infrastructure commitments, and a broader capital investment program.",
+      "extracted_tags": ["acquisition", "capital expenditure", "facility expansion"],
+      "related_tickers": [
+        { "ticker": "ORCL", "name": "Oracle", "relationship": "Sector Peer", "strength": 0.44 }
+      ],
+      "metadata": {
+        "filing_sections": ["Item 2.06", "Item 8.01"]
+      }
+    },
+    {
+      "accession_number": "0000320193-26-000041",
+      "form_type": "8-K",
+      "filing_date": "2026-03-18",
+      "company_name": "Apple Inc.",
+      "ticker": "AAPL",
+      "headline": "Apple discloses expanded European legal proceedings related to platform rules",
+      "summary": "The filing describes expanded legal proceedings in Europe and ongoing regulatory review of platform conduct and compliance requirements.",
+      "extracted_tags": ["litigation", "regulatory", "legal"],
+      "related_tickers": [
+        { "ticker": "GOOGL", "name": "Alphabet", "relationship": "Sector Peer", "strength": 0.41 },
+        { "ticker": "META", "name": "Meta", "relationship": "Sector Peer", "strength": 0.39 }
+      ],
+      "metadata": {
+        "filing_sections": ["Item 8.01"]
+      }
+    }
+  ]
+}

@@ -1,0 +1,259 @@
+{
+  "relationships": [
+    {
+      "id": "f1111111-1111-1111-1111-111111111111",
+      "source_ticker": "NVDA",
+      "source_name": "NVIDIA Corporation",
+      "target_ticker": "TSM",
+      "target_name": "Taiwan Semiconductor Manufacturing",
+      "relationship_type": "Supplier",
+      "strength": 0.92,
+      "is_directional": true,
+      "notes": "TSMC manufactures NVIDIA's leading-edge AI chips.",
+      "provenance": {
+        "source_name": "manual_relationship_seed",
+        "source_record_id": "nvda-tsm-supplier-v1"
+      }
+    },
+    {
+      "id": "f1222222-2222-2222-2222-222222222222",
+      "source_ticker": "NVDA",
+      "source_name": "NVIDIA Corporation",
+      "target_ticker": "AMD",
+      "target_name": "Advanced Micro Devices",
+      "relationship_type": "Competitor",
+      "strength": 0.87,
+      "is_directional": false,
+      "notes": "NVIDIA and AMD compete across GPU and AI accelerator markets.",
+      "provenance": {
+        "source_name": "manual_relationship_seed",
+        "source_record_id": "nvda-amd-competitor-v1"
+      }
+    },
+    {
+      "id": "f1333333-3333-3333-3333-333333333333",
+      "source_ticker": "NVDA",
+      "source_name": "NVIDIA Corporation",
+      "target_ticker": "AVGO",
+      "target_name": "Broadcom",
+      "relationship_type": "Sector Peer",
+      "strength": 0.64,
+      "is_directional": false,
+      "notes": "Broadcom is a semiconductor infrastructure peer for NVIDIA.",
+      "provenance": {
+        "source_name": "manual_relationship_seed",
+        "source_record_id": "nvda-avgo-sector-peer-v1"
+      }
+    },
+    {
+      "id": "f1444444-4444-4444-4444-444444444444",
+      "source_ticker": "NVDA",
+      "source_name": "NVIDIA Corporation",
+      "target_ticker": "MSFT",
+      "target_name": "Microsoft Corporation",
+      "relationship_type": "Customer",
+      "strength": 0.82,
+      "is_directional": true,
+      "notes": "Microsoft is a major buyer of NVIDIA AI infrastructure.",
+      "provenance": {
+        "source_name": "manual_relationship_seed",
+        "source_record_id": "nvda-msft-customer-v1"
+      }
+    },
+    {
+      "id": "f1555555-5555-5555-5555-555555555555",
+      "source_ticker": "NVDA",
+      "source_name": "NVIDIA Corporation",
+      "target_ticker": "GOOGL",
+      "target_name": "Alphabet Inc.",
+      "relationship_type": "Customer",
+      "strength": 0.78,
+      "is_directional": true,
+      "notes": "Alphabet consumes NVIDIA infrastructure for AI workloads.",
+      "provenance": {
+        "source_name": "manual_relationship_seed",
+        "source_record_id": "nvda-googl-customer-v1"
+      }
+    },
+    {
+      "id": "f1666666-6666-6666-6666-666666666666",
+      "source_ticker": "NVDA",
+      "source_name": "NVIDIA Corporation",
+      "target_ticker": "QCOM",
+      "target_name": "Qualcomm Incorporated",
+      "relationship_type": "Sector Peer",
+      "strength": 0.58,
+      "is_directional": false,
+      "notes": "Qualcomm is a semiconductor platform peer across edge AI and compute.",
+      "provenance": {
+        "source_name": "manual_relationship_seed",
+        "source_record_id": "nvda-qcom-sector-peer-v1"
+      }
+    },
+    {
+      "id": "f1777777-7777-7777-7777-777777777777",
+      "source_ticker": "TSLA",
+      "source_name": "Tesla, Inc.",
+      "target_ticker": "RIVN",
+      "target_name": "Rivian Automotive",
+      "relationship_type": "Competitor",
+      "strength": 0.74,
+      "is_directional": false,
+      "notes": "Rivian is an EV peer and competitive read-through name for Tesla.",
+      "provenance": {
+        "source_name": "manual_relationship_seed",
+        "source_record_id": "tsla-rivn-competitor-v1"
+      }
+    },
+    {
+      "id": "f1888888-8888-8888-8888-888888888888",
+      "source_ticker": "TSLA",
+      "source_name": "Tesla, Inc.",
+      "target_ticker": "PANW",
+      "target_name": "Panasonic Holdings",
+      "relationship_type": "Supplier",
+      "strength": 0.63,
+      "is_directional": true,
+      "notes": "Panasonic is treated as a battery supply relationship in the current project data.",
+      "provenance": {
+        "source_name": "manual_relationship_seed",
+        "source_record_id": "tsla-panw-supplier-v1"
+      }
+    },
+    {
+      "id": "f1999999-9999-9999-9999-999999999999",
+      "source_ticker": "TSLA",
+      "source_name": "Tesla, Inc.",
+      "target_ticker": "QCOM",
+      "target_name": "Qualcomm Incorporated",
+      "relationship_type": "Supply Chain Dependency",
+      "strength": 0.52,
+      "is_directional": true,
+      "notes": "Qualcomm components are used as a supply-chain dependency proxy for vehicle electronics.",
+      "provenance": {
+        "source_name": "manual_relationship_seed",
+        "source_record_id": "tsla-qcom-supply-chain-v1"
+      }
+    },
+    {
+      "id": "f1aaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+      "source_ticker": "LLY",
+      "source_name": "Eli Lilly and Company",
+      "target_ticker": "NVO",
+      "target_name": "Novo Nordisk",
+      "relationship_type": "Competitor",
+      "strength": 0.81,
+      "is_directional": false,
+      "notes": "Novo Nordisk is Lilly's closest GLP-1 competitor.",
+      "provenance": {
+        "source_name": "manual_relationship_seed",
+        "source_record_id": "lly-nvo-competitor-v1"
+      }
+    },
+    {
+      "id": "f1bbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "source_ticker": "LLY",
+      "source_name": "Eli Lilly and Company",
+      "target_ticker": "NVO",
+      "target_name": "Novo Nordisk",
+      "relationship_type": "Regulatory Peer",
+      "strength": 0.74,
+      "is_directional": false,
+      "notes": "Lilly and Novo share overlapping regulatory pathways in obesity and diabetes.",
+      "provenance": {
+        "source_name": "manual_relationship_seed",
+        "source_record_id": "lly-nvo-regulatory-peer-v1"
+      }
+    },
+    {
+      "id": "f1cccccc-cccc-cccc-cccc-cccccccccccc",
+      "source_ticker": "AAPL",
+      "source_name": "Apple Inc.",
+      "target_ticker": "GOOGL",
+      "target_name": "Alphabet Inc.",
+      "relationship_type": "Sector Peer",
+      "strength": 0.69,
+      "is_directional": false,
+      "notes": "Alphabet is a large-cap platform peer for Apple.",
+      "provenance": {
+        "source_name": "manual_relationship_seed",
+        "source_record_id": "aapl-googl-sector-peer-v1"
+      }
+    },
+    {
+      "id": "f1dddddd-dddd-dddd-dddd-dddddddddddd",
+      "source_ticker": "AAPL",
+      "source_name": "Apple Inc.",
+      "target_ticker": "GOOGL",
+      "target_name": "Alphabet Inc.",
+      "relationship_type": "Regulatory Peer",
+      "strength": 0.72,
+      "is_directional": false,
+      "notes": "Apple and Alphabet face similar platform regulation and antitrust scrutiny.",
+      "provenance": {
+        "source_name": "manual_relationship_seed",
+        "source_record_id": "aapl-googl-regulatory-peer-v1"
+      }
+    },
+    {
+      "id": "f1eeeeee-eeee-eeee-eeee-eeeeeeeeeeee",
+      "source_ticker": "AAPL",
+      "source_name": "Apple Inc.",
+      "target_ticker": "QCOM",
+      "target_name": "Qualcomm Incorporated",
+      "relationship_type": "Supplier",
+      "strength": 0.59,
+      "is_directional": true,
+      "notes": "Qualcomm remains a device component supplier proxy for Apple.",
+      "provenance": {
+        "source_name": "manual_relationship_seed",
+        "source_record_id": "aapl-qcom-supplier-v1"
+      }
+    },
+    {
+      "id": "f1ffffff-ffff-ffff-ffff-ffffffffffff",
+      "source_ticker": "MSFT",
+      "source_name": "Microsoft Corporation",
+      "target_ticker": "GOOGL",
+      "target_name": "Alphabet Inc.",
+      "relationship_type": "Competitor",
+      "strength": 0.79,
+      "is_directional": false,
+      "notes": "Microsoft and Alphabet compete in cloud and AI infrastructure.",
+      "provenance": {
+        "source_name": "manual_relationship_seed",
+        "source_record_id": "msft-googl-competitor-v1"
+      }
+    },
+    {
+      "id": "f2111111-1111-1111-1111-111111111111",
+      "source_ticker": "MSFT",
+      "source_name": "Microsoft Corporation",
+      "target_ticker": "AMZN",
+      "target_name": "Amazon.com, Inc.",
+      "relationship_type": "Competitor",
+      "strength": 0.83,
+      "is_directional": false,
+      "notes": "AWS is Microsoft's main hyperscale cloud competitor.",
+      "provenance": {
+        "source_name": "manual_relationship_seed",
+        "source_record_id": "msft-amzn-competitor-v1"
+      }
+    },
+    {
+      "id": "f2222222-2222-2222-2222-222222222222",
+      "source_ticker": "MSFT",
+      "source_name": "Microsoft Corporation",
+      "target_ticker": "ORCL",
+      "target_name": "Oracle Corporation",
+      "relationship_type": "Sector Peer",
+      "strength": 0.61,
+      "is_directional": false,
+      "notes": "Oracle is a software infrastructure peer relevant to Microsoft capex announcements.",
+      "provenance": {
+        "source_name": "manual_relationship_seed",
+        "source_record_id": "msft-orcl-sector-peer-v1"
+      }
+    }
+  ]
+}

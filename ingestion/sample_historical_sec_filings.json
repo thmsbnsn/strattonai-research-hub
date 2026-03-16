@@ -1,0 +1,118 @@
+{
+  "filings": [
+    {
+      "accession_number": "0001326801-26-000011",
+      "form_type": "8-K",
+      "filing_date": "2026-01-16",
+      "company_name": "NVIDIA Corporation",
+      "ticker": "NVDA",
+      "headline": "NVIDIA discloses multi-year strategic supply agreement for AI rack deployments",
+      "summary": "The filing describes a strategic agreement supporting AI rack deployments and infrastructure scale commitments with key enterprise customers.",
+      "extracted_tags": ["major agreement", "strategic agreement", "supply expansion"],
+      "related_tickers": [
+        { "ticker": "TSM", "name": "Taiwan Semi", "relationship": "Supplier", "strength": 0.86 },
+        { "ticker": "MSFT", "name": "Microsoft", "relationship": "Customer", "strength": 0.69 }
+      ],
+      "metadata": { "filing_sections": ["Item 1.01", "Item 8.01"], "source_batch": "historical-sec-v1" }
+    },
+    {
+      "accession_number": "0000789019-26-000014",
+      "form_type": "8-K",
+      "filing_date": "2026-01-15",
+      "company_name": "Microsoft Corporation",
+      "ticker": "MSFT",
+      "headline": "Microsoft furnishes earnings update highlighting Azure acceleration",
+      "summary": "Management furnished an earnings update noting stronger Azure consumption and raised near-term commercial bookings expectations.",
+      "extracted_tags": ["earnings", "guidance raised", "investor presentation"],
+      "metadata": { "filing_sections": ["Item 2.02", "Item 7.01"], "source_batch": "historical-sec-v1" }
+    },
+    {
+      "accession_number": "0000320193-26-000018",
+      "form_type": "8-K",
+      "filing_date": "2026-01-26",
+      "company_name": "Apple Inc.",
+      "ticker": "AAPL",
+      "headline": "Apple reports expanded European litigation related to app distribution rules",
+      "summary": "The filing updates investors on additional legal proceedings and regulatory review connected to platform steering and payment rules.",
+      "extracted_tags": ["litigation", "regulatory", "legal"],
+      "related_tickers": [
+        { "ticker": "GOOGL", "name": "Alphabet", "relationship": "Sector Peer", "strength": 0.42 },
+        { "ticker": "META", "name": "Meta", "relationship": "Sector Peer", "strength": 0.39 }
+      ],
+      "metadata": { "filing_sections": ["Item 8.01"], "source_batch": "historical-sec-v1" }
+    },
+    {
+      "accession_number": "0001652044-26-000022",
+      "form_type": "8-K",
+      "filing_date": "2026-02-09",
+      "company_name": "Alphabet Inc.",
+      "ticker": "GOOGL",
+      "headline": "Alphabet announces facility acquisition and expanded data center capital plan",
+      "summary": "The filing outlines a facility acquisition, power infrastructure commitments, and a broader capital investment program for AI workloads.",
+      "extracted_tags": ["acquisition", "capital expenditure", "facility expansion"],
+      "related_tickers": [
+        { "ticker": "MSFT", "name": "Microsoft", "relationship": "Competitor", "strength": 0.67 },
+        { "ticker": "ORCL", "name": "Oracle", "relationship": "Sector Peer", "strength": 0.44 }
+      ],
+      "metadata": { "filing_sections": ["Item 2.06", "Item 8.01"], "source_batch": "historical-sec-v1" }
+    },
+    {
+      "accession_number": "000594918-26-000026",
+      "form_type": "8-K",
+      "filing_date": "2026-02-16",
+      "company_name": "Eli Lilly and Company",
+      "ticker": "LLY",
+      "headline": "Eli Lilly discloses commercial launch update following expanded approval",
+      "summary": "The filing highlights accelerated physician demand after approval expansion and details manufacturing readiness for a broader launch.",
+      "extracted_tags": ["approval", "commercial launch", "guidance raised"],
+      "related_tickers": [
+        { "ticker": "NVO", "name": "Novo Nordisk", "relationship": "Competitor", "strength": 0.72 }
+      ],
+      "metadata": { "filing_sections": ["Item 8.01"], "source_batch": "historical-sec-v1" }
+    },
+    {
+      "accession_number": "0001318605-26-000041",
+      "form_type": "8-K",
+      "filing_date": "2026-02-23",
+      "company_name": "Tesla, Inc.",
+      "ticker": "TSLA",
+      "headline": "Tesla discloses supplier disruption and remediation costs",
+      "summary": "The filing discusses a supplier disruption affecting battery module availability and outlines remediation costs and production adjustments.",
+      "extracted_tags": ["supply disruption", "supplier", "remediation"],
+      "related_tickers": [
+        { "ticker": "RIVN", "name": "Rivian", "relationship": "Competitor", "strength": 0.61 },
+        { "ticker": "QCOM", "name": "Qualcomm", "relationship": "Supplier", "strength": 0.36 }
+      ],
+      "metadata": { "filing_sections": ["Item 8.01"], "source_batch": "historical-sec-v1" }
+    },
+    {
+      "accession_number": "0001341439-26-000017",
+      "form_type": "8-K",
+      "filing_date": "2026-03-04",
+      "company_name": "Oracle Corporation",
+      "ticker": "ORCL",
+      "headline": "Oracle reports strategic customer alliance for sovereign cloud deployments",
+      "summary": "The filing describes a strategic customer alliance and expanded workload commitments in government and regulated industries.",
+      "extracted_tags": ["major agreement", "partnership", "customer alliance"],
+      "related_tickers": [
+        { "ticker": "MSFT", "name": "Microsoft", "relationship": "Partner", "strength": 0.74 }
+      ],
+      "metadata": { "filing_sections": ["Item 1.01", "Item 8.01"], "source_batch": "historical-sec-v1" }
+    },
+    {
+      "accession_number": "0001326801-26-000029",
+      "form_type": "8-K",
+      "filing_date": "2026-03-08",
+      "company_name": "Meta Platforms, Inc.",
+      "ticker": "META",
+      "headline": "Meta details expanded European regulatory proceedings tied to advertising controls",
+      "summary": "The filing updates investors on expanded regulatory proceedings in Europe and expected compliance spending tied to advertising controls.",
+      "extracted_tags": ["legal proceeding", "regulatory", "compliance"],
+      "related_tickers": [
+        { "ticker": "GOOGL", "name": "Alphabet", "relationship": "Sector Peer", "strength": 0.53 },
+        { "ticker": "AAPL", "name": "Apple", "relationship": "Sector Peer", "strength": 0.31 }
+      ],
+      "metadata": { "filing_sections": ["Item 8.01"], "source_batch": "historical-sec-v1" }
+    }
+  ]
+}

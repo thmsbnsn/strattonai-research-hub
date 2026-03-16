@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { AppLayout } from "@/components/AppLayout";
 import { StatCard } from "@/components/StatCard";
@@ -15,13 +15,20 @@ export default function EventStudies() {
   const [eventType, setEventType] = useState("Product Launch");
   const [horizon, setHorizon] = useState("5D");
 
-  const studies = useQuery({ queryKey: ["events", "studies"], queryFn: getEventStudies });
+  const studies = useQuery({ queryKey: ["events", "studies", eventType], queryFn: () => getEventStudies(eventType) });
   const distribution = useQuery({ queryKey: ["events", "distribution"], queryFn: getReturnDistribution });
   const forwardCurve = useQuery({ queryKey: ["events", "forward-curve"], queryFn: getForwardCurve });
   const categories = useQuery({ queryKey: ["events", "categories"], queryFn: getEventCategories });
-  const horizons = useQuery({ queryKey: ["events", "horizons"], queryFn: getTimeHorizons });
+  const horizons = useQuery({ queryKey: ["events", "horizons", eventType], queryFn: () => getTimeHorizons(eventType) });
 
   const sortedDistribution = distribution.data?.slice().sort((a, b) => a.return - b.return);
+  const selectedStudy = studies.data?.find((study) => study.horizon === horizon) || studies.data?.[0];
+
+  useEffect(() => {
+    if (categories.data?.length && !categories.data.includes(eventType)) {
+      setEventType(categories.data[0]);
+    }
+  }, [categories.data, eventType]);
 
   return (
     <AppLayout>
@@ -71,10 +78,10 @@ export default function EventStudies() {
             <div className="col-span-4"><ErrorState onRetry={() => studies.refetch()} /></div>
           ) : (
             <>
-              <StatCard label="Avg Forward Return" value="+1.78%" color="text-success" />
-              <StatCard label="Win Rate" value="65%" color="text-primary" />
-              <StatCard label="Sample Size" value="42" />
-              <StatCard label="Sharpe Ratio" value="1.24" />
+              <StatCard label="Avg Forward Return" value={`${selectedStudy && selectedStudy.avgReturn >= 0 ? "+" : ""}${(selectedStudy?.avgReturn ?? 0).toFixed(2)}%`} color={(selectedStudy?.avgReturn ?? 0) >= 0 ? "text-success" : "text-danger"} />
+              <StatCard label="Win Rate" value={`${(selectedStudy?.winRate ?? 0).toFixed(0)}%`} color="text-primary" />
+              <StatCard label="Sample Size" value={`${selectedStudy?.sampleSize ?? 0}`} />
+              <StatCard label="Median Return" value={`${selectedStudy && (selectedStudy.medianReturn ?? 0) >= 0 ? "+" : ""}${(selectedStudy?.medianReturn ?? 0).toFixed(2)}%`} color={(selectedStudy?.medianReturn ?? 0) >= 0 ? "text-success" : "text-danger"} />
             </>
           )}
         </div>

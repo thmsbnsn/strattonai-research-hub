@@ -1,0 +1,139 @@
+{
+  "input_dir": "C:\\Users\\tlben\\Bentlas\\StrattonAI\\data\\events\\financialNews",
+  "before": {
+    "normalized_records": 1985,
+    "skipped_records": 1039,
+    "stored_financial_news_rows": 1948,
+    "mapped_companies": {
+      "Apple Inc.": {
+        "ticker": "AAPL",
+        "strategy": "existing_us_primary",
+        "notes": "Existing canonical U.S. primary listing already used across the project."
+      },
+      "Boeing": {
+        "ticker": "BA",
+        "strategy": "existing_us_primary",
+        "notes": "Existing canonical U.S. primary listing already used across the project."
+      },
+      "ExxonMobil": {
+        "ticker": "XOM",
+        "strategy": "existing_us_primary",
+        "notes": "Existing canonical U.S. primary listing already used across the project."
+      },
+      "Goldman Sachs": {
+        "ticker": "GS",
+        "strategy": "existing_us_primary",
+        "notes": "Existing canonical U.S. primary listing already used across the project."
+      },
+      "JP Morgan Chase": {
+        "ticker": "JPM",
+        "strategy": "existing_us_primary",
+        "notes": "Existing canonical U.S. primary listing already used across the project."
+      },
+      "Microsoft": {
+        "ticker": "MSFT",
+        "strategy": "existing_us_primary",
+        "notes": "Existing canonical U.S. primary listing already used across the project."
+      },
+      "Tata Motors": {
+        "ticker": "TTM",
+        "strategy": "nyse_adr",
+        "notes": "NYSE ADR ticker TTM is used as the deterministic tradable line because the project currently operates on exchange ticker strings without a separate home-listing convention."
+      },
+      "Tesla": {
+        "ticker": "TSLA",
+        "strategy": "existing_us_primary",
+        "notes": "Existing canonical U.S. primary listing already used across the project."
+      }
+    },
+    "unmapped_companies": {
+      "Reliance Industries": {
+        "row_count": 296,
+        "reason": "Skipped because the project does not yet define a canonical foreign-listing convention across NSE, BSE, and depository receipt symbols."
+      },
+      "Samsung Electronics": {
+        "row_count": 336,
+        "reason": "Skipped because the project does not yet define a canonical foreign-listing convention across KRX primary shares, London GDRs, and OTC lines."
+      }
+    }
+  },
+  "after": {
+    "normalized_records": 2274,
+    "skipped_records": 750,
+    "stored_financial_news_rows": 2235,
+    "mapped_companies": {
+      "Apple Inc.": {
+        "ticker": "AAPL",
+        "strategy": "existing_us_primary",
+        "notes": "Existing canonical U.S. primary listing already used across the project."
+      },
+      "Boeing": {
+        "ticker": "BA",
+        "strategy": "existing_us_primary",
+        "notes": "Existing canonical U.S. primary listing already used across the project."
+      },
+      "ExxonMobil": {
+        "ticker": "XOM",
+        "strategy": "existing_us_primary",
+        "notes": "Existing canonical U.S. primary listing already used across the project."
+      },
+      "Goldman Sachs": {
+        "ticker": "GS",
+        "strategy": "existing_us_primary",
+        "notes": "Existing canonical U.S. primary listing already used across the project."
+      },
+      "JP Morgan Chase": {
+        "ticker": "JPM",
+        "strategy": "existing_us_primary",
+        "notes": "Existing canonical U.S. primary listing already used across the project."
+      },
+      "Microsoft": {
+        "ticker": "MSFT",
+        "strategy": "existing_us_primary",
+        "notes": "Existing canonical U.S. primary listing already used across the project."
+      },
+      "Tata Motors": {
+        "ticker": "TTM",
+        "strategy": "nyse_adr",
+        "notes": "NYSE ADR ticker TTM is used as the deterministic tradable line because the project currently operates on exchange ticker strings without a separate home-listing convention."
+      },
+      "Tesla": {
+        "ticker": "TSLA",
+        "strategy": "existing_us_primary",
+        "notes": "Existing canonical U.S. primary listing already used across the project."
+      }
+    },
+    "unmapped_companies": {
+      "Reliance Industries": {
+        "row_count": 296,
+        "reason": "Skipped because the project does not yet define a canonical foreign-listing convention across NSE, BSE, and depository receipt symbols."
+      },
+      "Samsung Electronics": {
+        "row_count": 336,
+        "reason": "Skipped because the project does not yet define a canonical foreign-listing convention across KRX primary shares, London GDRs, and OTC lines."
+      }
+    },
+    "skip_reason_counts": {
+      "Headline is required.": 148,
+      "Unsupported Related_Company mapping: Reliance Industries (Skipped because the project does not yet define a canonical foreign-listing convention across NSE, BSE, and depository receipt symbols.)": 288,
+      "Unsupported Related_Company mapping: Samsung Electronics (Skipped because the project does not yet define a canonical foreign-listing convention across KRX primary shares, London GDRs, and OTC lines.)": 314
+    }
+  },
+  "delta": {
+    "normalized_records": 289,
+    "stored_financial_news_rows": 287
+  },
+  "added_mappings": [],
+  "unsupported_companies": [
+    {
+      "company_name": "Reliance Industries",
+      "row_count": 296,
+      "notes": "Skipped because the project does not yet define a canonical foreign-listing convention across NSE, BSE, and depository receipt symbols."
+    },
+    {
+      "company_name": "Samsung Electronics",
+      "row_count": 336,
+      "notes": "Skipped because the project does not yet define a canonical foreign-listing convention across KRX primary shares, London GDRs, and OTC lines."
+    }
+  ]
+}

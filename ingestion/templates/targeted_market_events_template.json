@@ -1,0 +1,121 @@
+{
+  "template_metadata": {
+    "purpose": "Fill the highest-priority market-event backfill gaps with real historical records.",
+    "generated_from_plan": true,
+    "count": 4
+  },
+  "events": [
+    {
+      "template_only": true,
+      "source_name": "historical_backfill",
+      "source_record_id": "replace-with-real-id-8",
+      "headline": "<insert real historical market event headline>",
+      "primary_ticker": "<insert primary ticker>",
+      "event_type": "Product Launch",
+      "sentiment": "<positive|negative|neutral>",
+      "occurred_at": "<YYYY-MM-DDTHH:MM:SSZ>",
+      "related_companies": [
+        {
+          "ticker": "TSM",
+          "name": "<insert related company name>",
+          "relationship": "Supplier",
+          "strength": 0.75,
+          "notes": "Replace with a real historical related-company attachment supported by the source."
+        }
+      ],
+      "metadata": {
+        "template_source_gap_key": "related::Product Launch::TSM::Supplier",
+        "notes_to_research": "Product Launch remains weak in the audit and this slice is repeatedly used by current signals. Product Launch related slice for TSM / Supplier has sample 0, missing horizons ['1D', '3D', '5D', '10D', '20D'], fallback usage 10, signal usage 10.",
+        "example_guidance": [
+          "Find a real historical Product Launch example involving TSM.",
+          "Prefer examples where the related-company path is explicitly Supplier.",
+          "This category currently has 0 high-confidence signals and 96 low-confidence signals."
+        ]
+      }
+    },
+    {
+      "template_only": true,
+      "source_name": "historical_backfill",
+      "source_record_id": "replace-with-real-id-9",
+      "headline": "<insert real historical market event headline>",
+      "primary_ticker": "<insert primary ticker>",
+      "event_type": "Product Launch",
+      "sentiment": "<positive|negative|neutral>",
+      "occurred_at": "<YYYY-MM-DDTHH:MM:SSZ>",
+      "related_companies": [
+        {
+          "ticker": "GOOGL",
+          "name": "<insert related company name>",
+          "relationship": "Competitor",
+          "strength": 0.75,
+          "notes": "Replace with a real historical related-company attachment supported by the source."
+        }
+      ],
+      "metadata": {
+        "template_source_gap_key": "related::Product Launch::GOOGL::Competitor",
+        "notes_to_research": "Product Launch remains weak in the audit and this slice is repeatedly used by current signals. Product Launch related slice for GOOGL / Competitor has sample 0, missing horizons ['1D', '3D', '5D', '10D', '20D'], fallback usage 10, signal usage 10.",
+        "example_guidance": [
+          "Find a real historical Product Launch example involving GOOGL.",
+          "Prefer examples where the related-company path is explicitly Competitor.",
+          "This category currently has 0 high-confidence signals and 96 low-confidence signals."
+        ]
+      }
+    },
+    {
+      "template_only": true,
+      "source_name": "historical_backfill",
+      "source_record_id": "replace-with-real-id-10",
+      "headline": "<insert real historical market event headline>",
+      "primary_ticker": "<insert primary ticker>",
+      "event_type": "Product Launch",
+      "sentiment": "<positive|negative|neutral>",
+      "occurred_at": "<YYYY-MM-DDTHH:MM:SSZ>",
+      "related_companies": [
+        {
+          "ticker": "AMD",
+          "name": "<insert related company name>",
+          "relationship": "Competitor",
+          "strength": 0.75,
+          "notes": "Replace with a real historical related-company attachment supported by the source."
+        }
+      ],
+      "metadata": {
+        "template_source_gap_key": "related::Product Launch::AMD::Competitor",
+        "notes_to_research": "Product Launch remains weak in the audit and this slice is repeatedly used by current signals. Product Launch related slice for AMD / Competitor has sample 0, missing horizons ['1D', '3D', '5D', '10D', '20D'], fallback usage 10, signal usage 10.",
+        "example_guidance": [
+          "Find a real historical Product Launch example involving AMD.",
+          "Prefer examples where the related-company path is explicitly Competitor.",
+          "This category currently has 0 high-confidence signals and 96 low-confidence signals."
+        ]
+      }
+    },
+    {
+      "template_only": true,
+      "source_name": "historical_backfill",
+      "source_record_id": "replace-with-real-id-11",
+      "headline": "<insert real historical market event headline>",
+      "primary_ticker": "<insert primary ticker>",
+      "event_type": "Product Launch",
+      "sentiment": "<positive|negative|neutral>",
+      "occurred_at": "<YYYY-MM-DDTHH:MM:SSZ>",
+      "related_companies": [
+        {
+          "ticker": "QCOM",
+          "name": "<insert related company name>",
+          "relationship": "Supplier",
+          "strength": 0.75,
+          "notes": "Replace with a real historical related-company attachment supported by the source."
+        }
+      ],
+      "metadata": {
+        "template_source_gap_key": "related::Product Launch::QCOM::Supplier",
+        "notes_to_research": "Product Launch remains weak in the audit and this slice is repeatedly used by current signals. Product Launch related slice for QCOM / Supplier has sample 0, missing horizons ['1D', '3D', '5D', '10D', '20D'], fallback usage 10, signal usage 10.",
+        "example_guidance": [
+          "Find a real historical Product Launch example involving QCOM.",
+          "Prefer examples where the related-company path is explicitly Supplier.",
+          "This category currently has 0 high-confidence signals and 96 low-confidence signals."
+        ]
+      }
+    }
+  ]
+}

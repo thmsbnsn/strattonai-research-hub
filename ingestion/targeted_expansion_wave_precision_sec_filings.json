@@ -1,0 +1,74 @@
+{
+  "filings": [
+    {
+      "accession_number": "0001326801-26-000052",
+      "form_type": "8-K",
+      "filing_date": "2026-03-03",
+      "company_name": "Meta Platforms, Inc.",
+      "ticker": "META",
+      "headline": "Meta discloses another AI campus and network-capacity expansion program",
+      "summary": "The filing outlines additional AI campus capacity, networking purchases, and revised infrastructure commitments for scaled model deployment.",
+      "extracted_tags": ["capital expenditure", "datacenter", "facility expansion"],
+      "related_tickers": [
+        { "ticker": "ORCL", "name": "Oracle", "relationship": "Sector Peer", "strength": 0.51 },
+        { "ticker": "AMZN", "name": "Amazon", "relationship": "Competitor", "strength": 0.67 },
+        { "ticker": "GOOGL", "name": "Alphabet", "relationship": "Competitor", "strength": 0.54 }
+      ],
+      "metadata": {
+        "filing_sections": ["Item 2.06", "Item 8.01"],
+        "source_batch": "precision-expansion-wave-1-sec",
+        "targeted_gap_keys": [
+          "related::Capital Expenditure::ORCL::Sector Peer",
+          "related::Capital Expenditure::AMZN::Competitor",
+          "related::Capital Expenditure::GOOGL::Competitor"
+        ]
+      }
+    },
+    {
+      "accession_number": "0000789019-26-000045",
+      "form_type": "8-K",
+      "filing_date": "2026-03-05",
+      "company_name": "Microsoft Corporation",
+      "ticker": "MSFT",
+      "headline": "Microsoft reports another European compliance review covering marketplace and bundling disclosures",
+      "summary": "The filing describes another European compliance review and expected remediation around marketplace disclosures and software bundling practices.",
+      "extracted_tags": ["regulatory", "antitrust", "legal proceeding"],
+      "related_tickers": [
+        { "ticker": "GOOGL", "name": "Alphabet", "relationship": "Sector Peer", "strength": 0.43 },
+        { "ticker": "META", "name": "Meta", "relationship": "Sector Peer", "strength": 0.39 }
+      ],
+      "metadata": {
+        "filing_sections": ["Item 8.01"],
+        "source_batch": "precision-expansion-wave-1-sec",
+        "targeted_gap_keys": [
+          "related::Legal/Regulatory::GOOGL::Sector Peer",
+          "related::Legal/Regulatory::META::Sector Peer"
+        ]
+      }
+    },
+    {
+      "accession_number": "0001326801-26-000054",
+      "form_type": "8-K",
+      "filing_date": "2026-03-10",
+      "company_name": "NVIDIA Corporation",
+      "ticker": "NVDA",
+      "headline": "NVIDIA expands a commercial systems alliance for enterprise AI capacity rollouts",
+      "summary": "The filing expands a systems alliance for enterprise AI capacity rollouts and details new supply reservations and customer deployment commitments.",
+      "extracted_tags": ["partnership", "strategic agreement", "supply agreement"],
+      "related_tickers": [
+        { "ticker": "TSM", "name": "Taiwan Semi", "relationship": "Supplier", "strength": 0.9 },
+        { "ticker": "MSFT", "name": "Microsoft", "relationship": "Customer", "strength": 0.75 },
+        { "ticker": "AVGO", "name": "Broadcom", "relationship": "Sector Peer", "strength": 0.53 }
+      ],
+      "metadata": {
+        "filing_sections": ["Item 1.01", "Item 8.01"],
+        "source_batch": "precision-expansion-wave-1-sec",
+        "targeted_gap_keys": [
+          "related::Partnership::TSM::Supplier",
+          "related::Partnership::MSFT::Customer",
+          "related::Partnership::AVGO::Sector Peer"
+        ]
+      }
+    }
+  ]
+}

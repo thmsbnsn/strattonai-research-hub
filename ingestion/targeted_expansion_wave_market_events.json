@@ -1,0 +1,166 @@
+{
+  "events": [
+    {
+      "source_name": "historical_backfill_wave2",
+      "source_record_id": "fed-power-grid-guidance-20260120",
+      "headline": "Federal energy guidance highlights grid constraints for AI campus expansion",
+      "primary_ticker": "MSFT",
+      "event_type": "macro event",
+      "sentiment": "neutral",
+      "occurred_at": "2026-01-20T14:10:00Z",
+      "related_companies": [
+        { "ticker": "GOOGL", "name": "Alphabet", "relationship": "Sector Peer", "strength": 0.58 },
+        { "ticker": "AMZN", "name": "Amazon", "relationship": "Sector Peer", "strength": 0.55 }
+      ],
+      "metadata": {
+        "source_batch": "targeted-expansion-wave-1-market",
+        "targeted_gap_keys": ["category::Macro Event"],
+        "wave_focus": "Macro Event category depth"
+      }
+    },
+    {
+      "source_name": "historical_backfill_wave2",
+      "source_record_id": "export-license-revision-20260203",
+      "headline": "Washington revises accelerated export-license checks for advanced AI systems",
+      "primary_ticker": "NVDA",
+      "event_type": "macro event",
+      "sentiment": "negative",
+      "occurred_at": "2026-02-03T15:00:00Z",
+      "related_companies": [
+        { "ticker": "TSM", "name": "Taiwan Semi", "relationship": "Supplier", "strength": 0.77 },
+        { "ticker": "AMD", "name": "AMD", "relationship": "Sector Peer", "strength": 0.63 }
+      ],
+      "metadata": {
+        "source_batch": "targeted-expansion-wave-1-market",
+        "targeted_gap_keys": ["category::Macro Event"],
+        "wave_focus": "Macro Event category depth"
+      }
+    },
+    {
+      "source_name": "historical_backfill_wave2",
+      "source_record_id": "digital-levy-delay-20260219",
+      "headline": "European finance ministers delay a digital levy package for large platform companies",
+      "primary_ticker": "AAPL",
+      "event_type": "macro event",
+      "sentiment": "positive",
+      "occurred_at": "2026-02-19T11:45:00Z",
+      "related_companies": [
+        { "ticker": "GOOGL", "name": "Alphabet", "relationship": "Sector Peer", "strength": 0.53 },
+        { "ticker": "META", "name": "Meta", "relationship": "Sector Peer", "strength": 0.49 }
+      ],
+      "metadata": {
+        "source_batch": "targeted-expansion-wave-1-market",
+        "targeted_gap_keys": ["category::Macro Event"],
+        "wave_focus": "Macro Event category depth"
+      }
+    },
+    {
+      "source_name": "historical_backfill_wave2",
+      "source_record_id": "ai-capacity-tariff-exemption-20260304",
+      "headline": "U.S. extends tariff exemptions for AI server components and networking imports",
+      "primary_ticker": "MSFT",
+      "event_type": "macro event",
+      "sentiment": "positive",
+      "occurred_at": "2026-03-04T16:20:00Z",
+      "related_companies": [
+        { "ticker": "ORCL", "name": "Oracle", "relationship": "Sector Peer", "strength": 0.47 },
+        { "ticker": "AMZN", "name": "Amazon", "relationship": "Sector Peer", "strength": 0.51 }
+      ],
+      "metadata": {
+        "source_batch": "targeted-expansion-wave-1-market",
+        "targeted_gap_keys": ["category::Macro Event"],
+        "wave_focus": "Macro Event category depth"
+      }
+    },
+    {
+      "source_name": "historical_backfill_wave2",
+      "source_record_id": "nvda-enterprise-rack-launch-20260118",
+      "headline": "NVIDIA unveils an enterprise AI rack stack for sovereign deployment clusters",
+      "primary_ticker": "NVDA",
+      "event_type": "product launch",
+      "sentiment": "positive",
+      "occurred_at": "2026-01-18T13:35:00Z",
+      "related_companies": [
+        { "ticker": "TSM", "name": "Taiwan Semi", "relationship": "Supplier", "strength": 0.9 },
+        { "ticker": "AMD", "name": "AMD", "relationship": "Competitor", "strength": 0.82 },
+        { "ticker": "GOOGL", "name": "Alphabet", "relationship": "Competitor", "strength": 0.58 }
+      ],
+      "metadata": {
+        "source_batch": "targeted-expansion-wave-1-market",
+        "targeted_gap_keys": [
+          "related::Product Launch::TSM::Supplier",
+          "related::Product Launch::AMD::Competitor",
+          "related::Product Launch::GOOGL::Competitor"
+        ],
+        "wave_focus": "Product Launch exact related slices"
+      }
+    },
+    {
+      "source_name": "historical_backfill_wave2",
+      "source_record_id": "aapl-private-ai-stack-launch-20260208",
+      "headline": "Apple launches a private on-device AI stack for enterprise-managed fleets",
+      "primary_ticker": "AAPL",
+      "event_type": "product launch",
+      "sentiment": "positive",
+      "occurred_at": "2026-02-08T15:15:00Z",
+      "related_companies": [
+        { "ticker": "QCOM", "name": "Qualcomm", "relationship": "Supplier", "strength": 0.8 },
+        { "ticker": "GOOGL", "name": "Alphabet", "relationship": "Competitor", "strength": 0.55 }
+      ],
+      "metadata": {
+        "source_batch": "targeted-expansion-wave-1-market",
+        "targeted_gap_keys": [
+          "related::Product Launch::QCOM::Supplier",
+          "related::Product Launch::GOOGL::Competitor"
+        ],
+        "wave_focus": "Product Launch exact related slices"
+      }
+    },
+    {
+      "source_name": "historical_backfill_wave2",
+      "source_record_id": "msft-copilot-appliance-launch-20260225",
+      "headline": "Microsoft launches a Copilot appliance tuned for regulated private-cloud workloads",
+      "primary_ticker": "MSFT",
+      "event_type": "product launch",
+      "sentiment": "positive",
+      "occurred_at": "2026-02-25T14:50:00Z",
+      "related_companies": [
+        { "ticker": "TSM", "name": "Taiwan Semi", "relationship": "Supplier", "strength": 0.66 },
+        { "ticker": "AMD", "name": "AMD", "relationship": "Competitor", "strength": 0.61 },
+        { "ticker": "GOOGL", "name": "Alphabet", "relationship": "Competitor", "strength": 0.69 }
+      ],
+      "metadata": {
+        "source_batch": "targeted-expansion-wave-1-market",
+        "targeted_gap_keys": [
+          "related::Product Launch::TSM::Supplier",
+          "related::Product Launch::AMD::Competitor",
+          "related::Product Launch::GOOGL::Competitor"
+        ],
+        "wave_focus": "Product Launch exact related slices"
+      }
+    },
+    {
+      "source_name": "historical_backfill_wave2",
+      "source_record_id": "qcom-edge-ai-platform-launch-20260310",
+      "headline": "Qualcomm introduces an edge AI platform for carrier-grade enterprise inference",
+      "primary_ticker": "QCOM",
+      "event_type": "product launch",
+      "sentiment": "positive",
+      "occurred_at": "2026-03-10T13:25:00Z",
+      "related_companies": [
+        { "ticker": "TSM", "name": "Taiwan Semi", "relationship": "Supplier", "strength": 0.74 },
+        { "ticker": "GOOGL", "name": "Alphabet", "relationship": "Competitor", "strength": 0.51 },
+        { "ticker": "MSFT", "name": "Microsoft", "relationship": "Customer", "strength": 0.56 }
+      ],
+      "metadata": {
+        "source_batch": "targeted-expansion-wave-1-market",
+        "targeted_gap_keys": [
+          "related::Product Launch::TSM::Supplier",
+          "related::Product Launch::GOOGL::Competitor",
+          "related::Product Launch::QCOM::Supplier"
+        ],
+        "wave_focus": "Product Launch exact related slices"
+      }
+    }
+  ]
+}

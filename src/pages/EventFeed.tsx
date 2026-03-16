@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { AppLayout } from "@/components/AppLayout";
 import { EventCard } from "@/components/EventCard";
@@ -12,6 +12,12 @@ export default function EventFeed() {
 
   const categories = ["All", ...new Set(events?.map((e) => e.category) ?? [])];
   const filtered = filter === "All" ? events : events?.filter((e) => e.category === filter);
+
+  useEffect(() => {
+    if (!categories.includes(filter)) {
+      setFilter("All");
+    }
+  }, [categories, filter]);
 
   return (
     <AppLayout>

@@ -1,0 +1,431 @@
+{
+  "events": [
+    {
+      "source_name": "historical_backfill",
+      "source_record_id": "nvda-inference-platform-20260106",
+      "headline": "NVIDIA launches inference platform tuned for enterprise AI workloads",
+      "primary_ticker": "NVDA",
+      "event_type": "product_launch",
+      "sentiment": "positive",
+      "occurred_at": "2026-01-06T08:15:00Z",
+      "related_companies": [
+        { "ticker": "TSM", "name": "Taiwan Semi", "relationship": "Supplier", "strength": 0.92 },
+        { "ticker": "AMD", "name": "AMD", "relationship": "Competitor", "strength": 0.84 }
+      ],
+      "metadata": { "source_batch": "historical-market-v1" }
+    },
+    {
+      "source_name": "historical_backfill",
+      "source_record_id": "aapl-ai-ipad-launch-20260122",
+      "headline": "Apple unveils AI-enabled iPad lineup with new silicon features",
+      "primary_ticker": "AAPL",
+      "event_type": "product launch",
+      "sentiment": "positive",
+      "occurred_at": "2026-01-22T14:00:00Z",
+      "related_companies": [
+        { "ticker": "QCOM", "name": "Qualcomm", "relationship": "Supplier", "strength": 0.61 },
+        { "ticker": "GOOGL", "name": "Alphabet", "relationship": "Competitor", "strength": 0.58 }
+      ],
+      "metadata": { "source_batch": "historical-market-v1" }
+    },
+    {
+      "source_name": "historical_backfill",
+      "source_record_id": "qcom-auto-ai-launch-20260204",
+      "headline": "Qualcomm introduces automotive AI chipset platform for assisted driving",
+      "primary_ticker": "QCOM",
+      "event_type": "product_launch",
+      "sentiment": "positive",
+      "occurred_at": "2026-02-04T13:10:00Z",
+      "related_companies": [
+        { "ticker": "AAPL", "name": "Apple", "relationship": "Partner", "strength": 0.46 },
+        { "ticker": "NVDA", "name": "NVIDIA", "relationship": "Competitor", "strength": 0.67 }
+      ],
+      "metadata": { "source_batch": "historical-market-v1" }
+    },
+    {
+      "source_name": "historical_backfill",
+      "source_record_id": "msft-security-appliance-launch-20260218",
+      "headline": "Microsoft launches sovereign cloud security appliance for regulated workloads",
+      "primary_ticker": "MSFT",
+      "event_type": "product_launch",
+      "sentiment": "positive",
+      "occurred_at": "2026-02-18T15:25:00Z",
+      "related_companies": [
+        { "ticker": "ORCL", "name": "Oracle", "relationship": "Sector Peer", "strength": 0.57 },
+        { "ticker": "GOOGL", "name": "Alphabet", "relationship": "Competitor", "strength": 0.62 }
+      ],
+      "metadata": { "source_batch": "historical-market-v1" }
+    },
+
+    {
+      "source_name": "historical_backfill",
+      "source_record_id": "msft-azure-earnings-beat-20260114",
+      "headline": "Microsoft posts Azure-driven earnings beat and raises commercial cloud outlook",
+      "primary_ticker": "MSFT",
+      "event_type": "earnings",
+      "sentiment": "positive",
+      "occurred_at": "2026-01-14T21:05:00Z",
+      "related_companies": [
+        { "ticker": "AMZN", "name": "Amazon", "relationship": "Competitor", "strength": 0.73 },
+        { "ticker": "ORCL", "name": "Oracle", "relationship": "Sector Peer", "strength": 0.58 }
+      ],
+      "metadata": { "source_batch": "historical-market-v1" }
+    },
+    {
+      "source_name": "historical_backfill",
+      "source_record_id": "amd-ai-gpu-outlook-20260129",
+      "headline": "AMD raises AI GPU outlook after enterprise accelerator demand surprises higher",
+      "primary_ticker": "AMD",
+      "event_type": "earnings",
+      "sentiment": "positive",
+      "occurred_at": "2026-01-29T21:20:00Z",
+      "related_companies": [
+        { "ticker": "NVDA", "name": "NVIDIA", "relationship": "Competitor", "strength": 0.81 },
+        { "ticker": "TSM", "name": "Taiwan Semi", "relationship": "Supplier", "strength": 0.64 }
+      ],
+      "metadata": { "source_batch": "historical-market-v1" }
+    },
+    {
+      "source_name": "historical_backfill",
+      "source_record_id": "aapl-services-beat-buyback-20260212",
+      "headline": "Apple beats services expectations and expands repurchase authorization",
+      "primary_ticker": "AAPL",
+      "event_type": "earnings",
+      "sentiment": "positive",
+      "occurred_at": "2026-02-12T21:15:00Z",
+      "related_companies": [
+        { "ticker": "QCOM", "name": "Qualcomm", "relationship": "Supplier", "strength": 0.54 },
+        { "ticker": "META", "name": "Meta", "relationship": "Sector Peer", "strength": 0.49 }
+      ],
+      "metadata": { "source_batch": "historical-market-v1" }
+    },
+    {
+      "source_name": "historical_backfill",
+      "source_record_id": "lly-demand-outlook-20260226",
+      "headline": "Eli Lilly raises full-year demand outlook after obesity franchise acceleration",
+      "primary_ticker": "LLY",
+      "event_type": "earnings",
+      "sentiment": "positive",
+      "occurred_at": "2026-02-26T21:10:00Z",
+      "related_companies": [
+        { "ticker": "NVO", "name": "Novo Nordisk", "relationship": "Competitor", "strength": 0.79 },
+        { "ticker": "AMGN", "name": "Amgen", "relationship": "Sector Peer", "strength": 0.55 }
+      ],
+      "metadata": { "source_batch": "historical-market-v1" }
+    },
+
+    {
+      "source_name": "historical_backfill",
+      "source_record_id": "msft-orcl-sovereign-deal-20260110",
+      "headline": "Microsoft extends Oracle interoperability deal for sovereign cloud workloads",
+      "primary_ticker": "MSFT",
+      "event_type": "partnership",
+      "sentiment": "positive",
+      "occurred_at": "2026-01-10T13:00:00Z",
+      "related_companies": [
+        { "ticker": "ORCL", "name": "Oracle", "relationship": "Partner", "strength": 0.87 },
+        { "ticker": "GOOGL", "name": "Alphabet", "relationship": "Competitor", "strength": 0.59 }
+      ],
+      "metadata": { "source_batch": "historical-market-v1" }
+    },
+    {
+      "source_name": "historical_backfill",
+      "source_record_id": "nvda-googl-inference-stack-20260127",
+      "headline": "NVIDIA partners with Alphabet on enterprise inference stack optimization",
+      "primary_ticker": "NVDA",
+      "event_type": "partnership",
+      "sentiment": "positive",
+      "occurred_at": "2026-01-27T16:10:00Z",
+      "related_companies": [
+        { "ticker": "GOOGL", "name": "Alphabet", "relationship": "Partner", "strength": 0.76 },
+        { "ticker": "TSM", "name": "Taiwan Semi", "relationship": "Supplier", "strength": 0.68 }
+      ],
+      "metadata": { "source_batch": "historical-market-v1" }
+    },
+    {
+      "source_name": "historical_backfill",
+      "source_record_id": "aapl-qcom-modem-extension-20260220",
+      "headline": "Apple renews modem collaboration agreement with Qualcomm through next device cycle",
+      "primary_ticker": "AAPL",
+      "event_type": "partnership",
+      "sentiment": "positive",
+      "occurred_at": "2026-02-20T14:40:00Z",
+      "related_companies": [
+        { "ticker": "QCOM", "name": "Qualcomm", "relationship": "Partner", "strength": 0.82 },
+        { "ticker": "GOOGL", "name": "Alphabet", "relationship": "Competitor", "strength": 0.43 }
+      ],
+      "metadata": { "source_batch": "historical-market-v1" }
+    },
+    {
+      "source_name": "historical_backfill",
+      "source_record_id": "lly-amgn-trial-collab-20260303",
+      "headline": "Eli Lilly signs metabolic disease trial collaboration with Amgen",
+      "primary_ticker": "LLY",
+      "event_type": "partnership",
+      "sentiment": "positive",
+      "occurred_at": "2026-03-03T12:55:00Z",
+      "related_companies": [
+        { "ticker": "AMGN", "name": "Amgen", "relationship": "Partner", "strength": 0.75 },
+        { "ticker": "NVO", "name": "Novo Nordisk", "relationship": "Competitor", "strength": 0.52 }
+      ],
+      "metadata": { "source_batch": "historical-market-v1" }
+    },
+
+    {
+      "source_name": "historical_backfill",
+      "source_record_id": "aapl-dma-review-20260108",
+      "headline": "Apple faces expanded EU DMA compliance review over platform steering rules",
+      "primary_ticker": "AAPL",
+      "event_type": "legal/regulatory",
+      "sentiment": "negative",
+      "occurred_at": "2026-01-08T10:05:00Z",
+      "related_companies": [
+        { "ticker": "GOOGL", "name": "Alphabet", "relationship": "Sector Peer", "strength": 0.61 },
+        { "ticker": "META", "name": "Meta", "relationship": "Sector Peer", "strength": 0.58 }
+      ],
+      "metadata": { "source_batch": "historical-market-v1" }
+    },
+    {
+      "source_name": "historical_backfill",
+      "source_record_id": "googl-doj-remedy-hearing-20260130",
+      "headline": "Alphabet enters DOJ remedy hearing over ad-tech practices",
+      "primary_ticker": "GOOGL",
+      "event_type": "legal/regulatory",
+      "sentiment": "negative",
+      "occurred_at": "2026-01-30T15:35:00Z",
+      "related_companies": [
+        { "ticker": "META", "name": "Meta", "relationship": "Sector Peer", "strength": 0.63 },
+        { "ticker": "AAPL", "name": "Apple", "relationship": "Sector Peer", "strength": 0.47 }
+      ],
+      "metadata": { "source_batch": "historical-market-v1" }
+    },
+    {
+      "source_name": "historical_backfill",
+      "source_record_id": "tsla-nhtsa-probe-20260211",
+      "headline": "Tesla discloses NHTSA probe into automated driving recall repairs",
+      "primary_ticker": "TSLA",
+      "event_type": "legal/regulatory",
+      "sentiment": "negative",
+      "occurred_at": "2026-02-11T13:45:00Z",
+      "related_companies": [
+        { "ticker": "RIVN", "name": "Rivian", "relationship": "Regulatory Peer", "strength": 0.62 },
+        { "ticker": "QCOM", "name": "Qualcomm", "relationship": "Supplier", "strength": 0.35 }
+      ],
+      "metadata": { "source_batch": "historical-market-v1" }
+    },
+    {
+      "source_name": "historical_backfill",
+      "source_record_id": "meta-eu-privacy-notice-20260304",
+      "headline": "Meta receives European privacy enforcement notice tied to ad targeting controls",
+      "primary_ticker": "META",
+      "event_type": "legal/regulatory",
+      "sentiment": "negative",
+      "occurred_at": "2026-03-04T11:50:00Z",
+      "related_companies": [
+        { "ticker": "GOOGL", "name": "Alphabet", "relationship": "Sector Peer", "strength": 0.64 },
+        { "ticker": "AAPL", "name": "Apple", "relationship": "Sector Peer", "strength": 0.42 }
+      ],
+      "metadata": { "source_batch": "historical-market-v1" }
+    },
+
+    {
+      "source_name": "historical_backfill",
+      "source_record_id": "msft-arizona-capex-20260112",
+      "headline": "Microsoft approves new Arizona data center investment program",
+      "primary_ticker": "MSFT",
+      "event_type": "capital expenditure",
+      "sentiment": "positive",
+      "occurred_at": "2026-01-12T15:00:00Z",
+      "related_companies": [
+        { "ticker": "AMZN", "name": "Amazon", "relationship": "Competitor", "strength": 0.69 },
+        { "ticker": "ORCL", "name": "Oracle", "relationship": "Sector Peer", "strength": 0.56 }
+      ],
+      "metadata": { "source_batch": "historical-market-v1" }
+    },
+    {
+      "source_name": "historical_backfill",
+      "source_record_id": "nvda-packaging-expansion-20260131",
+      "headline": "NVIDIA expands advanced packaging reservation with Taiwan Semiconductor",
+      "primary_ticker": "NVDA",
+      "event_type": "capex",
+      "sentiment": "positive",
+      "occurred_at": "2026-01-31T12:40:00Z",
+      "related_companies": [
+        { "ticker": "TSM", "name": "Taiwan Semi", "relationship": "Supplier", "strength": 0.91 },
+        { "ticker": "AVGO", "name": "Broadcom", "relationship": "Sector Peer", "strength": 0.52 }
+      ],
+      "metadata": { "source_batch": "historical-market-v1" }
+    },
+    {
+      "source_name": "historical_backfill",
+      "source_record_id": "amzn-robotics-capex-20260213",
+      "headline": "Amazon accelerates robotics fulfillment capex plan across North America",
+      "primary_ticker": "AMZN",
+      "event_type": "capex",
+      "sentiment": "positive",
+      "occurred_at": "2026-02-13T14:20:00Z",
+      "related_companies": [
+        { "ticker": "MSFT", "name": "Microsoft", "relationship": "Sector Peer", "strength": 0.44 },
+        { "ticker": "ORCL", "name": "Oracle", "relationship": "Sector Peer", "strength": 0.41 }
+      ],
+      "metadata": { "source_batch": "historical-market-v1" }
+    },
+    {
+      "source_name": "historical_backfill",
+      "source_record_id": "googl-ai-campus-power-20260305",
+      "headline": "Alphabet secures long-dated power commitments for AI campus expansion",
+      "primary_ticker": "GOOGL",
+      "event_type": "capital expenditure",
+      "sentiment": "positive",
+      "occurred_at": "2026-03-05T15:05:00Z",
+      "related_companies": [
+        { "ticker": "MSFT", "name": "Microsoft", "relationship": "Competitor", "strength": 0.66 },
+        { "ticker": "ORCL", "name": "Oracle", "relationship": "Sector Peer", "strength": 0.48 }
+      ],
+      "metadata": { "source_batch": "historical-market-v1" }
+    },
+
+    {
+      "source_name": "historical_backfill",
+      "source_record_id": "tsla-battery-shortage-20260115",
+      "headline": "Tesla flags battery module shortage at Texas plant",
+      "primary_ticker": "TSLA",
+      "event_type": "supply disruption",
+      "sentiment": "negative",
+      "occurred_at": "2026-01-15T12:15:00Z",
+      "related_companies": [
+        { "ticker": "RIVN", "name": "Rivian", "relationship": "Competitor", "strength": 0.73 },
+        { "ticker": "QCOM", "name": "Qualcomm", "relationship": "Supplier", "strength": 0.39 }
+      ],
+      "metadata": { "source_batch": "historical-market-v1" }
+    },
+    {
+      "source_name": "historical_backfill",
+      "source_record_id": "nvda-substrate-shortage-20260202",
+      "headline": "NVIDIA warns of temporary substrate shortage constraining shipments",
+      "primary_ticker": "NVDA",
+      "event_type": "supply chain disruption",
+      "sentiment": "negative",
+      "occurred_at": "2026-02-02T13:05:00Z",
+      "related_companies": [
+        { "ticker": "TSM", "name": "Taiwan Semi", "relationship": "Supplier", "strength": 0.83 },
+        { "ticker": "AMD", "name": "AMD", "relationship": "Competitor", "strength": 0.71 }
+      ],
+      "metadata": { "source_batch": "historical-market-v1" }
+    },
+    {
+      "source_name": "historical_backfill",
+      "source_record_id": "aapl-assembly-delay-20260217",
+      "headline": "Apple faces China assembly delays after component bottleneck",
+      "primary_ticker": "AAPL",
+      "event_type": "supply disruption",
+      "sentiment": "negative",
+      "occurred_at": "2026-02-17T10:20:00Z",
+      "related_companies": [
+        { "ticker": "QCOM", "name": "Qualcomm", "relationship": "Supplier", "strength": 0.62 },
+        { "ticker": "META", "name": "Meta", "relationship": "Sector Peer", "strength": 0.35 }
+      ],
+      "metadata": { "source_batch": "historical-market-v1" }
+    },
+    {
+      "source_name": "historical_backfill",
+      "source_record_id": "lly-inspection-delay-20260306",
+      "headline": "Eli Lilly cites fill-finish capacity inspection delay for new launch wave",
+      "primary_ticker": "LLY",
+      "event_type": "supply disruption",
+      "sentiment": "negative",
+      "occurred_at": "2026-03-06T12:25:00Z",
+      "related_companies": [
+        { "ticker": "NVO", "name": "Novo Nordisk", "relationship": "Competitor", "strength": 0.58 },
+        { "ticker": "AMGN", "name": "Amgen", "relationship": "Sector Peer", "strength": 0.36 }
+      ],
+      "metadata": { "source_batch": "historical-market-v1" }
+    },
+
+    {
+      "source_name": "historical_backfill",
+      "source_record_id": "lly-eu-approval-20260109",
+      "headline": "Eli Lilly wins EU approval for expanded obesity indication",
+      "primary_ticker": "LLY",
+      "event_type": "regulatory approval",
+      "sentiment": "positive",
+      "occurred_at": "2026-01-09T07:30:00Z",
+      "related_companies": [
+        { "ticker": "NVO", "name": "Novo Nordisk", "relationship": "Competitor", "strength": 0.82 },
+        { "ticker": "AMGN", "name": "Amgen", "relationship": "Competitor", "strength": 0.41 }
+      ],
+      "metadata": { "source_batch": "historical-market-v1" }
+    },
+    {
+      "source_name": "historical_backfill",
+      "source_record_id": "nvo-label-expansion-20260205",
+      "headline": "Novo Nordisk receives label expansion for oral obesity therapy",
+      "primary_ticker": "NVO",
+      "event_type": "regulatory approval",
+      "sentiment": "positive",
+      "occurred_at": "2026-02-05T08:00:00Z",
+      "related_companies": [
+        { "ticker": "LLY", "name": "Eli Lilly", "relationship": "Competitor", "strength": 0.84 },
+        { "ticker": "AMGN", "name": "Amgen", "relationship": "Sector Peer", "strength": 0.33 }
+      ],
+      "metadata": { "source_batch": "historical-market-v1" }
+    },
+    {
+      "source_name": "historical_backfill",
+      "source_record_id": "amgn-manufacturing-clearance-20260224",
+      "headline": "Amgen secures manufacturing clearance for metabolic biologic launch",
+      "primary_ticker": "AMGN",
+      "event_type": "regulatory approval",
+      "sentiment": "positive",
+      "occurred_at": "2026-02-24T09:10:00Z",
+      "related_companies": [
+        { "ticker": "LLY", "name": "Eli Lilly", "relationship": "Sector Peer", "strength": 0.37 },
+        { "ticker": "NVO", "name": "Novo Nordisk", "relationship": "Sector Peer", "strength": 0.35 }
+      ],
+      "metadata": { "source_batch": "historical-market-v1" }
+    },
+    {
+      "source_name": "historical_backfill",
+      "source_record_id": "lly-formulary-addition-20260302",
+      "headline": "Eli Lilly gains inclusion on a large national reimbursement formulary",
+      "primary_ticker": "LLY",
+      "event_type": "regulatory approval",
+      "sentiment": "positive",
+      "occurred_at": "2026-03-02T11:35:00Z",
+      "related_companies": [
+        { "ticker": "NVO", "name": "Novo Nordisk", "relationship": "Competitor", "strength": 0.76 },
+        { "ticker": "AMGN", "name": "Amgen", "relationship": "Sector Peer", "strength": 0.34 }
+      ],
+      "metadata": { "source_batch": "historical-market-v1" }
+    },
+
+    {
+      "source_name": "historical_backfill",
+      "source_record_id": "fed-slower-cuts-20260113",
+      "headline": "Fed speakers signal slower pace of rate cuts amid sticky inflation data",
+      "primary_ticker": "MSFT",
+      "event_type": "macro event",
+      "sentiment": "neutral",
+      "occurred_at": "2026-01-13T15:10:00Z",
+      "related_companies": [
+        { "ticker": "GOOGL", "name": "Alphabet", "relationship": "Sector Peer", "strength": 0.51 },
+        { "ticker": "AMZN", "name": "Amazon", "relationship": "Sector Peer", "strength": 0.48 }
+      ],
+      "metadata": { "source_batch": "historical-market-v1" }
+    },
+    {
+      "source_name": "historical_backfill",
+      "source_record_id": "semi-subsidy-framework-20260210",
+      "headline": "U.S. finalizes larger semiconductor subsidy pool for advanced packaging",
+      "primary_ticker": "NVDA",
+      "event_type": "macro event",
+      "sentiment": "positive",
+      "occurred_at": "2026-02-10T16:05:00Z",
+      "related_companies": [
+        { "ticker": "TSM", "name": "Taiwan Semi", "relationship": "Supplier", "strength": 0.74 },
+        { "ticker": "AMD", "name": "AMD", "relationship": "Sector Peer", "strength": 0.61 }
+      ],
+      "metadata": { "source_batch": "historical-market-v1" }
+    }
+  ]
+}

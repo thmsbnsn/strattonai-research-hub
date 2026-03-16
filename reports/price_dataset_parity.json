@@ -1,0 +1,59 @@
+{
+  "parquet": {
+    "path": "C:\\Users\\tlben\\Bentlas\\StrattonAI\\data\\prices\\all_stock_data.parquet",
+    "format": "parquet",
+    "row_count": 34646152,
+    "distinct_ticker_count": 9315,
+    "min_date": "1962-01-02",
+    "max_date": "2024-11-04",
+    "required_columns": [
+      "Date",
+      "Ticker",
+      "Close"
+    ],
+    "missing_columns": [],
+    "rejected_rows": 106,
+    "rejection_reasons": {
+      "missing_close": 106
+    }
+  },
+  "csv": {
+    "path": "C:\\Users\\tlben\\Bentlas\\StrattonAI\\data\\prices\\all_stock_data.csv",
+    "format": "csv",
+    "row_count": 34646152,
+    "distinct_ticker_count": 9315,
+    "min_date": "1962-01-02",
+    "max_date": "2024-11-04",
+    "required_columns": [
+      "Date",
+      "Ticker",
+      "Close"
+    ],
+    "missing_columns": [],
+    "rejected_rows": 106,
+    "rejection_reasons": {
+      "missing_close": 106
+    }
+  },
+  "parity": {
+    "row_count_equal": true,
+    "distinct_ticker_count_equal": true,
+    "min_date_equal": true,
+    "max_date_equal": true,
+    "required_columns_equal": true,
+    "missing_columns_equal": true,
+    "rejected_rows_equal": true,
+    "rejection_reasons_equal": true
+  },
+  "notes": {
+    "parquet_path": "C:\\Users\\tlben\\Bentlas\\StrattonAI\\data\\prices\\all_stock_data.parquet",
+    "csv_path": "C:\\Users\\tlben\\Bentlas\\StrattonAI\\data\\prices\\all_stock_data.csv"
+  },
+  "referenced_ticker_parity": {
+    "referenced_ticker_count": 17,
+    "parquet_loaded_ticker_count": 17,
+    "csv_loaded_ticker_count": 17,
+    "mismatch_count": 0,
+    "mismatches": []
+  }
+}

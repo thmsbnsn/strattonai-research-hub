@@ -1,0 +1,51 @@
+{
+  "csv_case": {
+    "price_path": "C:\\Users\\tlben\\Bentlas\\StrattonAI\\data\\prices\\all_stock_data.csv",
+    "price_format": "csv",
+    "resolution_reason": "explicit_override",
+    "event_count": 76,
+    "ticker_count": 17,
+    "loaded_ticker_count": 17,
+    "observation_count": 0,
+    "aggregate_count": 0,
+    "missing_primary_series": 0,
+    "missing_related_series": 0,
+    "missing_horizon": 1480,
+    "elapsed_seconds": 79.749
+  },
+  "parquet_case": {
+    "price_path": "C:\\Users\\tlben\\Bentlas\\StrattonAI\\data\\prices\\all_stock_data.parquet",
+    "price_format": "parquet",
+    "resolution_reason": "explicit_override",
+    "event_count": 76,
+    "ticker_count": 17,
+    "loaded_ticker_count": 17,
+    "observation_count": 0,
+    "aggregate_count": 0,
+    "missing_primary_series": 0,
+    "missing_related_series": 0,
+    "missing_horizon": 1480,
+    "elapsed_seconds": 1.339
+  },
+  "auto_case": {
+    "price_path": "C:\\Users\\tlben\\Bentlas\\StrattonAI\\data\\prices\\all_stock_data.parquet",
+    "price_format": "parquet",
+    "resolution_reason": "default_parquet",
+    "event_count": 76,
+    "ticker_count": 17,
+    "loaded_ticker_count": 17,
+    "observation_count": 0,
+    "aggregate_count": 0,
+    "missing_primary_series": 0,
+    "missing_related_series": 0,
+    "missing_horizon": 1480,
+    "elapsed_seconds": 1.233
+  },
+  "comparison": {
+    "parquet_speedup_vs_csv_seconds": 78.41,
+    "parquet_speedup_vs_csv_percent": 98.32,
+    "auto_matches_parquet_path": true,
+    "csv_vs_parquet_observations_equal": true,
+    "csv_vs_parquet_aggregates_equal": true
+  }
+}
