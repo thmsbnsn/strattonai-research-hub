@@ -5,6 +5,7 @@ import tempfile
 import unittest
 from datetime import date, datetime, timezone
 from decimal import Decimal
+import json
 from pathlib import Path
 from unittest.mock import patch
 
@@ -13,7 +14,8 @@ import pyarrow.parquet as pq
 
 from research.event_study_engine import build_price_map, compute_event_study_observations
 from research.event_study_models import PricePoint, PriceSeries, StudyEvent
-from research.massive_price_backfill import HistoricalPriceRow, run_massive_price_backfill
+from research.massive_config import MassiveConfig
+from research.massive_price_backfill import HistoricalPriceRow, _fetch_massive_rows, run_massive_price_backfill
 from research.price_dataset import load_resolved_price_series, resolve_price_dataset_path
 
 
@@ -159,6 +161,52 @@ class MassivePriceBackfillTests(unittest.TestCase):
         self.assertEqual(len(base_observations), 0)
         self.assertGreater(len(extended_observations), 0)
         self.assertTrue(any(observation.study_target_type == "primary" for observation in extended_observations))
+
+    def test_fetch_massive_rows_retries_alias_when_primary_symbol_returns_no_rows(self) -> None:
+        class FakeResponse:
+            def __init__(self, payload: dict[str, object]):
+                self.payload = payload
+
+            def read(self) -> bytes:
+                return json.dumps(self.payload).encode("utf-8")
+
+            def __enter__(self) -> "FakeResponse":
+                return self
+
+            def __exit__(self, exc_type, exc, tb) -> None:
+                return None
+
+        config = MassiveConfig(api_key="test_api_key", base_url="https://api.massive.com")
+        calls: list[str] = []
+
+        def fake_urlopen(request, timeout=60):  # type: ignore[no-untyped-def]
+            calls.append(request.full_url)
+            if "NYSE%3ATTM" in request.full_url:
+                return FakeResponse(
+                    {
+                        "results": [
+                            {
+                                "t": 1704153600000,
+                                "o": 25.0,
+                                "h": 26.0,
+                                "l": 24.5,
+                                "c": 25.5,
+                                "v": 1200,
+                            }
+                        ]
+                    }
+                )
+            return FakeResponse({"results": []})
+
+        with patch("research.massive_price_backfill.urlopen", side_effect=fake_urlopen):
+            rows = _fetch_massive_rows(config, "TTM", date(2024, 1, 2), date(2024, 1, 2))
+
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0].ticker, "TTM")
+        self.assertEqual(rows[0].trade_date, "2024-01-02")
+        self.assertEqual(len(calls), 2)
+        self.assertIn("/TTM/range/1/day/2024-01-02/2024-01-02", calls[0])
+        self.assertIn("/NYSE%3ATTM/range/1/day/2024-01-02/2024-01-02", calls[1])
 
 
 if __name__ == "__main__":

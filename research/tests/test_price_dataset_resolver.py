@@ -53,6 +53,22 @@ class PriceDatasetResolverTests(unittest.TestCase):
         self.assertEqual(resolved.format, "parquet")
         self.assertEqual(resolved.resolution_reason, "default_extended_parquet")
 
+    def test_default_prefers_enriched_parquet_when_present(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            repo_root = Path(temp_dir) / "ui"
+            data_dir = repo_root.parent / "data" / "prices"
+            data_dir.mkdir(parents=True, exist_ok=True)
+            enriched_path = data_dir / "all_stock_data_extended_enriched.parquet"
+            extended_path = data_dir / "all_stock_data_extended.parquet"
+            enriched_path.write_text("enriched", encoding="utf-8")
+            extended_path.write_text("extended", encoding="utf-8")
+
+            resolved = resolve_price_dataset_path(repo_root)
+
+        self.assertEqual(resolved.path, enriched_path.resolve())
+        self.assertEqual(resolved.format, "parquet")
+        self.assertEqual(resolved.resolution_reason, "default_enriched_parquet")
+
     def test_csv_fallback_is_used_when_parquet_missing(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             repo_root = Path(temp_dir) / "ui"

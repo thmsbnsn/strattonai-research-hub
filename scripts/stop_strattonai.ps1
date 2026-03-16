@@ -7,7 +7,9 @@ $ErrorActionPreference = "Stop"
 $repoRoot = Split-Path -Parent $PSScriptRoot
 $runtimeDir = Join-Path $repoRoot ".strattonai-runtime"
 $pidFile = Join-Path $runtimeDir "preview.pid"
+$stateFile = Join-Path $runtimeDir "preview.state.json"
 $stopped = $false
+$resolvedPort = $Port
 
 function Test-PortListening {
     param([int]$TargetPort)
@@ -51,6 +53,27 @@ function Wait-ForPortToClose {
     return -not (Test-PortListening -TargetPort $TargetPort)
 }
 
+function Get-PreviewState {
+    param([string]$Path)
+
+    if (-not (Test-Path $Path)) {
+        return $null
+    }
+
+    try {
+        return Get-Content $Path -Raw -ErrorAction Stop | ConvertFrom-Json -ErrorAction Stop
+    }
+    catch {
+        Remove-Item $Path -ErrorAction SilentlyContinue
+        return $null
+    }
+}
+
+$previewState = Get-PreviewState -Path $stateFile
+if ($null -ne $previewState -and $previewState.port) {
+    $resolvedPort = [int]$previewState.port
+}
+
 if (Test-Path $pidFile) {
     $rawPid = Get-Content $pidFile -ErrorAction SilentlyContinue | Select-Object -First 1
     if ($rawPid) {
@@ -58,10 +81,11 @@ if (Test-Path $pidFile) {
     }
     Remove-Item $pidFile -ErrorAction SilentlyContinue
 }
+Remove-Item $stateFile -ErrorAction SilentlyContinue
 
 if (-not $stopped) {
     try {
-        $connection = Get-NetTCPConnection -LocalPort $Port -State Listen -ErrorAction Stop | Select-Object -First 1
+        $connection = Get-NetTCPConnection -LocalPort $resolvedPort -State Listen -ErrorAction Stop | Select-Object -First 1
         if ($null -ne $connection -and $connection.OwningProcess) {
             $stopped = Stop-ProcessTreeByIdIfRunning -ProcessId $connection.OwningProcess
         }
@@ -71,7 +95,7 @@ if (-not $stopped) {
 }
 
 if ($stopped) {
-    $null = Wait-ForPortToClose -TargetPort $Port
+    $null = Wait-ForPortToClose -TargetPort $resolvedPort
     Write-Host "Stopped StrattonAI preview server."
 }
 else {

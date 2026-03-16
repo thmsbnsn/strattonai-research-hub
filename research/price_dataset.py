@@ -61,8 +61,10 @@ def resolve_price_dataset_path(
 
     searched = [
         str(path)
-        for path in _candidate_paths(repo_root, "data/prices/all_stock_data_extended.parquet")
+        for path in _candidate_paths(repo_root, "data/prices/all_stock_data_extended_enriched.parquet")
+        + _candidate_paths(repo_root, "data/prices/all_stock_data_extended.parquet")
         + _candidate_paths(repo_root, "data/prices/all_stock_data.parquet")
+        + _candidate_paths(repo_root, "data/prices/all_stock_data_extended_enriched.csv")
         + _candidate_paths(repo_root, "data/prices/all_stock_data_extended.csv")
         + _candidate_paths(repo_root, "data/prices/all_stock_data.csv")
     ]
@@ -148,6 +150,15 @@ def _resolve_explicit_path(repo_root: Path, explicit_path: str | Path) -> Path:
 
 def _iter_default_candidates(repo_root: Path) -> tuple[ResolvedPriceDataset, ...]:
     candidates: list[ResolvedPriceDataset] = []
+    for candidate in _candidate_paths(repo_root, "data/prices/all_stock_data_extended_enriched.parquet"):
+        candidates.append(
+            ResolvedPriceDataset(
+                path=candidate,
+                format="parquet",
+                resolution_reason="default_enriched_parquet",
+                used_sample_fallback=False,
+            )
+        )
     for candidate in _candidate_paths(repo_root, "data/prices/all_stock_data_extended.parquet"):
         candidates.append(
             ResolvedPriceDataset(
@@ -163,6 +174,15 @@ def _iter_default_candidates(repo_root: Path) -> tuple[ResolvedPriceDataset, ...
                 path=candidate,
                 format="parquet",
                 resolution_reason="default_parquet",
+                used_sample_fallback=False,
+            )
+        )
+    for candidate in _candidate_paths(repo_root, "data/prices/all_stock_data_extended_enriched.csv"):
+        candidates.append(
+            ResolvedPriceDataset(
+                path=candidate,
+                format="csv",
+                resolution_reason="default_enriched_csv",
                 used_sample_fallback=False,
             )
         )

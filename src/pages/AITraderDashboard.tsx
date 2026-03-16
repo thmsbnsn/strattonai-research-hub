@@ -23,7 +23,7 @@ export default function AITraderDashboard() {
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
         <div>
           <div className="flex items-center gap-2.5">
-            <h1 className="text-xl font-bold text-foreground">AI Trader</h1>
+            <h1 className="text-xl font-bold text-foreground">AI Trader Dashboard</h1>
             <span
               className={`text-[10px] px-2.5 py-0.5 rounded-full font-medium uppercase tracking-wider ${
                 tradingMode === "paper"
@@ -31,7 +31,7 @@ export default function AITraderDashboard() {
                   : "bg-danger/10 text-danger"
               }`}
             >
-              {tradingMode === "paper" ? "Paper" : "Live"}
+              {tradingMode === "paper" ? "Paper Trading" : "Live Trading"}
             </span>
           </div>
           <p className="text-xs text-muted-foreground mt-1 max-w-lg">
@@ -56,18 +56,18 @@ export default function AITraderDashboard() {
 
           {/* Supporting cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <TradeThesisCard />
-            <EvidenceSummaryCard />
-            <PaperTradeIdeaCard />
-            <LiveReadinessChecklist />
+            <TradeThesisCard ticker={selectedTicker} />
+            <EvidenceSummaryCard ticker={selectedTicker} />
+            <PaperTradeIdeaCard ticker={selectedTicker} />
+            <LiveReadinessChecklist ticker={selectedTicker} />
           </div>
         </div>
 
         {/* Right: chat + signals + events */}
         <div className="lg:col-span-4 space-y-4">
-          <AIChatPanel />
-          <TopRankedSignals />
-          <RecentRelatedEvents />
+          <AIChatPanel ticker={selectedTicker} tradingMode={tradingMode} />
+          <TopRankedSignals ticker={selectedTicker} />
+          <RecentRelatedEvents ticker={selectedTicker} />
         </div>
       </div>
     </div>

@@ -127,6 +127,16 @@ const companyProfile: CompanyProfile = {
   marketCap: "$3.2T", pe: 62.4, revenue: "$130.5B", employees: "32,000",
 };
 
+const companyProfiles: CompanyProfile[] = [
+  companyProfile,
+  { ticker: "AAPL", name: "Apple Inc.", sector: "Technology", industry: "Consumer Electronics", marketCap: "$3.1T", pe: 31.2, revenue: "$391.0B", employees: "161,000" },
+  { ticker: "MSFT", name: "Microsoft Corporation", sector: "Technology", industry: "Software", marketCap: "$3.0T", pe: 35.7, revenue: "$245.0B", employees: "228,000" },
+  { ticker: "TSLA", name: "Tesla, Inc.", sector: "Consumer Discretionary", industry: "Electric Vehicles", marketCap: "$760.0B", pe: 58.4, revenue: "$97.7B", employees: "140,000" },
+  { ticker: "AMD", name: "Advanced Micro Devices, Inc.", sector: "Technology", industry: "Semiconductors", marketCap: "$295.0B", pe: 48.1, revenue: "$25.8B", employees: "28,000" },
+  { ticker: "GOOGL", name: "Alphabet Inc.", sector: "Communication Services", industry: "Internet Services", marketCap: "$2.0T", pe: 27.4, revenue: "$350.0B", employees: "182,000" },
+  { ticker: "TSM", name: "Taiwan Semiconductor Manufacturing Company", sector: "Technology", industry: "Semiconductors", marketCap: "$835.0B", pe: 26.2, revenue: "$90.0B", employees: "76,000" },
+];
+
 const relatedCompaniesGraph: CompanyRelationship[] = [
   { source: "NVDA", target: "TSM", relationship: "Supplier", strength: 0.9 },
   { source: "NVDA", target: "AMD", relationship: "Competitor", strength: 0.85 },
@@ -304,8 +314,22 @@ const routes: Record<string, RouteHandler> = {
   "/events/forward-curve": () => forwardCurveData,
   "/events/time-horizons": () => timeHorizons,
   "/companies/profile": (params) => {
-    if (params?.ticker) return { ...companyProfile, ticker: params.ticker };
+    if (params?.ticker) {
+      return companyProfiles.find((profile) => profile.ticker === params.ticker) || { ...companyProfile, ticker: params.ticker };
+    }
     return companyProfile;
+  },
+  "/companies/search": (params) => {
+    const query = (params?.query || "").trim().toUpperCase();
+    if (!query) return [];
+
+    return companyProfiles
+      .filter((profile) =>
+        profile.ticker.toUpperCase().includes(query) ||
+        profile.name.toUpperCase().includes(query)
+      )
+      .slice(0, 6)
+      .map((profile) => ({ ticker: profile.ticker, name: profile.name }));
   },
   "/companies/relationships": () => relatedCompaniesGraph,
   "/companies/price-history": () => priceData,

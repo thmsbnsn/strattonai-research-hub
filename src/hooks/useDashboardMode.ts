@@ -21,8 +21,16 @@ export function useDashboardMode() {
   }, []);
 
   const toggle = useCallback(() => {
-    setMode(getStoredMode() === "research" ? "trader" : "research");
-  }, [setMode]);
+    setModeState((current) => {
+      const next = current === "research" ? "trader" : "research";
+
+      try {
+        localStorage.setItem("strattonai-dashboard-mode", next);
+      } catch {}
+
+      return next;
+    });
+  }, []);
 
   return { mode, setMode, toggle } as const;
 }

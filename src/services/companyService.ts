@@ -58,6 +58,16 @@ type EventMarkerRow = {
   created_at?: string | null;
 };
 
+type CompanySearchRow = {
+  ticker?: string | null;
+  name?: string | null;
+};
+
+export type CompanySearchResult = {
+  ticker: string;
+  name: string;
+};
+
 function toCompanyProfile(row: CompanyProfileRow, requestedTicker?: string): CompanyProfile {
   return {
     ticker: row.ticker || requestedTicker || "N/A",
@@ -96,6 +106,46 @@ function toEventMarker(row: EventMarkerRow): EventMarker {
     label: row.category || row.event_type || "Event",
     type: row.sentiment || "neutral",
   };
+}
+
+function toCompanySearchResult(row: CompanySearchRow): CompanySearchResult {
+  return {
+    ticker: (row.ticker || "").trim().toUpperCase(),
+    name: row.name?.trim() || (row.ticker || "").trim().toUpperCase(),
+  };
+}
+
+function rankCompanySearchResults(rows: CompanySearchResult[], query: string) {
+  const normalizedQuery = query.trim().toUpperCase();
+  const uniqueRows = Array.from(
+    new Map(rows.filter((row) => row.ticker).map((row) => [row.ticker, row])).values()
+  );
+
+  return uniqueRows.sort((left, right) => {
+    const leftTicker = left.ticker.toUpperCase();
+    const rightTicker = right.ticker.toUpperCase();
+    const leftName = left.name.toUpperCase();
+    const rightName = right.name.toUpperCase();
+
+    const leftScore =
+      (leftTicker === normalizedQuery ? 100 : 0) +
+      (leftName === normalizedQuery ? 90 : 0) +
+      (leftTicker.startsWith(normalizedQuery) ? 50 : 0) +
+      (leftName.startsWith(normalizedQuery) ? 40 : 0) +
+      (leftName.includes(normalizedQuery) ? 20 : 0);
+    const rightScore =
+      (rightTicker === normalizedQuery ? 100 : 0) +
+      (rightName === normalizedQuery ? 90 : 0) +
+      (rightTicker.startsWith(normalizedQuery) ? 50 : 0) +
+      (rightName.startsWith(normalizedQuery) ? 40 : 0) +
+      (rightName.includes(normalizedQuery) ? 20 : 0);
+
+    if (rightScore !== leftScore) {
+      return rightScore - leftScore;
+    }
+
+    return leftTicker.localeCompare(rightTicker);
+  });
 }
 
 export async function getCompanyProfile(ticker = "NVDA") {
@@ -160,6 +210,33 @@ export async function getCompanyRelationships() {
     const mockRelationships = await getMockFallback<CompanyRelationship[]>("/companies/relationships");
     return mergeCompanyRelationships(mockRelationships, relationshipMappings);
   }
+}
+
+export async function searchCompanies(query: string) {
+  const normalizedQuery = query.trim();
+  if (!normalizedQuery) {
+    return [] as CompanySearchResult[];
+  }
+
+  const sanitizedQuery = normalizedQuery.replace(/[,]/g, " ").trim();
+
+  return fetchSupabaseWithFallback<CompanySearchRow, CompanySearchResult[]>({
+    resource: "companyService.searchCompanies",
+    table: "company_profiles",
+    mockEndpoint: `/companies/search?query=${encodeURIComponent(sanitizedQuery)}`,
+    execute: async () => {
+      if (!supabase) {
+        return { data: null, error: null };
+      }
+
+      return await supabase
+        .from("company_profiles")
+        .select("ticker,name")
+        .or(`ticker.ilike.%${sanitizedQuery}%,name.ilike.%${sanitizedQuery}%`)
+        .limit(8);
+    },
+    transform: (rows) => rankCompanySearchResults(rows.map(toCompanySearchResult), sanitizedQuery).slice(0, 8),
+  });
 }
 
 export async function getPriceHistory(ticker = "NVDA") {

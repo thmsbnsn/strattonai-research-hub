@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import {
   Building2,
-  TrendingUp,
   Users,
   AlertTriangle,
   BarChart3,
@@ -10,8 +9,9 @@ import {
   Layers,
   Activity,
 } from "lucide-react";
-import { getSignalScores } from "@/services/signalService";
+import { getSignalsForTicker } from "@/services/signalService";
 import { getEvents } from "@/services/eventService";
+import { getCompanyProfile, getCompanyRelationships } from "@/services/companyService";
 import { ListSkeleton } from "@/components/LoadingSkeletons";
 
 interface CompanyBriefingProps {
@@ -19,17 +19,37 @@ interface CompanyBriefingProps {
 }
 
 export function CompanyBriefing({ ticker }: CompanyBriefingProps) {
+  const profile = useQuery({
+    queryKey: ["companies", "profile", ticker],
+    queryFn: () => getCompanyProfile(ticker),
+  });
+
   const signals = useQuery({
-    queryKey: ["signals", "scores", ticker],
-    queryFn: () => getSignalScores(ticker),
+    queryKey: ["signals", "company", ticker],
+    queryFn: () => getSignalsForTicker(ticker),
   });
 
   const events = useQuery({ queryKey: ["events"], queryFn: getEvents });
+  const relationships = useQuery({
+    queryKey: ["companies", "relationships"],
+    queryFn: getCompanyRelationships,
+  });
 
   const companyEvents =
-    events.data?.filter((e) => e.ticker === ticker).slice(0, 3) ?? [];
+    events.data
+      ?.filter((event) =>
+        event.ticker === ticker ||
+        event.relatedCompanies.some((company) => company.ticker === ticker)
+      )
+      .slice(0, 4) ?? [];
   const topSignals = signals.data?.slice(0, 4) ?? [];
   const bestSignal = topSignals[0];
+  const relatedCompanies =
+    relationships.data
+      ?.filter((relationship) => relationship.source === ticker || relationship.target === ticker)
+      .slice(0, 6) ?? [];
+  const profileName = profile.data?.name || ticker;
+  const profileContext = [profile.data?.sector, profile.data?.industry].filter(Boolean).join(" · ");
 
   return (
     <div className="space-y-4">
@@ -58,8 +78,11 @@ export function CompanyBriefing({ ticker }: CompanyBriefingProps) {
                 </span>
               )}
             </div>
+            <p className="text-sm text-foreground mt-0.5">{profileName}</p>
             <p className="text-xs text-muted-foreground mt-0.5">
-              Intelligence Briefing ·{" "}
+              Intelligence Briefing
+              {profileContext ? ` · ${profileContext}` : ""}
+              {" · "}
               {new Date().toLocaleDateString("en-US", {
                 month: "short",
                 day: "numeric",
@@ -96,7 +119,7 @@ export function CompanyBriefing({ ticker }: CompanyBriefingProps) {
               <span className="font-semibold">
                 {bestSignal.confidenceBand}
               </span>{" "}
-              confidence, driven by {bestSignal.eventCategory} activity.
+              confidence, driven by {bestSignal.eventCategory} activity around {profileName}.
             </p>
             <div className="grid grid-cols-3 gap-3">
               <div className="rounded-lg bg-muted/30 p-3 text-center">
@@ -163,9 +186,12 @@ export function CompanyBriefing({ ticker }: CompanyBriefingProps) {
                   <p className="text-xs text-foreground leading-snug line-clamp-2">
                     {evt.headline}
                   </p>
-                  <span className="text-[10px] text-muted-foreground mt-1 block">
-                    {evt.category}
-                  </span>
+                  <div className="mt-1 flex items-center gap-2 text-[10px] text-muted-foreground">
+                    <span>{evt.category}</span>
+                    <span>
+                      {evt.ticker === ticker ? "Primary" : "Related exposure"}
+                    </span>
+                  </div>
                 </div>
               ))}
             </div>
@@ -218,22 +244,36 @@ export function CompanyBriefing({ ticker }: CompanyBriefingProps) {
               Peers & Related Companies
             </h4>
           </div>
-          <div className="space-y-2">
+          {relationships.isLoading ? (
+            <ListSkeleton count={2} />
+          ) : relatedCompanies.length === 0 ? (
             <p className="text-xs text-muted-foreground">
-              Peer and relationship context from the company graph will populate
-              once connected.
+              No company-graph relationships are available for {ticker}.
             </p>
-            <div className="flex gap-2 flex-wrap">
-              {["Supplier", "Competitor", "Customer"].map((t) => (
-                <span
-                  key={t}
-                  className="text-[10px] px-2 py-1 rounded-md border border-border text-muted-foreground"
-                >
-                  {t}
-                </span>
-              ))}
+          ) : (
+            <div className="space-y-2">
+              {relatedCompanies.map((relationship, index) => {
+                const counterpart =
+                  relationship.source === ticker ? relationship.target : relationship.source;
+
+                return (
+                  <div key={`${counterpart}-${index}`} className="flex items-center justify-between rounded-md bg-muted/30 px-3 py-2">
+                    <div>
+                      <p className="font-mono text-xs font-semibold text-foreground">
+                        {counterpart}
+                      </p>
+                      <p className="text-[10px] text-muted-foreground">
+                        {relationship.relationship}
+                      </p>
+                    </div>
+                    <span className="font-mono text-[11px] text-muted-foreground">
+                      {(relationship.strength * 100).toFixed(0)}%
+                    </span>
+                  </div>
+                );
+              })}
             </div>
-          </div>
+          )}
         </div>
 
         {/* Evidence Strength & Risk */}

@@ -10,7 +10,7 @@ from pathlib import Path
 from time import sleep
 from typing import Any
 from urllib.error import HTTPError, URLError
-from urllib.parse import urlencode
+from urllib.parse import quote, urlencode
 from urllib.request import Request, urlopen
 
 import pyarrow as pa
@@ -25,6 +25,9 @@ from .write_event_studies_to_supabase import EventStudySupabaseWriter
 
 LOGGER = logging.getLogger("research.massive_price_backfill")
 CSV_HEADER = ["Date", "Ticker", "Open", "High", "Low", "Close", "Volume", "Dividends", "Stock Splits"]
+TICKER_ALIASES: dict[str, list[str]] = {
+    "TTM": ["TTM", "NYSE:TTM"],
+}
 
 
 @dataclass(frozen=True, slots=True)
@@ -182,6 +185,36 @@ def _fetch_massive_rows(
     max_retries: int = 8,
     retry_sleep_seconds: float = 5.0,
 ) -> list[HistoricalPriceRow]:
+    alias_candidates = TICKER_ALIASES.get(ticker, [ticker])
+    symbols = tuple(dict.fromkeys([ticker, *alias_candidates]))
+
+    for symbol in symbols:
+        rows = _fetch_massive_rows_for_symbol(
+            config,
+            requested_ticker=ticker,
+            lookup_symbol=symbol,
+            start_date=start_date,
+            end_date=end_date,
+            max_retries=max_retries,
+            retry_sleep_seconds=retry_sleep_seconds,
+        )
+        if rows:
+            if symbol != ticker:
+                LOGGER.info("Massive alias fallback succeeded for %s using %s", ticker, symbol)
+            return rows
+    return []
+
+
+def _fetch_massive_rows_for_symbol(
+    config: MassiveConfig,
+    *,
+    requested_ticker: str,
+    lookup_symbol: str,
+    start_date: date,
+    end_date: date,
+    max_retries: int,
+    retry_sleep_seconds: float,
+) -> list[HistoricalPriceRow]:
     params = urlencode(
         {
             "adjusted": "true",
@@ -190,7 +223,8 @@ def _fetch_massive_rows(
             "apiKey": config.api_key,
         }
     )
-    url = f"{config.base_url}/v2/aggs/ticker/{ticker}/range/1/day/{start_date.isoformat()}/{end_date.isoformat()}?{params}"
+    encoded_symbol = quote(lookup_symbol, safe="")
+    url = f"{config.base_url}/v2/aggs/ticker/{encoded_symbol}/range/1/day/{start_date.isoformat()}/{end_date.isoformat()}?{params}"
     request = Request(url, headers={"User-Agent": "StrattonAI/1.0"})
 
     for attempt in range(1, max_retries + 1):
@@ -201,7 +235,7 @@ def _fetch_massive_rows(
             rows = [
                 HistoricalPriceRow(
                     trade_date=datetime.fromtimestamp(result["t"] / 1000, tz=UTC).date().isoformat(),
-                    ticker=ticker,
+                    ticker=requested_ticker,
                     open=float(result.get("o", 0.0)),
                     high=float(result.get("h", 0.0)),
                     low=float(result.get("l", 0.0)),
@@ -210,7 +244,7 @@ def _fetch_massive_rows(
                 )
                 for result in results
             ]
-            LOGGER.info("Fetched %s day aggregate row(s) for %s", len(rows), ticker)
+            LOGGER.info("Fetched %s day aggregate row(s) for %s via %s", len(rows), requested_ticker, lookup_symbol)
             return rows
         except HTTPError as exc:
             if exc.code == 429 and attempt < max_retries:
@@ -224,7 +258,7 @@ def _fetch_massive_rows(
                 wait_seconds = max(retry_sleep_seconds * attempt, retry_after_seconds)
                 LOGGER.warning(
                     "Massive rate limit for %s on attempt %s/%s. Retrying in %.1f seconds.",
-                    ticker,
+                    lookup_symbol,
                     attempt,
                     max_retries,
                     wait_seconds,
@@ -232,18 +266,26 @@ def _fetch_massive_rows(
                 sleep(wait_seconds)
                 continue
             if exc.code == 429:
-                LOGGER.error("Massive rate limit persisted for %s after %s attempts. Marking ticker as uncovered.", ticker, max_retries)
+                LOGGER.error(
+                    "Massive rate limit persisted for %s after %s attempts. Marking ticker as uncovered.",
+                    lookup_symbol,
+                    max_retries,
+                )
                 return []
             if exc.code == 404:
-                LOGGER.warning("Massive returned 404 for %s. Treating as uncovered.", ticker)
+                LOGGER.warning("Massive returned 404 for %s. Treating as uncovered.", lookup_symbol)
                 return []
             raise
         except URLError as exc:
             if attempt < max_retries:
-                LOGGER.warning("Massive network error for %s on attempt %s/%s: %s", ticker, attempt, max_retries, exc)
+                LOGGER.warning("Massive network error for %s on attempt %s/%s: %s", lookup_symbol, attempt, max_retries, exc)
                 sleep(retry_sleep_seconds * attempt)
                 continue
-            LOGGER.error("Massive network error persisted for %s after %s attempts. Marking ticker as uncovered.", ticker, max_retries)
+            LOGGER.error(
+                "Massive network error persisted for %s after %s attempts. Marking ticker as uncovered.",
+                lookup_symbol,
+                max_retries,
+            )
             return []
     return []
 

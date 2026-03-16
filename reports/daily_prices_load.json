@@ -1,0 +1,30 @@
+{
+  "price_file": "C:\\Users\\tlben\\Bentlas\\StrattonAI\\data\\prices\\all_stock_data_extended.parquet",
+  "total_rows_read": 180849,
+  "rows_skipped": 0,
+  "rows_upserted": 180849,
+  "tickers_loaded": [
+    "AAPL",
+    "AMD",
+    "AMGN",
+    "AMZN",
+    "AVGO",
+    "BA",
+    "GOOGL",
+    "GS",
+    "JPM",
+    "LLY",
+    "META",
+    "MSFT",
+    "NVDA",
+    "NVO",
+    "ORCL",
+    "PANW",
+    "QCOM",
+    "RIVN",
+    "TSLA",
+    "TSM",
+    "XOM"
+  ],
+  "load_completed_at": "2026-03-16T17:00:36.369577+00:00"
+}

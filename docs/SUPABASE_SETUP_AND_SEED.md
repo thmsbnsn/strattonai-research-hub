@@ -13,6 +13,7 @@ The SQL creates these first-pass tables:
 - `company_profiles`
 - `event_study_results`
 - `signal_scores`
+- `daily_prices`
 
 It also creates:
 - `public.set_updated_at()` trigger function
@@ -28,6 +29,7 @@ Run these files in order:
 4. `supabase/sql/005_seed_company_relationship_graph.sql`
 5. `supabase/sql/006_add_event_study_statistics.sql`
 6. `supabase/sql/007_add_signal_scores.sql`
+7. `supabase/sql/008_add_daily_prices.sql`
 
 ## How To Run In Supabase
 
@@ -40,6 +42,7 @@ Using the Supabase dashboard:
 6. Paste and run `005_seed_company_relationship_graph.sql`.
 7. Paste and run `006_add_event_study_statistics.sql`.
 8. Paste and run `007_add_signal_scores.sql`.
+9. Paste and run `008_add_daily_prices.sql`.
 
 Using the Supabase CLI:
 1. Save the files as-is in the repo.
@@ -82,7 +85,7 @@ These areas still intentionally use mock fallback data in the frontend:
 - market indexes
 - sector performance
 - VIX
-- company price history
+- `daily_prices` table: wired in frontend (`companyService.getPriceHistory`). Load via `python -m research.load_prices_to_supabase --bootstrap-schema`. Falls back to mock if table is empty or missing.
 - company event markers
 - event return distribution
 - event forward curve

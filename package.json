@@ -12,6 +12,8 @@
     "start:desktop": "powershell -NoLogo -NoProfile -ExecutionPolicy Bypass -File .\\scripts\\start_strattonai.ps1",
     "stop:desktop": "powershell -NoLogo -NoProfile -ExecutionPolicy Bypass -File .\\scripts\\stop_strattonai.ps1",
     "desktop:shortcut": "powershell -NoLogo -NoProfile -ExecutionPolicy Bypass -File .\\scripts\\create_desktop_shortcut.ps1",
+    "ai:start": "powershell -NoLogo -NoProfile -ExecutionPolicy Bypass -File .\\scripts\\start_local_ai_gateway.ps1",
+    "ai:stop": "powershell -NoLogo -NoProfile -ExecutionPolicy Bypass -File .\\scripts\\stop_local_ai_gateway.ps1",
     "test": "vitest run",
     "test:watch": "vitest"
   },

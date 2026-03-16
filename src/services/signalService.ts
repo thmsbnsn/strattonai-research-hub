@@ -102,6 +102,40 @@ export async function getSignalScores(ticker?: string) {
   return filteredScores.sort((left, right) => right.score - left.score);
 }
 
+export async function getSignalsForTicker(ticker: string) {
+  const normalizedTicker = ticker.trim().toUpperCase();
+  if (!normalizedTicker) {
+    return [] as SignalScore[];
+  }
+
+  const scores = await fetchSupabaseWithFallback<SignalRow, SignalScore[]>({
+    resource: "signalService.getSignalsForTicker",
+    table: "signal_scores",
+    mockEndpoint: "/signals/top?limit=50",
+    execute: async () => {
+      if (!supabase) {
+        return { data: null, error: null };
+      }
+
+      return await supabase
+        .from("signal_scores")
+        .select("*")
+        .or(`primary_ticker.eq.${normalizedTicker},target_ticker.eq.${normalizedTicker}`)
+        .order("score", { ascending: false });
+    },
+    transform: (rows) => rows.map(toSignalScore).sort((left, right) => right.score - left.score),
+  });
+
+  return scores
+    .filter((score) =>
+      [score.primaryTicker, score.targetTicker, score.relatedTicker]
+        .filter(Boolean)
+        .map((value) => value!.toUpperCase())
+        .includes(normalizedTicker)
+    )
+    .sort((left, right) => right.score - left.score);
+}
+
 export async function getTopSignals(limit = 5, ticker?: string) {
   const scores = await getSignalScores(ticker);
   return scores.slice(0, limit);

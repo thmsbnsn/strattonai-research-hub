@@ -1,13 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { Target, FileText, Lightbulb, CheckCircle, Rss, TrendingUp } from "lucide-react";
-import { getSignalScores } from "@/services/signalService";
+import { getSignalScores, getSignalsForTicker } from "@/services/signalService";
 import { getEvents } from "@/services/eventService";
 import { ListSkeleton } from "@/components/LoadingSkeletons";
 
-export function TopRankedSignals() {
+export function TopRankedSignals({ ticker }: { ticker?: string | null }) {
   const { data, isLoading } = useQuery({
-    queryKey: ["signals", "scores"],
-    queryFn: () => getSignalScores(),
+    queryKey: ["signals", "top", ticker ?? "all"],
+    queryFn: () => (ticker ? getSignalsForTicker(ticker) : getSignalScores()),
   });
 
   const top = data?.slice(0, 4) ?? [];
@@ -16,7 +16,9 @@ export function TopRankedSignals() {
     <div className="terminal-card p-4">
       <div className="flex items-center gap-2 mb-3">
         <Target className="h-4 w-4 text-primary" />
-        <h4 className="text-sm font-semibold text-foreground">Top Ranked Signals</h4>
+        <h4 className="text-sm font-semibold text-foreground">
+          {ticker ? `${ticker} Signals` : "Top Ranked Signals"}
+        </h4>
       </div>
       {isLoading ? (
         <ListSkeleton count={3} />
@@ -39,7 +41,7 @@ export function TopRankedSignals() {
   );
 }
 
-export function TradeThesisCard() {
+export function TradeThesisCard({ ticker }: { ticker?: string | null }) {
   return (
     <div className="terminal-card p-4">
       <div className="flex items-center gap-2 mb-3">
@@ -47,13 +49,15 @@ export function TradeThesisCard() {
         <h4 className="text-sm font-semibold text-foreground">Trade Thesis</h4>
       </div>
       <p className="text-xs text-muted-foreground leading-relaxed">
-        Select a company above to generate a research-backed trade thesis based on recent events and signal scores.
+        {ticker
+          ? `Use ${ticker}'s signal stack, event context, and peer reactions to build a deterministic trade thesis.`
+          : "Select a company above to generate a research-backed trade thesis based on recent events and signal scores."}
       </p>
     </div>
   );
 }
 
-export function EvidenceSummaryCard() {
+export function EvidenceSummaryCard({ ticker }: { ticker?: string | null }) {
   return (
     <div className="terminal-card p-4">
       <div className="flex items-center gap-2 mb-3">
@@ -61,13 +65,15 @@ export function EvidenceSummaryCard() {
         <h4 className="text-sm font-semibold text-foreground">Research Evidence</h4>
       </div>
       <p className="text-xs text-muted-foreground leading-relaxed">
-        Evidence summaries from event studies and historical analogs will appear here when a company is selected.
+        {ticker
+          ? `Event-study evidence, analog event summaries, and research notes for ${ticker} will accumulate here.`
+          : "Evidence summaries from event studies and historical analogs will appear here when a company is selected."}
       </p>
     </div>
   );
 }
 
-export function PaperTradeIdeaCard() {
+export function PaperTradeIdeaCard({ ticker }: { ticker?: string | null }) {
   return (
     <div className="terminal-card p-4">
       <div className="flex items-center gap-2 mb-3">
@@ -75,15 +81,17 @@ export function PaperTradeIdeaCard() {
         <h4 className="text-sm font-semibold text-foreground">Paper Trade Idea</h4>
       </div>
       <p className="text-xs text-muted-foreground leading-relaxed">
-        Once a thesis is formed, a suggested paper trade entry will appear here with target, stop, and horizon.
+        {ticker
+          ? `Once ${ticker} has a validated thesis, suggest a paper-trade entry, stop, target, and time horizon here.`
+          : "Once a thesis is formed, a suggested paper trade entry will appear here with target, stop, and horizon."}
       </p>
     </div>
   );
 }
 
-export function LiveReadinessChecklist() {
+export function LiveReadinessChecklist({ ticker }: { ticker?: string | null }) {
   const items = [
-    { label: "Research signals scored", done: true },
+    { label: "Research signals scored", done: Boolean(ticker) },
     { label: "Event study evidence reviewed", done: false },
     { label: "Risk flags assessed", done: false },
     { label: "Paper trade validated", done: false },
@@ -108,15 +116,24 @@ export function LiveReadinessChecklist() {
   );
 }
 
-export function RecentRelatedEvents() {
+export function RecentRelatedEvents({ ticker }: { ticker?: string | null }) {
   const { data, isLoading } = useQuery({ queryKey: ["events"], queryFn: getEvents });
-  const recent = data?.slice(0, 4) ?? [];
+  const recent =
+    data
+      ?.filter((event) =>
+        ticker
+          ? event.ticker === ticker || event.relatedCompanies.some((company) => company.ticker === ticker)
+          : true
+      )
+      .slice(0, 4) ?? [];
 
   return (
     <div className="terminal-card p-4">
       <div className="flex items-center gap-2 mb-3">
         <Rss className="h-4 w-4 text-primary" />
-        <h4 className="text-sm font-semibold text-foreground">Recent Events</h4>
+        <h4 className="text-sm font-semibold text-foreground">
+          {ticker ? `${ticker} Event Context` : "Recent Events"}
+        </h4>
       </div>
       {isLoading ? (
         <ListSkeleton count={3} />
