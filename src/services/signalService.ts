@@ -7,6 +7,7 @@ type SignalRow = {
   event_id?: string | null;
   event_category?: string | null;
   primary_ticker?: string | null;
+  related_ticker?: string | null;
   target_ticker?: string | null;
   target_type?: string | null;
   relationship_type?: string | null;
@@ -43,12 +44,15 @@ function normalizeOriginType(value: string | null | undefined): SignalScore["ori
 
 function toSignalScore(row: SignalRow): SignalScore {
   const targetTicker = row.target_ticker || row.primary_ticker || "N/A";
+  const relatedTicker =
+    row.related_ticker || (normalizeTargetType(row.target_type) === "related" ? targetTicker : undefined);
 
   return {
     id: row.id || `${targetTicker}-${row.horizon || "unknown"}`,
     eventId: row.event_id || "",
     eventCategory: row.event_category || "Unknown",
     primaryTicker: row.primary_ticker || "N/A",
+    relatedTicker,
     targetTicker,
     targetType: normalizeTargetType(row.target_type),
     relationshipType: row.relationship_type || undefined,
@@ -64,22 +68,41 @@ function toSignalScore(row: SignalRow): SignalScore {
   };
 }
 
-export async function getTopSignals(limit = 5) {
-  return fetchSupabaseWithFallback<SignalRow, SignalScore[]>({
-    resource: "signalService.getTopSignals",
+export async function getSignalScores(ticker?: string) {
+  const normalizedTicker = ticker?.trim().toUpperCase();
+  const mockLimit = normalizedTicker ? 50 : 25;
+
+  const scores = await fetchSupabaseWithFallback<SignalRow, SignalScore[]>({
+    resource: "signalService.getSignalScores",
     table: "signal_scores",
-    mockEndpoint: `/signals/top?limit=${limit}`,
+    mockEndpoint: `/signals/top?limit=${mockLimit}`,
     execute: async () => {
       if (!supabase) {
         return { data: null, error: null };
       }
 
-      return await supabase
+      let query = supabase
         .from("signal_scores")
         .select("*")
-        .order("score", { ascending: false })
-        .limit(limit);
+        .order("score", { ascending: false });
+
+      if (normalizedTicker) {
+        query = query.eq("primary_ticker", normalizedTicker);
+      }
+
+      return await query;
     },
-    transform: (rows) => rows.map(toSignalScore),
+    transform: (rows) => rows.map(toSignalScore).sort((left, right) => right.score - left.score),
   });
+
+  const filteredScores = normalizedTicker
+    ? scores.filter((score) => score.primaryTicker === normalizedTicker)
+    : scores;
+
+  return filteredScores.sort((left, right) => right.score - left.score);
+}
+
+export async function getTopSignals(limit = 5, ticker?: string) {
+  const scores = await getSignalScores(ticker);
+  return scores.slice(0, limit);
 }

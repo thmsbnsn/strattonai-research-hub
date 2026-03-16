@@ -9,7 +9,7 @@ import { ErrorState, EmptyState } from "@/components/StateDisplays";
 import { getMarketIndexes, getSectorPerformance, getVolatilityData } from "@/services/marketService";
 import { getEvents } from "@/services/eventService";
 import { getResearchInsights } from "@/services/researchService";
-import { getTopSignals } from "@/services/signalService";
+import { getSignalScores } from "@/services/signalService";
 
 function SentimentBadge({ sentiment }: { sentiment: string }) {
   const colors: Record<string, string> = {
@@ -24,13 +24,27 @@ function SentimentBadge({ sentiment }: { sentiment: string }) {
   );
 }
 
+function SignalConfidenceBadge({ band }: { band: "High" | "Moderate" | "Low" }) {
+  const colors = {
+    High: "bg-success/10 text-success",
+    Moderate: "bg-warning/10 text-warning",
+    Low: "bg-muted text-muted-foreground",
+  } satisfies Record<"High" | "Moderate" | "Low", string>;
+
+  return (
+    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${colors[band]}`}>
+      {band}
+    </span>
+  );
+}
+
 export default function Dashboard() {
   const indexes = useQuery({ queryKey: ["market", "indexes"], queryFn: getMarketIndexes });
   const sectors = useQuery({ queryKey: ["market", "sectors"], queryFn: getSectorPerformance });
   const vix = useQuery({ queryKey: ["market", "volatility"], queryFn: getVolatilityData });
   const events = useQuery({ queryKey: ["events"], queryFn: getEvents });
   const insights = useQuery({ queryKey: ["research", "insights"], queryFn: getResearchInsights });
-  const signals = useQuery({ queryKey: ["signals", "top"], queryFn: () => getTopSignals(5) });
+  const signals = useQuery({ queryKey: ["signals", "scores"], queryFn: getSignalScores });
 
   return (
     <AppLayout>
@@ -157,7 +171,7 @@ export default function Dashboard() {
             <EmptyState title="No signals" description="No scored event signals are available yet." />
           ) : (
             <div className="space-y-3">
-              {signals.data?.map((signal) => (
+              {signals.data?.slice(0, 5).map((signal) => (
                 <div key={signal.id} className="flex items-start justify-between gap-4 p-3 rounded-lg bg-muted/30">
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 flex-wrap">
@@ -167,16 +181,16 @@ export default function Dashboard() {
                       <span className="text-xs text-muted-foreground">
                         {signal.targetType === "primary" ? "Primary" : signal.relationshipType || "Related"} · {signal.horizon}
                       </span>
-                      <span className="text-xs text-muted-foreground">{signal.confidenceBand}</span>
+                      <SignalConfidenceBadge band={signal.confidenceBand} />
                     </div>
-                    <p className="text-sm text-foreground mt-1 line-clamp-2">{signal.evidenceSummary}</p>
                     <p className="text-xs text-muted-foreground mt-1">
-                      {signal.eventCategory} · Sample {signal.sampleSize} · Avg {signal.avgReturn.toFixed(2)}%
+                      {signal.eventCategory} · {signal.primaryTicker}
+                      {signal.relatedTicker ? ` -> ${signal.relatedTicker}` : ""}
                     </p>
                   </div>
                   <div className="text-right shrink-0">
                     <p className="font-mono text-lg font-semibold text-foreground">{signal.score.toFixed(1)}</p>
-                    <p className="text-xs text-muted-foreground">{signal.originType}</p>
+                    <p className="text-xs text-muted-foreground">{signal.horizon}</p>
                   </div>
                 </div>
               ))}

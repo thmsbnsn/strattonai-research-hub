@@ -16,8 +16,8 @@ export default function EventStudies() {
   const [horizon, setHorizon] = useState("5D");
 
   const studies = useQuery({ queryKey: ["events", "studies", eventType], queryFn: () => getEventStudies(eventType) });
-  const distribution = useQuery({ queryKey: ["events", "distribution"], queryFn: getReturnDistribution });
-  const forwardCurve = useQuery({ queryKey: ["events", "forward-curve"], queryFn: getForwardCurve });
+  const distribution = useQuery({ queryKey: ["events", "distribution", eventType], queryFn: () => getReturnDistribution(eventType) });
+  const forwardCurve = useQuery({ queryKey: ["events", "forward-curve", eventType], queryFn: () => getForwardCurve(eventType) });
   const categories = useQuery({ queryKey: ["events", "categories"], queryFn: getEventCategories });
   const horizons = useQuery({ queryKey: ["events", "horizons", eventType], queryFn: () => getTimeHorizons(eventType) });
 
@@ -95,9 +95,9 @@ export default function EventStudies() {
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={forwardCurve.data}>
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(222 30% 16%)" />
-                  <XAxis dataKey="day" tick={{ fill: "hsl(215 20% 55%)", fontSize: 10 }} axisLine={{ stroke: "hsl(222 30% 16%)" }} label={{ value: "Days", position: "bottom", fill: "hsl(215 20% 55%)", fontSize: 10 }} />
+                  <XAxis dataKey="horizon" tick={{ fill: "hsl(215 20% 55%)", fontSize: 10 }} axisLine={{ stroke: "hsl(222 30% 16%)" }} />
                   <YAxis tick={{ fill: "hsl(215 20% 55%)", fontSize: 10 }} axisLine={{ stroke: "hsl(222 30% 16%)" }} tickFormatter={(v) => `${v.toFixed(1)}%`} />
-                  <Tooltip contentStyle={{ backgroundColor: "hsl(222 44% 8%)", border: "1px solid hsl(222 30% 16%)", borderRadius: "8px", fontSize: "12px", color: "hsl(210 40% 92%)" }} formatter={(v: number) => [`${v.toFixed(2)}%`]} />
+                  <Tooltip contentStyle={{ backgroundColor: "hsl(222 44% 8%)", border: "1px solid hsl(222 30% 16%)", borderRadius: "8px", fontSize: "12px", color: "hsl(210 40% 92%)" }} formatter={(v: number) => [`${v.toFixed(2)}%`]} labelFormatter={(value) => `Horizon ${value}`} />
                   <Area type="monotone" dataKey="upperBound" stroke="none" fill="hsl(210 100% 56% / 0.08)" />
                   <Area type="monotone" dataKey="lowerBound" stroke="none" fill="hsl(210 100% 56% / 0.08)" />
                   <Line type="monotone" dataKey="avgReturn" stroke="hsl(210 100% 56%)" strokeWidth={2} dot={false} />
@@ -114,10 +114,10 @@ export default function EventStudies() {
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={sortedDistribution}>
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(222 30% 16%)" />
-                  <XAxis dataKey="return" tick={{ fill: "hsl(215 20% 55%)", fontSize: 10 }} axisLine={{ stroke: "hsl(222 30% 16%)" }} tickFormatter={(v) => `${v.toFixed(0)}%`} />
-                  <YAxis hide />
-                  <Tooltip contentStyle={{ backgroundColor: "hsl(222 44% 8%)", border: "1px solid hsl(222 30% 16%)", borderRadius: "8px", fontSize: "12px", color: "hsl(210 40% 92%)" }} formatter={(v: number) => [`${v.toFixed(2)}%`, "Return"]} />
-                  <Bar dataKey="return" radius={[2, 2, 0, 0]}>
+                  <XAxis dataKey="return" tick={{ fill: "hsl(215 20% 55%)", fontSize: 10 }} axisLine={{ stroke: "hsl(222 30% 16%)" }} tickFormatter={(v) => `${v.toFixed(1)}%`} />
+                  <YAxis tick={{ fill: "hsl(215 20% 55%)", fontSize: 10 }} axisLine={{ stroke: "hsl(222 30% 16%)" }} allowDecimals={false} />
+                  <Tooltip contentStyle={{ backgroundColor: "hsl(222 44% 8%)", border: "1px solid hsl(222 30% 16%)", borderRadius: "8px", fontSize: "12px", color: "hsl(210 40% 92%)" }} formatter={(v: number) => [`${v}`, "Study count"]} labelFormatter={(value) => `Bucket ${Number(value).toFixed(1)}%`} />
+                  <Bar dataKey="count" radius={[2, 2, 0, 0]}>
                     {sortedDistribution?.map((entry, i) => (
                       <Cell key={i} fill={entry.return >= 0 ? "hsl(152 69% 45%)" : "hsl(0 72% 55%)"} />
                     ))}

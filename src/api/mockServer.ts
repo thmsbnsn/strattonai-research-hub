@@ -159,17 +159,19 @@ const eventStudyResults: EventStudyResult[] = [
   { horizon: "20D", avgReturn: 3.15, winRate: 59, sampleSize: 42 },
 ];
 
-const returnDistribution: ReturnDistributionPoint[] = Array.from({ length: 42 }, (_, i) => ({
+const returnDistribution: ReturnDistributionPoint[] = Array.from({ length: 12 }, (_, i) => ({
   id: i,
-  return: (Math.random() - 0.3) * 10,
+  return: -5.5 + i,
+  count: Math.max(1, 12 - Math.abs(5 - i)),
 }));
 
-const forwardCurveData: ForwardCurvePoint[] = Array.from({ length: 21 }, (_, i) => ({
-  day: i,
-  avgReturn: Math.log(1 + i * 0.15) * 2 + (Math.random() - 0.5) * 0.3,
-  upperBound: Math.log(1 + i * 0.15) * 2 + 2 + (Math.random() - 0.5) * 0.2,
-  lowerBound: Math.log(1 + i * 0.15) * 2 - 1.5 + (Math.random() - 0.5) * 0.2,
-}));
+const forwardCurveData: ForwardCurvePoint[] = [
+  { day: 1, horizon: "1D", avgReturn: 0.45, upperBound: 0.62, lowerBound: 0.31 },
+  { day: 3, horizon: "3D", avgReturn: 1.12, upperBound: 1.38, lowerBound: 0.96 },
+  { day: 5, horizon: "5D", avgReturn: 1.78, upperBound: 2.12, lowerBound: 1.51 },
+  { day: 10, horizon: "10D", avgReturn: 2.34, upperBound: 2.76, lowerBound: 1.98 },
+  { day: 20, horizon: "20D", avgReturn: 3.15, upperBound: 3.62, lowerBound: 2.74 },
+];
 
 const journalEntries: JournalEntry[] = [
   {

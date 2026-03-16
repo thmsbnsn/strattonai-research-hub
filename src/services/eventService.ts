@@ -64,7 +64,26 @@ type EventStudyResultRow = {
   sample_size?: number | null;
 };
 
+type EventStudyStatisticRow = {
+  event_category?: string | null;
+  study_target_type?: string | null;
+  horizon?: string | null;
+  avg_return?: number | null;
+  median_return?: number | null;
+  win_rate?: number | null;
+  sample_size?: number | null;
+};
+
 const defaultEventCategories = [...CANONICAL_EVENT_CATEGORIES];
+const canonicalHorizonOrder = ["1D", "3D", "5D", "10D", "20D"] as const;
+const horizonDayMap: Record<(typeof canonicalHorizonOrder)[number], number> = {
+  "1D": 1,
+  "3D": 3,
+  "5D": 5,
+  "10D": 10,
+  "20D": 20,
+};
+const returnBucketSize = 1;
 
 function normalizeEventSentiment(sentiment: string | null | undefined): MarketEvent["sentiment"] {
   if (sentiment === "positive" || sentiment === "negative" || sentiment === "neutral") {
@@ -137,8 +156,54 @@ function toEventStudyResult(row: EventStudyResultRow): EventStudyResult {
 }
 
 function sortStudiesByHorizon(studies: EventStudyResult[]) {
-  const order = ["1D", "3D", "5D", "10D", "20D"];
-  return studies.sort((left, right) => order.indexOf(left.horizon) - order.indexOf(right.horizon));
+  return studies.sort(
+    (left, right) => canonicalHorizonOrder.indexOf(left.horizon as (typeof canonicalHorizonOrder)[number]) - canonicalHorizonOrder.indexOf(right.horizon as (typeof canonicalHorizonOrder)[number])
+  );
+}
+
+function buildReturnDistribution(rows: EventStudyStatisticRow[]): ReturnDistributionPoint[] {
+  const bucketCounts = new Map<number, number>();
+
+  rows.forEach((row) => {
+    if (typeof row.avg_return !== "number" || !Number.isFinite(row.avg_return)) {
+      return;
+    }
+
+    const bucketStart = Math.floor(row.avg_return / returnBucketSize) * returnBucketSize;
+    const bucketCenter = Number((bucketStart + returnBucketSize / 2).toFixed(2));
+    bucketCounts.set(bucketCenter, (bucketCounts.get(bucketCenter) ?? 0) + 1);
+  });
+
+  return [...bucketCounts.entries()]
+    .sort(([left], [right]) => left - right)
+    .map(([bucket, count], index) => ({
+      id: index,
+      return: bucket,
+      count,
+    }));
+}
+
+function buildForwardCurve(rows: EventStudyStatisticRow[]): ForwardCurvePoint[] {
+  return rows
+    .filter((row): row is EventStudyStatisticRow & { horizon: (typeof canonicalHorizonOrder)[number] } =>
+      Boolean(row.horizon && canonicalHorizonOrder.includes(row.horizon as (typeof canonicalHorizonOrder)[number]))
+    )
+    .sort(
+      (left, right) =>
+        canonicalHorizonOrder.indexOf(left.horizon) - canonicalHorizonOrder.indexOf(right.horizon)
+    )
+    .map((row) => {
+      const avgReturn = row.avg_return ?? 0;
+      const medianReturn = row.median_return ?? avgReturn;
+
+      return {
+        day: horizonDayMap[row.horizon],
+        horizon: row.horizon,
+        avgReturn,
+        upperBound: Math.max(avgReturn, medianReturn),
+        lowerBound: Math.min(avgReturn, medianReturn),
+      };
+    });
 }
 
 export async function getEvents() {
@@ -246,16 +311,51 @@ export async function getEventStudies(eventType = "Product Launch") {
   });
 }
 
-export async function getReturnDistribution() {
-  return getMockFallback<ReturnDistributionPoint[]>("/events/distribution");
+export async function getReturnDistribution(eventType = "Product Launch") {
+  const normalizedEventType = eventType.trim() || "Product Launch";
+
+  return fetchSupabaseWithFallback<EventStudyStatisticRow, ReturnDistributionPoint[]>({
+    resource: "eventService.getReturnDistribution",
+    table: "event_study_statistics",
+    mockEndpoint: "/events/distribution",
+    execute: async () => {
+      if (!supabase) {
+        return { data: null, error: null };
+      }
+
+      return await supabase
+        .from("event_study_statistics")
+        .select("event_category,study_target_type,horizon,avg_return,median_return,win_rate,sample_size")
+        .eq("event_category", normalizedEventType);
+    },
+    transform: (rows) => buildReturnDistribution(rows),
+  });
 }
 
-export async function getForwardCurve() {
-  return getMockFallback<ForwardCurvePoint[]>("/events/forward-curve");
+export async function getForwardCurve(eventType = "Product Launch") {
+  const normalizedEventType = eventType.trim() || "Product Launch";
+
+  return fetchSupabaseWithFallback<EventStudyStatisticRow, ForwardCurvePoint[]>({
+    resource: "eventService.getForwardCurve",
+    table: "event_study_statistics",
+    mockEndpoint: "/events/forward-curve",
+    execute: async () => {
+      if (!supabase) {
+        return { data: null, error: null };
+      }
+
+      return await supabase
+        .from("event_study_statistics")
+        .select("event_category,study_target_type,horizon,avg_return,median_return,win_rate,sample_size")
+        .eq("event_category", normalizedEventType)
+        .eq("study_target_type", "category_summary");
+    },
+    transform: (rows) => buildForwardCurve(rows),
+  });
 }
 
 export async function getTimeHorizons(eventType = "Product Launch") {
   const studies = await getEventStudies(eventType);
   const horizons = [...new Set(studies.map((study) => study.horizon))];
-  return horizons.length > 0 ? horizons : ["1D", "3D", "5D", "10D", "20D"];
+  return horizons.length > 0 ? horizons : [...canonicalHorizonOrder];
 }

@@ -39,6 +39,25 @@ type RelatedCompanyRow = {
   strength?: number | null;
 };
 
+type DailyPriceRow = {
+  date?: string | null;
+  trade_date?: string | null;
+  close?: number | null;
+  price?: number | null;
+  volume?: number | null;
+};
+
+type EventMarkerRow = {
+  ticker?: string | null;
+  primary_ticker?: string | null;
+  category?: string | null;
+  event_type?: string | null;
+  sentiment?: string | null;
+  timestamp?: string | null;
+  occurred_at?: string | null;
+  created_at?: string | null;
+};
+
 function toCompanyProfile(row: CompanyProfileRow, requestedTicker?: string): CompanyProfile {
   return {
     ticker: row.ticker || requestedTicker || "N/A",
@@ -58,6 +77,24 @@ function toCompanyRelationship(row: RelatedCompanyRow): CompanyRelationship {
     target: row.target || row.target_ticker || row.related_ticker || row.related || "N/A",
     relationship: row.relationship || row.relationship_type || row.relation_type || "Related",
     strength: row.strength ?? 0.5,
+  };
+}
+
+function toPricePoint(row: DailyPriceRow): PricePoint {
+  return {
+    date: row.date || row.trade_date || new Date().toISOString().split("T")[0],
+    price: row.close ?? row.price ?? 0,
+    volume: row.volume ?? 0,
+  };
+}
+
+function toEventMarker(row: EventMarkerRow): EventMarker {
+  const markerDate = row.timestamp || row.occurred_at || row.created_at || new Date().toISOString();
+
+  return {
+    date: markerDate.split("T")[0],
+    label: row.category || row.event_type || "Event",
+    type: row.sentiment || "neutral",
   };
 }
 
@@ -125,10 +162,48 @@ export async function getCompanyRelationships() {
   }
 }
 
-export async function getPriceHistory() {
-  return getMockFallback<PricePoint[]>("/companies/price-history");
+export async function getPriceHistory(ticker = "NVDA") {
+  const normalizedTicker = ticker.trim().toUpperCase() || "NVDA";
+
+  return fetchSupabaseWithFallback<DailyPriceRow, PricePoint[]>({
+    resource: "companyService.getPriceHistory",
+    table: "daily_prices",
+    mockEndpoint: `/companies/price-history?ticker=${normalizedTicker}`,
+    execute: async () => {
+      if (!supabase) {
+        return { data: null, error: null };
+      }
+
+      return await supabase
+        .from("daily_prices")
+        .select("date,trade_date,close,price,volume")
+        .eq("ticker", normalizedTicker)
+        .order("date", { ascending: true })
+        .limit(90);
+    },
+    transform: (rows) => rows.map(toPricePoint),
+  });
 }
 
-export async function getEventMarkers() {
-  return getMockFallback<EventMarker[]>("/companies/event-markers");
+export async function getEventMarkers(ticker = "NVDA") {
+  const normalizedTicker = ticker.trim().toUpperCase() || "NVDA";
+
+  return fetchSupabaseWithFallback<EventMarkerRow, EventMarker[]>({
+    resource: "companyService.getEventMarkers",
+    table: "events",
+    mockEndpoint: `/companies/event-markers?ticker=${normalizedTicker}`,
+    execute: async () => {
+      if (!supabase) {
+        return { data: null, error: null };
+      }
+
+      return await supabase
+        .from("events")
+        .select("ticker,primary_ticker,category,event_type,sentiment,timestamp,occurred_at,created_at")
+        .or(`ticker.eq.${normalizedTicker},primary_ticker.eq.${normalizedTicker}`)
+        .order("timestamp", { ascending: true })
+        .limit(12);
+    },
+    transform: (rows) => rows.map(toEventMarker),
+  });
 }

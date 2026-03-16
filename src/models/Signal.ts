@@ -7,6 +7,7 @@ export interface SignalScore {
   eventId: string;
   eventCategory: string;
   primaryTicker: string;
+  relatedTicker?: string;
   targetTicker: string;
   targetType: SignalTargetType;
   relationshipType?: string;

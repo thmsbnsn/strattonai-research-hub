@@ -14,8 +14,8 @@ export default function Companies() {
 
   const profile = useQuery({ queryKey: ["company", "profile", search], queryFn: () => getCompanyProfile(search) });
   const relationships = useQuery({ queryKey: ["company", "relationships"], queryFn: getCompanyRelationships });
-  const prices = useQuery({ queryKey: ["company", "prices"], queryFn: getPriceHistory });
-  const markers = useQuery({ queryKey: ["company", "markers"], queryFn: getEventMarkers });
+  const prices = useQuery({ queryKey: ["company", "prices", search], queryFn: () => getPriceHistory(search) });
+  const markers = useQuery({ queryKey: ["company", "markers", search], queryFn: () => getEventMarkers(search) });
   const events = useQuery({ queryKey: ["events"], queryFn: getEvents });
 
   const chartData = prices.data?.map((d) => ({ ...d, price: Math.round(d.price * 100) / 100 }));

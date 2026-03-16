@@ -6,10 +6,12 @@ export type { EventStudyResult };
 export interface ReturnDistributionPoint {
   id: number;
   return: number;
+  count: number;
 }
 
 export interface ForwardCurvePoint {
   day: number;
+  horizon: string;
   avgReturn: number;
   upperBound: number;
   lowerBound: number;
