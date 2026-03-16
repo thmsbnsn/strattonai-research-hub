@@ -8,7 +8,6 @@ import {
   Settings,
   Menu,
   X,
-  Zap,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useState } from "react";
@@ -31,7 +30,7 @@ export function AppSidebar() {
       {/* Mobile toggle */}
       <button
         onClick={() => setMobileOpen(!mobileOpen)}
-        className="fixed top-4 left-4 z-50 md:hidden p-2 rounded-lg bg-card border border-border"
+        className="fixed top-[4.25rem] left-4 z-50 md:hidden p-2 rounded-lg bg-card border border-border"
       >
         {mobileOpen ? <X className="h-5 w-5 text-foreground" /> : <Menu className="h-5 w-5 text-foreground" />}
       </button>
@@ -46,18 +45,11 @@ export function AppSidebar() {
 
       {/* Sidebar */}
       <aside
-        className={`fixed md:sticky top-0 left-0 z-40 h-screen w-64 bg-sidebar border-r border-border flex flex-col transition-transform duration-300 ${
+        className={`fixed md:sticky top-0 left-0 z-40 h-screen md:h-auto md:min-h-0 md:flex-shrink-0 w-56 bg-sidebar border-r border-border flex flex-col transition-transform duration-300 ${
           mobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         }`}
+        style={{ top: 0 }}
       >
-        {/* Logo */}
-        <div className="h-16 flex items-center gap-2 px-5 border-b border-border">
-          <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
-            <Zap className="h-4 w-4 text-primary" />
-          </div>
-          <span className="text-lg font-semibold text-foreground tracking-tight">StrattonAI</span>
-        </div>
-
         {/* Navigation */}
         <nav className="flex-1 py-4 px-3 space-y-1 overflow-y-auto scrollbar-thin">
           {navItems.map((item) => (
