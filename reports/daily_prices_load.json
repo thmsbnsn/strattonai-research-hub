@@ -1,30 +1,10 @@
 {
-  "price_file": "C:\\Users\\tlben\\Bentlas\\StrattonAI\\data\\prices\\all_stock_data_extended.parquet",
-  "total_rows_read": 180849,
+  "price_file": "C:\\Users\\tlben\\Bentlas\\StrattonAI\\data\\prices\\all_stock_data_extended_enriched.parquet",
+  "total_rows_read": 8337,
   "rows_skipped": 0,
-  "rows_upserted": 180849,
+  "rows_upserted": 8337,
   "tickers_loaded": [
-    "AAPL",
-    "AMD",
-    "AMGN",
-    "AMZN",
-    "AVGO",
-    "BA",
-    "GOOGL",
-    "GS",
-    "JPM",
-    "LLY",
-    "META",
-    "MSFT",
-    "NVDA",
-    "NVO",
-    "ORCL",
-    "PANW",
-    "QCOM",
-    "RIVN",
-    "TSLA",
-    "TSM",
-    "XOM"
+    "SPY"
   ],
-  "load_completed_at": "2026-03-16T17:00:36.369577+00:00"
+  "load_completed_at": "2026-03-17T02:29:08.649825+00:00"
 }

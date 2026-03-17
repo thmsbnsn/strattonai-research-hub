@@ -54,6 +54,8 @@ Important tables include:
 - `event_study_results`
 - `signal_scores`
 - `daily_prices`
+- `portfolio_allocations`
+- `market_regimes`
 
 Primary code area:
 
@@ -82,6 +84,7 @@ Current sources:
 - base all-stock dataset
 - Massive local historical backfills
 - Papers With Backtest enrichment
+- deterministic external gap-fill providers for uncovered study tickers
 
 Primary code area:
 
@@ -89,6 +92,8 @@ Primary code area:
 - `research/massive_price_backfill.py`
 - `research/load_prices_to_supabase.py`
 - `research/import_paperswithbacktest_prices.py`
+- `research/fill_external_price_gap.py`
+- `research/fill_study_universe_gaps.py`
 
 ### 4. Event Study Engine
 
@@ -159,8 +164,10 @@ It measures:
 It produces:
 
 - coverage audits
+- coverage diffs
 - low-confidence diagnostics
 - targeted backfill plans
+- partnership backfill priorities
 
 Primary code area:
 
@@ -174,6 +181,33 @@ Detailed references:
 - `docs/COVERAGE_AUDIT_AND_GAP_FILLING.md`
 - `docs/HISTORICAL_BACKFILL_WORKFLOW.md`
 - `docs/TARGETED_BACKFILL_PLANNING.md`
+- `docs/N8N_TARGETED_BACKFILL_WORKFLOW.md`
+
+### 6.5. n8n-Assisted Targeted Backfill
+
+n8n is an optional research-collection layer for weak slices already ranked by the deterministic planner.
+
+It is intentionally limited to:
+
+- reading ranked slice targets
+- building stable search tasks
+- collecting candidate source metadata
+- documenting evidence in the review bundle contract
+
+It is intentionally not allowed to:
+
+- classify final event types
+- decide relationship truth
+- write directly into research tables
+- bypass idempotent ingestion
+
+Repo-owned workflow and handoff artifacts:
+
+- `automation/n8n/strattonai_targeted_backfill_research_workflow.json`
+- `ingestion/templates/n8n_targeted_research_template.json`
+- `ingestion/build_n8n_handoff_bundles.py`
+
+That keeps n8n in the operator-assistance boundary while Python remains the source of truth.
 
 ### 7. Frontend Application
 
@@ -189,6 +223,7 @@ Main surfaces:
 - Paper Trades
 - Settings
 - AI Trader Dashboard shell
+- shared gateway-backed company briefing payload reused by company briefing, trader cards, and chat
 
 Frontend design rules:
 
@@ -210,13 +245,34 @@ Current responsibilities:
 - rerank relevant evidence locally
 - prompt the local chat model
 - return cited answers to the AI Trader dashboard
+- assemble a deterministic company-briefing payload with profile, events, relationships, studies, signals, and live-readiness guardrails
 - fall back deterministically when the local model stack is unavailable
+- expose trader-side gateway endpoints for health, risk, preview, portfolio, and loop controls
 
 Model roles:
 
 - Ollama chat model for analyst interaction
 - `bge-m3` for semantic retrieval
 - `bge-reranker-v2-m3` for reranking
+
+### 9. Trader Safety And Operator Control
+
+The trader layer sits on top of the research stack and remains explicitly guarded.
+
+Current responsibilities:
+
+- build deterministic order previews before any non-dry-run order path
+- apply a unified hard risk gate
+- keep live-mode execution behind explicit operator confirmation
+- expose health, migration, loop-status, and gap-fill controls to the UI
+
+Primary code area:
+
+- `research/risk_gate.py`
+- `research/order_preview.py`
+- `research/trading_loop.py`
+- `research/health_check.py`
+- `supabase/scripts/apply_and_verify_migrations.py`
 
 Primary code area:
 

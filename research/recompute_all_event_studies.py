@@ -24,9 +24,25 @@ def parse_args() -> argparse.Namespace:
         default=None,
         help="Optional explicit price dataset path (.parquet, .csv, or .json). Defaults resolve to Parquet first.",
     )
+    parser.add_argument(
+        "--ticker-filter",
+        action="append",
+        default=[],
+        help="Optional ticker filter. Events touching these primary or related tickers are included.",
+    )
     parser.add_argument("--dry-run", action="store_true", help="Compute studies without writing to Supabase.")
     parser.add_argument("--verbose", action="store_true", help="Enable verbose logging.")
     return parser.parse_args()
+
+
+def _normalize_ticker_filter(values: list[str]) -> set[str]:
+    normalized: set[str] = set()
+    for value in values:
+        for part in str(value).split(","):
+            cleaned = part.strip().upper()
+            if cleaned:
+                normalized.add(cleaned)
+    return normalized
 
 
 def _count_existing(writer: EventStudySupabaseWriter) -> tuple[int, int]:
@@ -48,6 +64,16 @@ def main() -> int:
     before_detail_count, before_summary_count = _count_existing(writer)
 
     events = writer.load_study_events()
+    all_events = events
+    ticker_filter = _normalize_ticker_filter(args.ticker_filter)
+    if ticker_filter:
+        events = [
+            event
+            for event in events
+            if event.ticker in ticker_filter
+            or any(related.target_ticker in ticker_filter for related in event.related_companies)
+        ]
+        LOGGER.info("Ticker filter active. processed_events=%s skipped_events=%s", len(events), len(all_events) - len(events))
     tickers = collect_study_tickers(events)
     price_series, resolved_price_dataset = load_resolved_price_series(repo_root, args.price_file, tickers=tickers)
     LOGGER.info("Using price dataset %s", describe_resolution(resolved_price_dataset))
@@ -70,8 +96,8 @@ def main() -> int:
         LOGGER.info("Dry run complete. No database writes were performed.")
         return 0
 
-    detail_count = writer.upsert_event_study_aggregates(aggregates)
-    summary_count = writer.upsert_ui_summary_rows(aggregates)
+    detail_count = writer.upsert_event_study_aggregates(aggregates, ticker_scope=ticker_filter)
+    summary_count = writer.upsert_ui_summary_rows(aggregates, ticker_scope=ticker_filter)
     after_detail_count, after_summary_count = _count_existing(writer)
 
     LOGGER.info(

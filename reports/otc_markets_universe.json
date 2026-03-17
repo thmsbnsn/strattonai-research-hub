@@ -1,0 +1,87 @@
+{
+  "generatedAt": "2026-03-17T04:54:46.892349+00:00",
+  "source": "otc_markets_screener",
+  "inputFile": "C:\\Users\\tlben\\OneDrive\\Documents\\Downloads\\Stock_Screener.csv",
+  "candidates": [
+    {
+      "ticker": "FMCC",
+      "name": "FREDDIE MAC",
+      "exchange": "OTCQB",
+      "lastPrice": 5.28,
+      "avgVolume": 2708777.0,
+      "marketCapEst": null,
+      "changePct": -0.00565,
+      "source": "otc_markets_screener"
+    },
+    {
+      "ticker": "FNMA",
+      "name": "FANNIE MAE",
+      "exchange": "OTCQB",
+      "lastPrice": 6.1,
+      "avgVolume": 5262239.0,
+      "marketCapEst": null,
+      "changePct": 0.014975,
+      "source": "otc_markets_screener"
+    },
+    {
+      "ticker": "LTCN",
+      "name": "GRAYSCALE LITECOIN TR LTC",
+      "exchange": "OTCQX",
+      "lastPrice": 4.21,
+      "avgVolume": 164835.0,
+      "marketCapEst": null,
+      "changePct": 0.016933,
+      "source": "otc_markets_screener"
+    },
+    {
+      "ticker": "FTCO",
+      "name": "FORTITUDE GOLD CORP",
+      "exchange": "OTCQB",
+      "lastPrice": 5.18,
+      "avgVolume": 111064.0,
+      "marketCapEst": null,
+      "changePct": -0.056466,
+      "source": "otc_markets_screener"
+    },
+    {
+      "ticker": "NLCP",
+      "name": "NEWLAKE CAP PARTNERS INC",
+      "exchange": "OTCQX",
+      "lastPrice": 15.43,
+      "avgVolume": 57515.0,
+      "marketCapEst": null,
+      "changePct": -0.014058,
+      "source": "otc_markets_screener"
+    },
+    {
+      "ticker": "HZEN",
+      "name": "GRAYSCALE HORIZEN TR ZEN",
+      "exchange": "OTCQX",
+      "lastPrice": 0.635,
+      "avgVolume": 99838.0,
+      "marketCapEst": null,
+      "changePct": 0.056748,
+      "source": "otc_markets_screener"
+    },
+    {
+      "ticker": "MRAI",
+      "name": "MARPAI INC A",
+      "exchange": "OTCQX",
+      "lastPrice": 0.5,
+      "avgVolume": 57851.0,
+      "marketCapEst": null,
+      "changePct": 0.041667,
+      "source": "otc_markets_screener"
+    },
+    {
+      "ticker": "GBAT",
+      "name": "GRAYSCALE BSC ATTN TKN TR",
+      "exchange": "OTCQB",
+      "lastPrice": 0.54375,
+      "avgVolume": 61108.0,
+      "marketCapEst": null,
+      "changePct": -0.108607,
+      "source": "otc_markets_screener"
+    }
+  ]
+}

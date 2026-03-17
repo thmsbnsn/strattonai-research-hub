@@ -26,5 +26,8 @@ dist-ssr
 __pycache__/
 *.py[cod]
 .strattonai-runtime/
+research/cache/
 models/*
 !models/README.md
+n8nac-config.json
+Untitled-*.n8n

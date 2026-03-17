@@ -1,28 +1,41 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useSearchParams } from "react-router-dom";
 import { AppLayout } from "@/components/AppLayout";
 import { StatCard } from "@/components/StatCard";
 import { ChartCard } from "@/components/ChartCard";
 import { CardSkeleton, ChartSkeleton, TableSkeleton } from "@/components/LoadingSkeletons";
 import { ErrorState } from "@/components/StateDisplays";
+import { EvidenceSliceDrawer } from "@/components/research/EvidenceSliceDrawer";
 import { getEventStudies, getReturnDistribution, getForwardCurve, getEventCategories, getTimeHorizons } from "@/services/eventService";
+import { getEvents } from "@/services/eventService";
 import {
   LineChart, Line, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Area, AreaChart,
   CartesianGrid, Cell, ReferenceLine,
 } from "recharts";
 
 export default function EventStudies() {
-  const [eventType, setEventType] = useState("Product Launch");
+  const [searchParams] = useSearchParams();
+  const initialCategory = searchParams.get("category") || "Product Launch";
+  const initialTicker = (searchParams.get("ticker") || "").trim().toUpperCase();
+  const [eventType, setEventType] = useState(initialCategory);
   const [horizon, setHorizon] = useState("5D");
+  const [primaryTicker, setPrimaryTicker] = useState(initialTicker);
+  const [relatedTicker, setRelatedTicker] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [drawerTicker, setDrawerTicker] = useState<string | null>(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   const studies = useQuery({ queryKey: ["events", "studies", eventType], queryFn: () => getEventStudies(eventType) });
   const distribution = useQuery({ queryKey: ["events", "distribution", eventType], queryFn: () => getReturnDistribution(eventType) });
   const forwardCurve = useQuery({ queryKey: ["events", "forward-curve", eventType], queryFn: () => getForwardCurve(eventType) });
   const categories = useQuery({ queryKey: ["events", "categories"], queryFn: getEventCategories });
   const horizons = useQuery({ queryKey: ["events", "horizons", eventType], queryFn: () => getTimeHorizons(eventType) });
+  const events = useQuery({ queryKey: ["events"], queryFn: getEvents });
 
   const sortedDistribution = distribution.data?.slice().sort((a, b) => a.return - b.return);
   const selectedStudy = studies.data?.find((study) => study.horizon === horizon) || studies.data?.[0];
+  const categoryTicker = events.data?.find((event) => event.category === eventType)?.ticker || null;
 
   useEffect(() => {
     if (categories.data?.length && !categories.data.includes(eventType)) {
@@ -30,12 +43,22 @@ export default function EventStudies() {
     }
   }, [categories.data, eventType]);
 
+  useEffect(() => {
+    if (categories.data?.includes(initialCategory)) {
+      setEventType(initialCategory);
+    }
+    setPrimaryTicker(initialTicker);
+  }, [categories.data, initialCategory, initialTicker]);
+
   return (
     <AppLayout>
       <div className="space-y-6">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Event Study Explorer</h1>
-          <p className="text-sm text-muted-foreground mt-1">Research historical event outcomes and forward returns</p>
+          <p className="text-sm text-muted-foreground mt-1">
+            Research historical event outcomes and forward returns
+            {initialTicker ? ` · focused on ${initialTicker}` : ""}
+          </p>
         </div>
 
         {/* Filters */}
@@ -50,11 +73,11 @@ export default function EventStudies() {
             </div>
             <div>
               <label className="text-xs text-muted-foreground block mb-1.5">Primary Company</label>
-              <input placeholder="Any" className="w-full bg-muted border border-border rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary font-mono" />
+              <input value={primaryTicker} onChange={(e) => setPrimaryTicker(e.target.value.toUpperCase())} placeholder="Any" className="w-full bg-muted border border-border rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary font-mono" />
             </div>
             <div>
               <label className="text-xs text-muted-foreground block mb-1.5">Related Company</label>
-              <input placeholder="Any" className="w-full bg-muted border border-border rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary font-mono" />
+              <input value={relatedTicker} onChange={(e) => setRelatedTicker(e.target.value.toUpperCase())} placeholder="Any" className="w-full bg-muted border border-border rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary font-mono" />
             </div>
             <div>
               <label className="text-xs text-muted-foreground block mb-1.5">Time Horizon</label>
@@ -146,7 +169,16 @@ export default function EventStudies() {
                 </thead>
                 <tbody>
                   {studies.data?.map((r) => (
-                    <tr key={r.horizon} className="border-b border-border/50 hover:bg-muted/20">
+                    <tr
+                      key={r.horizon}
+                      className="border-b border-border/50 hover:bg-muted/20 cursor-pointer"
+                      onClick={() => {
+                        const targetTicker = primaryTicker || relatedTicker || categoryTicker || null;
+                        setSelectedCategory(eventType);
+                        setDrawerTicker(targetTicker);
+                        setDrawerOpen(true);
+                      }}
+                    >
                       <td className="py-2.5 px-3 text-foreground font-semibold">{r.horizon}</td>
                       <td className={`py-2.5 px-3 text-right ${r.avgReturn >= 0 ? "text-success" : "text-danger"}`}>
                         {r.avgReturn >= 0 ? "+" : ""}{r.avgReturn.toFixed(2)}%
@@ -160,6 +192,24 @@ export default function EventStudies() {
             </div>
           </div>
         )}
+
+        {selectedCategory ? (
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <button
+              className="rounded-md border border-border bg-muted/30 px-2 py-1 text-foreground hover:bg-muted/50"
+              onClick={() => {
+                setSelectedCategory(null);
+                setDrawerTicker(null);
+                setDrawerOpen(false);
+              }}
+            >
+              Back
+            </button>
+            <span>Event Studies &gt; {selectedCategory}</span>
+          </div>
+        ) : null}
+
+        <EvidenceSliceDrawer ticker={drawerTicker} category={selectedCategory} open={drawerOpen} onOpenChange={setDrawerOpen} />
       </div>
     </AppLayout>
   );

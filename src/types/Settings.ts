@@ -6,4 +6,5 @@ export type {
   RelationshipMapping,
   SettingsEnvelope,
   SettingsDataSourceKey,
+  TradingSettings,
 } from "@/models";

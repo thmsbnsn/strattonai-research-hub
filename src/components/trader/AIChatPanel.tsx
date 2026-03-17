@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import { AlertTriangle, Bot, ExternalLink, Loader2, Send, Sparkles, User } from "lucide-react";
 import type { AIChatCitation, AIChatTurn } from "@/models";
 import { getAIHealth, sendAIChatMessage } from "@/services/aiService";
@@ -43,6 +44,20 @@ function citationLabel(citation: AIChatCitation) {
   return citation.ticker ? `${citation.title} · ${citation.ticker}` : citation.title;
 }
 
+function citationTarget(citation: AIChatCitation) {
+  const ticker = citation.ticker?.trim().toUpperCase();
+  if (citation.kind === "event") {
+    return ticker ? `/events?ticker=${encodeURIComponent(ticker)}` : "/events";
+  }
+  if (citation.kind === "study" || citation.kind === "signal") {
+    return ticker ? `/studies?ticker=${encodeURIComponent(ticker)}` : "/studies";
+  }
+  if (citation.kind === "profile" || citation.kind === "price" || citation.kind === "relationship") {
+    return ticker ? `/companies?search=${encodeURIComponent(ticker)}` : "/companies";
+  }
+  return ticker ? `/companies?search=${encodeURIComponent(ticker)}` : null;
+}
+
 export function AIChatPanel({
   ticker,
   tradingMode = "paper",
@@ -53,6 +68,7 @@ export function AIChatPanel({
   const [messages, setMessages] = useState<ChatPanelMessage[]>([]);
   const [input, setInput] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
   const suggestedPrompts = useMemo(() => getSuggestedPrompts(ticker), [ticker]);
 
   const healthQuery = useQuery({
@@ -213,16 +229,22 @@ export function AIChatPanel({
                       </div>
                       <div className="flex flex-wrap gap-2">
                         {message.citations.slice(0, 6).map((citation) => (
-                          <div
+                          <button
                             key={`${citation.kind}:${citation.title}:${citation.detail}`}
-                            className="rounded-md border border-border bg-background/60 px-2 py-1"
+                            onClick={() => {
+                              const target = citationTarget(citation);
+                              if (target) {
+                                navigate(target);
+                              }
+                            }}
+                            className="rounded-md border border-border bg-background/60 px-2 py-1 text-left hover:bg-muted/40"
                           >
                             <div className="flex items-center gap-1 text-[11px] font-medium text-foreground">
                               <ExternalLink className="h-3 w-3 text-muted-foreground" />
                               {citationLabel(citation)}
                             </div>
                             <div className="mt-1 text-[11px] text-muted-foreground">{citation.detail}</div>
-                          </div>
+                          </button>
                         ))}
                       </div>
                       {message.model && (

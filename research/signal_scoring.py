@@ -25,6 +25,13 @@ ORIGIN_MULTIPLIERS = {
     "inferred": Decimal("0.88"),
 }
 
+REGIME_MULTIPLIERS = {
+    "bear": {"bullish": Decimal("0.75"), "bearish": Decimal("1.15")},
+    "bull_low_vol": {"bullish": Decimal("1.10"), "bearish": Decimal("1.00")},
+    "bull_high_vol": {"bullish": Decimal("0.90"), "bearish": Decimal("1.00")},
+    "neutral": {"bullish": Decimal("1.00"), "bearish": Decimal("1.00")},
+}
+
 
 def quantize_score(value: Decimal) -> Decimal:
     return value.quantize(Decimal("0.0001"), rounding=ROUND_HALF_UP)
@@ -128,6 +135,7 @@ def compute_signal_score(
     relationship_type: str | None,
     origin_type: SignalOriginType,
     now: datetime | None = None,
+    regime_label: str | None = None,
 ) -> SignalScore:
     components = _build_components(event, study, origin_type, now=now)
     base_score = (
@@ -136,11 +144,15 @@ def compute_signal_score(
         + components["consistency_component"]
         + components["sample_component"]
     )
+    direction = "bullish" if (study.avg_return + study.median_return) >= ZERO else "bearish"
+    regime = regime_label or "neutral"
+    regime_multiplier = REGIME_MULTIPLIERS.get(regime, REGIME_MULTIPLIERS["neutral"])[direction]
     score = min(
         base_score
         * components["classifier_multiplier"]
         * components["origin_multiplier"]
-        * components["recency_multiplier"],
+        * components["recency_multiplier"]
+        * regime_multiplier,
         ONE_HUNDRED,
     )
     quantized_score = quantize_score(score)
@@ -159,7 +171,6 @@ def compute_signal_score(
         relationship_type=relationship_type,
         horizon=study.horizon,
     )
-    direction = "bullish" if (study.avg_return + study.median_return) >= ZERO else "bearish"
     evidence_summary = (
         f"{study.horizon} {target_type} signal is {direction}: "
         f"avg {study.avg_return}% / median {study.median_return}% / "
@@ -186,8 +197,10 @@ def compute_signal_score(
         },
         "scoring": {
             "direction": direction,
+            "regime_label": regime,
             "confidence_band": confidence_band,
             "components": {key: str(value) for key, value in components.items()},
+            "regime_multiplier": str(regime_multiplier),
             "base_score": str(quantize_score(base_score)),
             "final_score": str(quantized_score),
         },
@@ -213,6 +226,7 @@ def compute_signal_score(
         median_return=study.median_return,
         win_rate=study.win_rate,
         origin_type=origin_type,
+        metadata={"regime_label": regime},
     )
 
 
@@ -273,6 +287,7 @@ def score_event_signals(
     event: SignalEvent,
     indexed_studies: dict[tuple[str, str, str | None, str | None, str | None, str], SignalStudyStatistic],
     now: datetime | None = None,
+    regime_label: str | None = None,
 ) -> list[SignalScore]:
     signals: list[SignalScore] = []
 
@@ -288,6 +303,7 @@ def score_event_signals(
                     relationship_type=None,
                     origin_type="primary",
                     now=now,
+                    regime_label=regime_label,
                 )
             )
 
@@ -305,6 +321,7 @@ def score_event_signals(
                     relationship_type=related_company.relationship_type,
                     origin_type=related_company.origin_type,
                     now=now,
+                    regime_label=regime_label,
                 )
             )
 

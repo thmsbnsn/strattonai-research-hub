@@ -1,12 +1,13 @@
-import { supabase } from "@/integrations/supabase/client";
+import { isSupabaseConfigured, supabase } from "@/integrations/supabase/client";
 import { mergeCompanyRelationships } from "@/engine/companyRelationshipEngine";
 import type { CompanyProfile, CompanyRelationship, EventMarker, PricePoint } from "@/types";
 import {
+  fetchOptionalSupabaseRows,
   fetchSupabaseWithFallback,
   getMockFallback,
   isMissingTableError,
 } from "./supabaseService";
-import { getRelationshipMappings } from "./settingsService";
+import { getRelationshipMappings, shouldUseSupabaseLiveData } from "./settingsService";
 
 type CompanyProfileRow = {
   ticker?: string | null;
@@ -63,10 +64,61 @@ type CompanySearchRow = {
   name?: string | null;
 };
 
+type CompanyGraphRow = {
+  source_ticker?: string | null;
+  source_name?: string | null;
+  target_ticker?: string | null;
+  target_name?: string | null;
+};
+
+type EventCompanyRow = {
+  ticker?: string | null;
+  headline?: string | null;
+  metadata?: Record<string, unknown> | null;
+};
+
+type SignalSearchRow = {
+  primary_ticker?: string | null;
+  target_ticker?: string | null;
+};
+
 export type CompanySearchResult = {
   ticker: string;
   name: string;
 };
+
+function canUseLiveSupabase() {
+  return shouldUseSupabaseLiveData() && isSupabaseConfigured && Boolean(supabase);
+}
+
+function inferCompanyName(row: EventCompanyRow) {
+  const metadata = row.metadata;
+  if (!metadata || typeof metadata !== "object") {
+    return null;
+  }
+
+  const canonicalEntityName = metadata["canonical_entity_name"];
+  if (typeof canonicalEntityName === "string" && canonicalEntityName.trim()) {
+    return canonicalEntityName.trim();
+  }
+
+  const companyName = metadata["company_name"];
+  if (typeof companyName === "string" && companyName.trim()) {
+    return companyName.trim();
+  }
+
+  return null;
+}
+
+function inferCompanySector(row: EventCompanyRow) {
+  const metadata = row.metadata;
+  if (!metadata || typeof metadata !== "object") {
+    return null;
+  }
+
+  const sector = metadata["sector"];
+  return typeof sector === "string" && sector.trim() ? sector.trim() : null;
+}
 
 function toCompanyProfile(row: CompanyProfileRow, requestedTicker?: string): CompanyProfile {
   return {
@@ -115,6 +167,28 @@ function toCompanySearchResult(row: CompanySearchRow): CompanySearchResult {
   };
 }
 
+function addSearchCandidate(target: Map<string, CompanySearchResult>, ticker: string | null | undefined, name?: string | null) {
+  const normalizedTicker = (ticker || "").trim().toUpperCase();
+  if (!normalizedTicker) {
+    return;
+  }
+
+  const normalizedName = name?.trim();
+  const existing = target.get(normalizedTicker);
+  if (!existing) {
+    target.set(normalizedTicker, {
+      ticker: normalizedTicker,
+      name: normalizedName || normalizedTicker,
+    });
+    return;
+  }
+
+  const currentLooksSynthetic = existing.name.toUpperCase() === normalizedTicker;
+  if (normalizedName && currentLooksSynthetic) {
+    target.set(normalizedTicker, { ticker: normalizedTicker, name: normalizedName });
+  }
+}
+
 function rankCompanySearchResults(rows: CompanySearchResult[], query: string) {
   const normalizedQuery = query.trim().toUpperCase();
   const uniqueRows = Array.from(
@@ -150,23 +224,68 @@ function rankCompanySearchResults(rows: CompanySearchResult[], query: string) {
 
 export async function getCompanyProfile(ticker = "NVDA") {
   const normalizedTicker = ticker.trim().toUpperCase() || "NVDA";
+  if (!canUseLiveSupabase()) {
+    return getMockFallback<CompanyProfile>(`/companies/profile?ticker=${normalizedTicker}`);
+  }
 
-  return fetchSupabaseWithFallback<CompanyProfileRow, CompanyProfile>({
-    resource: "companyService.getCompanyProfile",
-    table: "company_profiles",
-    mockEndpoint: `/companies/profile?ticker=${normalizedTicker}`,
-    execute: async () => {
-      if (!supabase) {
-        return { data: null, error: null };
-      }
+  const [profileRows, graphRows, eventRows] = await Promise.all([
+    fetchOptionalSupabaseRows<CompanyProfileRow>({
+      resource: "companyService.getCompanyProfile.profile",
+      table: "company_profiles",
+      execute: async () =>
+        await supabase!
+          .from("company_profiles")
+          .select("*")
+          .eq("ticker", normalizedTicker)
+          .limit(1),
+    }),
+    fetchOptionalSupabaseRows<CompanyGraphRow>({
+      resource: "companyService.getCompanyProfile.graph",
+      table: "company_relationship_graph",
+      execute: async () =>
+        await supabase!
+          .from("company_relationship_graph")
+          .select("source_ticker,source_name,target_ticker,target_name")
+          .or(`source_ticker.eq.${normalizedTicker},target_ticker.eq.${normalizedTicker}`)
+          .limit(20),
+    }),
+    fetchOptionalSupabaseRows<EventCompanyRow>({
+      resource: "companyService.getCompanyProfile.events",
+      table: "events",
+      execute: async () =>
+        await supabase!
+          .from("events")
+          .select("ticker,headline,metadata")
+          .eq("ticker", normalizedTicker)
+          .order("timestamp", { ascending: false })
+          .limit(20),
+    }),
+  ]);
 
-      return await supabase
-        .from("company_profiles")
-        .select("*")
-        .eq("ticker", normalizedTicker);
-    },
-    transform: (rows) => toCompanyProfile(rows[0], normalizedTicker),
-  });
+  if (profileRows[0]) {
+    return toCompanyProfile(profileRows[0], normalizedTicker);
+  }
+
+  const graphMatch = graphRows.find(
+    (row) =>
+      row.source_ticker?.toUpperCase() === normalizedTicker || row.target_ticker?.toUpperCase() === normalizedTicker
+  );
+  const graphName =
+    graphMatch?.source_ticker?.toUpperCase() === normalizedTicker
+      ? graphMatch?.source_name
+      : graphMatch?.target_name;
+  const eventMatch = eventRows.find((row) => row.ticker?.toUpperCase() === normalizedTicker);
+
+  return {
+    ticker: normalizedTicker,
+    name: graphName?.trim() || inferCompanyName(eventMatch ?? {}) || normalizedTicker,
+    sector: inferCompanySector(eventMatch ?? {}) || "Unknown sector",
+    industry: "Research coverage in progress",
+    marketCap: "N/A",
+    pe: 0,
+    revenue: "N/A",
+    employees: "N/A",
+  };
 }
 
 export async function getCompanyRelationships() {
@@ -219,24 +338,99 @@ export async function searchCompanies(query: string) {
   }
 
   const sanitizedQuery = normalizedQuery.replace(/[,]/g, " ").trim();
+  if (!canUseLiveSupabase()) {
+    return getMockFallback<CompanySearchResult[]>(`/companies/search?query=${encodeURIComponent(sanitizedQuery)}`);
+  }
 
-  return fetchSupabaseWithFallback<CompanySearchRow, CompanySearchResult[]>({
-    resource: "companyService.searchCompanies",
-    table: "company_profiles",
-    mockEndpoint: `/companies/search?query=${encodeURIComponent(sanitizedQuery)}`,
-    execute: async () => {
-      if (!supabase) {
-        return { data: null, error: null };
-      }
+  const [profileRows, graphRows, relatedRows, signalRows, eventRows] = await Promise.all([
+    fetchOptionalSupabaseRows<CompanySearchRow>({
+      resource: "companyService.searchCompanies.profiles",
+      table: "company_profiles",
+      execute: async () =>
+        await supabase!
+          .from("company_profiles")
+          .select("ticker,name")
+          .or(`ticker.ilike.%${sanitizedQuery}%,name.ilike.%${sanitizedQuery}%`)
+          .limit(12),
+    }),
+    fetchOptionalSupabaseRows<CompanyGraphRow>({
+      resource: "companyService.searchCompanies.graph",
+      table: "company_relationship_graph",
+      execute: async () =>
+        await supabase!
+          .from("company_relationship_graph")
+          .select("source_ticker,source_name,target_ticker,target_name")
+          .or(
+            `source_ticker.ilike.%${sanitizedQuery}%,source_name.ilike.%${sanitizedQuery}%,target_ticker.ilike.%${sanitizedQuery}%,target_name.ilike.%${sanitizedQuery}%`
+          )
+          .limit(24),
+    }),
+    fetchOptionalSupabaseRows<RelatedCompanyRow>({
+      resource: "companyService.searchCompanies.related",
+      table: "related_companies",
+      execute: async () =>
+        await supabase!
+          .from("related_companies")
+          .select("source_ticker,target_ticker,name")
+          .or(`source_ticker.ilike.%${sanitizedQuery}%,target_ticker.ilike.%${sanitizedQuery}%,name.ilike.%${sanitizedQuery}%`)
+          .limit(24),
+    }),
+    fetchOptionalSupabaseRows<SignalSearchRow>({
+      resource: "companyService.searchCompanies.signals",
+      table: "signal_scores",
+      execute: async () =>
+        await supabase!
+          .from("signal_scores")
+          .select("primary_ticker,target_ticker")
+          .or(`primary_ticker.ilike.%${sanitizedQuery}%,target_ticker.ilike.%${sanitizedQuery}%`)
+          .limit(24),
+    }),
+    fetchOptionalSupabaseRows<EventCompanyRow>({
+      resource: "companyService.searchCompanies.events",
+      table: "events",
+      execute: async () =>
+        await supabase!
+          .from("events")
+          .select("ticker,headline,metadata")
+          .limit(3000),
+    }),
+  ]);
 
-      return await supabase
-        .from("company_profiles")
-        .select("ticker,name")
-        .or(`ticker.ilike.%${sanitizedQuery}%,name.ilike.%${sanitizedQuery}%`)
-        .limit(8);
-    },
-    transform: (rows) => rankCompanySearchResults(rows.map(toCompanySearchResult), sanitizedQuery).slice(0, 8),
+  const candidates = new Map<string, CompanySearchResult>();
+  profileRows.forEach((row) => addSearchCandidate(candidates, row.ticker, row.name));
+  graphRows.forEach((row) => {
+    addSearchCandidate(candidates, row.source_ticker, row.source_name);
+    addSearchCandidate(candidates, row.target_ticker, row.target_name);
   });
+  relatedRows.forEach((row) => {
+    addSearchCandidate(candidates, row.source_ticker, null);
+    addSearchCandidate(candidates, row.target_ticker, row.name || null);
+  });
+  signalRows.forEach((row) => {
+    addSearchCandidate(candidates, row.primary_ticker, null);
+    addSearchCandidate(candidates, row.target_ticker, null);
+  });
+
+  const uppercaseQuery = sanitizedQuery.toUpperCase();
+  eventRows
+    .filter((row) => {
+      const tickerValue = row.ticker?.toUpperCase() ?? "";
+      const headlineValue = row.headline?.toUpperCase() ?? "";
+      const inferredName = inferCompanyName(row)?.toUpperCase() ?? "";
+      return (
+        tickerValue.includes(uppercaseQuery) ||
+        headlineValue.includes(uppercaseQuery) ||
+        inferredName.includes(uppercaseQuery)
+      );
+    })
+    .forEach((row) => addSearchCandidate(candidates, row.ticker, inferCompanyName(row)));
+
+  const ranked = rankCompanySearchResults(Array.from(candidates.values()), sanitizedQuery).slice(0, 12);
+  if (ranked.length > 0) {
+    return ranked;
+  }
+
+  return getMockFallback<CompanySearchResult[]>(`/companies/search?query=${encodeURIComponent(sanitizedQuery)}`);
 }
 
 export async function getPriceHistory(ticker = "NVDA") {
@@ -253,9 +447,9 @@ export async function getPriceHistory(ticker = "NVDA") {
 
       return await supabase
         .from("daily_prices")
-        .select("date,trade_date,close,price,volume")
+        .select("trade_date,close,volume")
         .eq("ticker", normalizedTicker)
-        .order("date", { ascending: true })
+        .order("trade_date", { ascending: true })
         .limit(90);
     },
     transform: (rows) => rows.map(toPricePoint),

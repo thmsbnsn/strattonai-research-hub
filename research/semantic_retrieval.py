@@ -1,7 +1,11 @@
 from __future__ import annotations
 
+from datetime import UTC, datetime, timedelta
 from dataclasses import dataclass
+import hashlib
+import json
 import logging
+from pathlib import Path
 from typing import Any
 
 from .local_ai_config import LocalAIConfig
@@ -214,6 +218,11 @@ class SemanticRetriever:
         self._torch = None
 
     def ground(self, query: str, context: LocalAIContext) -> SemanticGroundingResult:
+        cache_key = self._cache_key(query, context.ticker)
+        cached = self._read_cache(cache_key)
+        if cached is not None:
+            LOGGER.info("[CACHE HIT] semantic grounding %s", cache_key)
+            return cached
         candidates = build_semantic_candidates(context)
         if not candidates:
             return SemanticGroundingResult(
@@ -234,7 +243,10 @@ class SemanticRetriever:
             f"Semantic retrieval evaluated {len(candidates)} structured candidates and selected {len(selected_candidates)} for grounding.",
             f"Semantic device: {self.config.semantic_device}.",
         ]
-        return SemanticGroundingResult(prompt=prompt, citations=citations, notes=notes)
+        result = SemanticGroundingResult(prompt=prompt, citations=citations, notes=notes)
+        self._write_cache(cache_key, result)
+        LOGGER.info("[CACHE MISS — written] semantic grounding %s", cache_key)
+        return result
 
     def _rank_candidates(
         self,
@@ -360,3 +372,50 @@ class SemanticRetriever:
                 )
             self._torch = torch
         return self._torch
+
+    def _cache_dir(self) -> Path:
+        return Path(__file__).resolve().parent / "cache" / "semantic"
+
+    def _cache_key(self, query: str, ticker: str | None) -> str:
+        payload = json.dumps({"query": query, "tickers": sorted([ticker] if ticker else [])}, sort_keys=True)
+        return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+    def _read_cache(self, cache_key: str) -> SemanticGroundingResult | None:
+        cache_path = self._cache_dir() / f"{cache_key}.json"
+        if not cache_path.exists():
+            return None
+        modified = datetime.fromtimestamp(cache_path.stat().st_mtime, tz=UTC)
+        if datetime.now(UTC) - modified > timedelta(hours=4):
+            return None
+        payload = json.loads(cache_path.read_text(encoding="utf-8"))
+        return SemanticGroundingResult(
+            prompt=str(payload.get("prompt", "")),
+            citations=[
+                ContextCitation(
+                    kind=str(item.get("kind", "study")),
+                    title=str(item.get("title", "")),
+                    detail=str(item.get("detail", "")),
+                    ticker=item.get("ticker"),
+                )
+                for item in payload.get("citations", [])
+            ],
+            notes=[str(note) for note in payload.get("notes", [])],
+        )
+
+    def _write_cache(self, cache_key: str, result: SemanticGroundingResult) -> None:
+        cache_path = self._cache_dir() / f"{cache_key}.json"
+        cache_path.parent.mkdir(parents=True, exist_ok=True)
+        payload = {
+            "prompt": result.prompt,
+            "citations": [
+                {
+                    "kind": citation.kind,
+                    "title": citation.title,
+                    "detail": citation.detail,
+                    "ticker": citation.ticker,
+                }
+                for citation in result.citations
+            ],
+            "notes": result.notes,
+        }
+        cache_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")

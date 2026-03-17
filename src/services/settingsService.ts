@@ -6,9 +6,11 @@ import type {
   RelationshipMapping,
   SettingsDataSourceKey,
   SettingsEnvelope,
+  TradingSettings,
 } from "@/types";
 
 const SETTINGS_STORAGE_KEY = "strattonai.settings.v1";
+const TRADING_SETTINGS_STORAGE_KEY = "strattonai_trading_settings";
 
 const defaultDataSources: AppSettings["dataSources"] = [
   {
@@ -52,6 +54,13 @@ const defaultNotifications: NotificationPreferences = {
   weeklyReport: true,
 };
 
+const defaultTrading: TradingSettings = {
+  alpacaMode: "paper",
+  liveTradingConfirmed: false,
+  startingCapital: 1000,
+  pennyStockUniverseEnabled: true,
+};
+
 const defaultSettings: AppSettings = {
   version: 1,
   updatedAt: new Date().toISOString(),
@@ -59,6 +68,7 @@ const defaultSettings: AppSettings = {
   classification: buildDefaultClassificationToggles(),
   relationshipMappings: defaultRelationshipMappings,
   notifications: defaultNotifications,
+  trading: defaultTrading,
 };
 
 function canUseLocalStorage() {
@@ -109,6 +119,18 @@ function normalizeNotifications(value: NotificationPreferences | undefined): Not
   };
 }
 
+function normalizeTradingSettings(value: TradingSettings | undefined): TradingSettings {
+  return {
+    alpacaMode: value?.alpacaMode === "live" ? "live" : "paper",
+    liveTradingConfirmed: Boolean(value?.liveTradingConfirmed),
+    startingCapital:
+      typeof value?.startingCapital === "number" && Number.isFinite(value.startingCapital)
+        ? Math.max(0, value.startingCapital)
+        : defaultTrading.startingCapital,
+    pennyStockUniverseEnabled: value?.pennyStockUniverseEnabled ?? defaultTrading.pennyStockUniverseEnabled,
+  };
+}
+
 export function normalizeSettings(value: Partial<AppSettings> | null | undefined): AppSettings {
   return {
     version: 1,
@@ -117,6 +139,7 @@ export function normalizeSettings(value: Partial<AppSettings> | null | undefined
     classification: normalizeClassification(value?.classification),
     relationshipMappings: normalizeRelationshipMappings(value?.relationshipMappings),
     notifications: normalizeNotifications(value?.notifications),
+    trading: normalizeTradingSettings(value?.trading),
   };
 }
 
@@ -162,6 +185,7 @@ export async function saveSettings(settings: AppSettings): Promise<SettingsEnvel
 
   if (canUseLocalStorage()) {
     window.localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(normalized));
+    window.localStorage.setItem(TRADING_SETTINGS_STORAGE_KEY, JSON.stringify(normalized.trading));
   }
 
   return buildEnvelope(normalized);
@@ -185,6 +209,41 @@ export function getEnabledClassificationCategories(settings = readSettingsSnapsh
     .map((toggle) => toggle.category);
 
   return enabledCategories.length > 0 ? enabledCategories : [...CANONICAL_EVENT_CATEGORIES];
+}
+
+export function readTradingSettingsSnapshot(): TradingSettings {
+  if (!canUseLocalStorage()) {
+    return normalizeTradingSettings(defaultTrading);
+  }
+
+  try {
+    const rawValue = window.localStorage.getItem(TRADING_SETTINGS_STORAGE_KEY);
+    if (!rawValue) {
+      return normalizeTradingSettings(readSettingsSnapshot().trading);
+    }
+    return normalizeTradingSettings(JSON.parse(rawValue) as TradingSettings);
+  } catch {
+    return normalizeTradingSettings(readSettingsSnapshot().trading);
+  }
+}
+
+export function saveTradingSettings(settings: TradingSettings) {
+  const normalized = normalizeTradingSettings(settings);
+  if (canUseLocalStorage()) {
+    window.localStorage.setItem(TRADING_SETTINGS_STORAGE_KEY, JSON.stringify(normalized));
+    const base = readSettingsSnapshot();
+    window.localStorage.setItem(
+      SETTINGS_STORAGE_KEY,
+      JSON.stringify(
+        normalizeSettings({
+          ...base,
+          updatedAt: new Date().toISOString(),
+          trading: normalized,
+        })
+      )
+    );
+  }
+  return normalized;
 }
 
 export function updateDataSourceToggle(

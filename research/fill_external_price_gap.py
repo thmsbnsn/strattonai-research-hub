@@ -21,7 +21,7 @@ import pyarrow.parquet as pq
 
 from ingestion.load_price_series_file import inspect_price_series_file, load_price_series_file
 
-from .load_prices_to_supabase import run_load
+from .load_prices_to_supabase import load_ticker_prices, run_load
 from .massive_config import MassiveConfig, load_massive_config
 from .massive_price_backfill import HistoricalPriceRow, _fetch_massive_rows
 from .price_dataset import collect_study_tickers, resolve_price_dataset_path
@@ -36,10 +36,31 @@ except ImportError:  # pragma: no cover - optional dependency path
     BotoConfig = None
     ClientError = Exception
 
+try:  # pragma: no cover - optional dependency path
+    import yfinance as yf
+except ImportError:  # pragma: no cover
+    yf = None
+
+try:  # pragma: no cover - optional dependency path
+    from databento import Historical as DatabentoHistorical
+except ImportError:  # pragma: no cover
+    DatabentoHistorical = None
+
 
 LOGGER = logging.getLogger("research.fill_external_price_gap")
 CSV_HEADER = ["Date", "Ticker", "Open", "High", "Low", "Close", "Volume", "Dividends", "Stock Splits"]
 FORWARD_RETURN_BUFFER_DAYS = 45
+TTM_MIN_START_DATE = date(2018, 1, 1)
+YFINANCE_MIN_ROWS = 500
+YFINANCE_MAX_BUSINESS_DAYS_STALE = 5
+DATABENTO_DATASETS: tuple[str, ...] = (
+    "EQUS.SUMMARY",
+    "XNYS.PILLAR",
+    "XNAS.BASIC",
+    "ARCX.PILLAR",
+    "XCIS.PILLAR",
+    "XASE.PILLAR",
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -64,6 +85,8 @@ class TickerGapFillResult:
     rows_found: int
     rows_added: int
     attempts: tuple[ProviderAttempt, ...]
+    missing_dates_count: int = 0
+    supabase_rows_written: int = 0
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -73,6 +96,8 @@ class TickerGapFillResult:
             "selected_provider": self.selected_provider,
             "rows_found": self.rows_found,
             "rows_added": self.rows_added,
+            "missing_dates_count": self.missing_dates_count,
+            "supabase_rows_written": self.supabase_rows_written,
             "attempts": [attempt.to_dict() for attempt in self.attempts],
         }
 
@@ -193,7 +218,57 @@ def _determine_event_ranges(repo_root: Path, tickers: Iterable[str]) -> dict[str
             min(current[0], event_date),
             max(current[1], event_date + timedelta(days=FORWARD_RETURN_BUFFER_DAYS)),
         )
+    if "TTM" in tickers_set:
+        current = ranges.get("TTM")
+        if current is not None:
+            ranges["TTM"] = (min(current[0], TTM_MIN_START_DATE), current[1])
     return ranges
+
+
+def _derive_explicit_refresh_range(base_price_path: Path, ticker: str) -> tuple[date, date]:
+    today = _most_recent_business_day(datetime.now(UTC).date())
+    series = load_price_series_file(base_price_path, tickers={ticker})
+    last_local_date = max(
+        (point.date for series_item in series for point in series_item.prices),
+        default=None,
+    )
+    if last_local_date is not None and last_local_date >= today:
+        return today, today
+    if last_local_date is not None:
+        return last_local_date + timedelta(days=1), today
+    if ticker.upper() == "TTM":
+        return TTM_MIN_START_DATE, today
+    return today - timedelta(days=365 * 5), today
+
+
+def _most_recent_business_day(reference: date) -> date:
+    current = reference
+    while current.weekday() >= 5:
+        current -= timedelta(days=1)
+    return current
+
+
+def _business_days_stale(last_trade_date: date, today: date) -> int:
+    if last_trade_date >= today:
+        return 0
+    stale = 0
+    current = last_trade_date + timedelta(days=1)
+    while current <= today:
+        if current.weekday() < 5:
+            stale += 1
+        current += timedelta(days=1)
+    return stale
+
+
+def _missing_business_dates(rows: list[HistoricalPriceRow], start_date: date, end_date: date) -> int:
+    observed = {date.fromisoformat(row.trade_date) for row in rows}
+    missing = 0
+    current = start_date
+    while current <= end_date:
+        if current.weekday() < 5 and current not in observed:
+            missing += 1
+        current += timedelta(days=1)
+    return missing
 
 
 def _existing_price_keys(path: Path, tickers: set[str]) -> tuple[set[tuple[str, str]], str]:
@@ -339,6 +414,176 @@ def _fetch_from_massive_rest(repo_root: Path, ticker: str, start_date: date, end
     if rows:
         return rows, _attempt_summary("massive_rest", "success", "Massive REST returned daily aggregate rows.", rows)
     return [], ProviderAttempt("massive_rest", "no_rows", 0, "Massive REST returned zero daily aggregate rows for the requested range.")
+
+
+def _fetch_from_yfinance(repo_root: Path, ticker: str, start_date: date, end_date: date) -> tuple[list[HistoricalPriceRow], ProviderAttempt]:
+    if yf is None:
+        return [], ProviderAttempt("yfinance", "unavailable", 0, "yfinance is not installed.")
+    fetch_start = min(start_date, TTM_MIN_START_DATE) if ticker.upper() == "TTM" else start_date
+    try:
+        history = yf.download(
+            tickers=ticker,
+            start=fetch_start.isoformat(),
+            end=(end_date + timedelta(days=1)).isoformat(),
+            interval="1d",
+            auto_adjust=False,
+            progress=False,
+            threads=False,
+        )
+    except Exception as exc:  # pragma: no cover - network path
+        return [], ProviderAttempt("yfinance", "error", 0, str(exc))
+
+    if history is None or getattr(history, "empty", False):
+        return [], ProviderAttempt("yfinance", "no_rows", 0, "Yahoo Finance returned no rows for the requested ticker.")
+
+    rows: list[HistoricalPriceRow] = []
+    for trade_date, row in history.iterrows():
+        close_value = float(row.get("Close", 0.0) or 0.0)
+        if close_value == 0.0:
+            continue
+        rows.append(
+            HistoricalPriceRow(
+                trade_date=trade_date.date().isoformat(),
+                ticker=ticker.upper(),
+                open=float(row.get("Open", close_value) or close_value),
+                high=float(row.get("High", close_value) or close_value),
+                low=float(row.get("Low", close_value) or close_value),
+                close=close_value,
+                volume=float(row.get("Volume", 0.0) or 0.0),
+            )
+        )
+    if rows:
+        rows.sort(key=lambda row: row.trade_date)
+        last_trade_date = date.fromisoformat(rows[-1].trade_date)
+        stale_days = _business_days_stale(last_trade_date, _most_recent_business_day(datetime.now(UTC).date()))
+        if len(rows) < YFINANCE_MIN_ROWS:
+            return [], ProviderAttempt(
+                "yfinance",
+                "insufficient_rows",
+                len(rows),
+                f"Yahoo Finance returned only {len(rows)} rows; minimum required is {YFINANCE_MIN_ROWS}.",
+                rows[0].trade_date,
+                rows[-1].trade_date,
+            )
+        if stale_days > YFINANCE_MAX_BUSINESS_DAYS_STALE:
+            return [], ProviderAttempt(
+                "yfinance",
+                "stale",
+                len(rows),
+                f"Yahoo Finance max trade date is stale by {stale_days} business day(s).",
+                rows[0].trade_date,
+                rows[-1].trade_date,
+            )
+        return rows, _attempt_summary("yfinance", "success", "Yahoo Finance returned historical daily rows.", rows)
+    return [], ProviderAttempt("yfinance", "no_rows", 0, "Yahoo Finance rows were empty after normalization.")
+
+
+def _databento_client(repo_root: Path):
+    if DatabentoHistorical is None:
+        raise RuntimeError("databento is not installed.")
+
+    env = _load_env_file(repo_root / ".env")
+    api_key = env.get("DATABENTO_API_KEY")
+    if not api_key:
+        raise RuntimeError("DATABENTO_API_KEY is missing.")
+    return DatabentoHistorical(key=api_key)
+
+
+def _databento_dataset_start(client, dataset: str) -> date | None:
+    try:
+        dataset_range = client.metadata.get_dataset_range(dataset)
+    except Exception:
+        return None
+    start_value = dataset_range.get("start") if isinstance(dataset_range, dict) else None
+    if not start_value:
+        return None
+    return datetime.fromisoformat(str(start_value).replace("Z", "+00:00")).date()
+
+
+def _rows_from_databento_frame(dataframe, ticker: str) -> list[HistoricalPriceRow]:
+    if dataframe is None or getattr(dataframe, "empty", True):
+        return []
+
+    rows: list[HistoricalPriceRow] = []
+    for trade_timestamp, row in dataframe.iterrows():
+        close_value = float(row.get("close", 0.0) or 0.0)
+        if close_value == 0.0:
+            continue
+        trade_date = getattr(trade_timestamp, "date", lambda: trade_timestamp)()
+        trade_date_str = trade_date.isoformat() if hasattr(trade_date, "isoformat") else str(trade_date)
+        rows.append(
+            HistoricalPriceRow(
+                trade_date=trade_date_str,
+                ticker=ticker.upper(),
+                open=float(row.get("open", close_value) or close_value),
+                high=float(row.get("high", close_value) or close_value),
+                low=float(row.get("low", close_value) or close_value),
+                close=close_value,
+                volume=float(row.get("volume", 0.0) or 0.0),
+            )
+        )
+    rows.sort(key=lambda item: item.trade_date)
+    return rows
+
+
+def _fetch_from_databento(repo_root: Path, ticker: str, start_date: date, end_date: date) -> tuple[list[HistoricalPriceRow], ProviderAttempt]:
+    try:
+        client = _databento_client(repo_root)
+    except Exception as exc:
+        return [], ProviderAttempt("databento", "unavailable", 0, str(exc))
+
+    attempt_messages: list[str] = []
+    for dataset in DATABENTO_DATASETS:
+        dataset_start = _databento_dataset_start(client, dataset)
+        effective_start = max(start_date, dataset_start) if dataset_start else start_date
+        if effective_start > end_date:
+            attempt_messages.append(f"{dataset}: range starts after requested window")
+            continue
+
+        try:
+            resolution = client.symbology.resolve(
+                dataset=dataset,
+                symbols=[ticker],
+                stype_in="raw_symbol",
+                stype_out="instrument_id",
+                start_date=effective_start.isoformat(),
+                end_date=end_date.isoformat(),
+            )
+        except Exception as exc:
+            attempt_messages.append(f"{dataset}: symbology error {exc}")
+            continue
+
+        if ticker in set(resolution.get("not_found") or []):
+            attempt_messages.append(f"{dataset}: symbol not found")
+            continue
+
+        try:
+            store = client.timeseries.get_range(
+                dataset=dataset,
+                symbols=[ticker],
+                start=effective_start.isoformat(),
+                end=end_date.isoformat(),
+                schema="ohlcv-1d",
+                stype_in="raw_symbol",
+            )
+            dataframe = store.to_df()
+        except Exception as exc:
+            attempt_messages.append(f"{dataset}: fetch error {exc}")
+            continue
+
+        rows = _rows_from_databento_frame(dataframe, ticker)
+        if rows:
+            return rows, _attempt_summary(
+                "databento",
+                "success",
+                f"Databento returned historical OHLCV rows from {dataset}.",
+                rows,
+            )
+
+        attempt_messages.append(f"{dataset}: resolved but returned no OHLCV rows")
+
+    message = "; ".join(attempt_messages[:6]) or "Databento returned no usable rows for the requested ticker."
+    return [], ProviderAttempt("databento", "no_rows", 0, message[:400])
 
 
 def _build_massive_s3_client(config: MassiveConfig):
@@ -629,6 +874,8 @@ def _fetch_from_alpha_vantage(repo_root: Path, ticker: str, start_date: date, en
 def _iter_provider_fetchers() -> tuple[ProviderFetcher, ...]:
     return (
         _fetch_from_massive_rest,
+        _fetch_from_yfinance,
+        _fetch_from_databento,
         _fetch_from_massive_flatfiles,
         _fetch_from_alpaca,
         _fetch_from_fmp,
@@ -678,6 +925,44 @@ def build_markdown_report(report: ExternalPriceGapFillReport) -> str:
     return "\n".join(lines) + "\n"
 
 
+def _write_optional_ttm_report(repo_root: Path, report: ExternalPriceGapFillReport) -> None:
+    ttm_result = next((result for result in report.results if result.ticker == "TTM"), None)
+    if ttm_result is None:
+        return
+
+    ttm_json_path = repo_root / "reports" / "ttm_price_gap_fill_report.json"
+    ttm_markdown_path = repo_root / "reports" / "ttm_price_gap_fill_report.md"
+    selected_attempt = next((attempt for attempt in ttm_result.attempts if attempt.provider == ttm_result.selected_provider), None)
+    payload = {
+        "ticker": "TTM",
+        "rows_added": ttm_result.rows_added,
+        "date_range_start": selected_attempt.first_date if selected_attempt else None,
+        "date_range_end": selected_attempt.last_date if selected_attempt else None,
+        "missing_dates_count": ttm_result.missing_dates_count,
+        "provider_used": ttm_result.selected_provider,
+        "supabase_rows_written": ttm_result.supabase_rows_written,
+        "timestamp": report.completed_at,
+    }
+    ttm_json_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    ttm_markdown_path.write_text(
+        "\n".join(
+            [
+                "# TTM Price Gap Fill",
+                "",
+                f"- Ticker: `{payload['ticker']}`",
+                f"- Rows added: {payload['rows_added']}",
+                f"- Date range: {payload['date_range_start'] or 'n/a'} -> {payload['date_range_end'] or 'n/a'}",
+                f"- Missing business dates: {payload['missing_dates_count']}",
+                f"- Provider used: {payload['provider_used'] or 'None'}",
+                f"- Supabase rows written: {payload['supabase_rows_written']}",
+                f"- Timestamp: {payload['timestamp']}",
+                "",
+            ]
+        ),
+        encoding="utf-8",
+    )
+
+
 def run_fill(
     repo_root: Path,
     *,
@@ -695,6 +980,17 @@ def run_fill(
     if not previous_max_date:
         previous_max_date = inspect_price_series_file(base_price_path).max_date or ""
     event_ranges = _determine_event_ranges(repo_root, target_tickers)
+    explicit_tickers = set(_normalize_tickers(ticker_overrides))
+    for ticker in explicit_tickers:
+        existing = event_ranges.get(ticker)
+        refresh_start, refresh_end = _derive_explicit_refresh_range(base_price_path, ticker)
+        if existing is None:
+            event_ranges[ticker] = (refresh_start, refresh_end)
+            continue
+        event_ranges[ticker] = (
+            min(existing[0], refresh_start) if ticker.upper() == "TTM" else existing[0],
+            max(existing[1], refresh_end),
+        )
 
     backfill_dir = base_price_path.parent / "backfills"
     backfill_csv_path = backfill_dir / "external_price_gap_backfill.csv"
@@ -716,6 +1012,8 @@ def run_fill(
                     selected_provider=None,
                     rows_found=0,
                     rows_added=0,
+                    missing_dates_count=0,
+                    supabase_rows_written=0,
                     attempts=(
                         ProviderAttempt(
                             provider="event_range",
@@ -755,6 +1053,8 @@ def run_fill(
                 selected_provider=selected_provider,
                 rows_found=len(selected_rows),
                 rows_added=len(unique_new_rows),
+                missing_dates_count=_missing_business_dates(selected_rows, start_date, end_date) if selected_rows else 0,
+                supabase_rows_written=0,
                 attempts=tuple(attempts),
             )
         )
@@ -780,16 +1080,34 @@ def run_fill(
 
     supabase_rows_upserted = 0
     if not dry_run and fetched_rows and load_supabase and coverage_path.exists():
-        summary = run_load(
-            repo_root,
-            price_file=str(coverage_path),
-            bootstrap_schema=bootstrap_daily_prices_schema,
-            schema_file=str(repo_root / "supabase" / "sql" / "008_add_daily_prices.sql"),
-            ticker_filters=target_tickers,
-            study_universe=False,
-            dry_run=False,
-        )
-        supabase_rows_upserted = summary.rows_upserted
+        ticker_upserts: dict[str, int] = {}
+        for ticker in target_tickers:
+            if ticker not in {row.ticker for row in fetched_rows}:
+                continue
+            summary = load_ticker_prices(
+                ticker,
+                repo_root=repo_root,
+                price_file=str(coverage_path),
+                bootstrap_schema=bootstrap_daily_prices_schema,
+                dry_run=False,
+            )
+            ticker_upserts[ticker] = summary.rows_upserted
+            supabase_rows_upserted += summary.rows_upserted
+        if ticker_upserts:
+            results = [
+                TickerGapFillResult(
+                    ticker=result.ticker,
+                    start_date=result.start_date,
+                    end_date=result.end_date,
+                    selected_provider=result.selected_provider,
+                    rows_found=result.rows_found,
+                    rows_added=result.rows_added,
+                    missing_dates_count=result.missing_dates_count,
+                    supabase_rows_written=ticker_upserts.get(result.ticker, 0),
+                    attempts=result.attempts,
+                )
+                for result in results
+            ]
 
     return ExternalPriceGapFillReport(
         base_price_path=str(base_price_path),
@@ -831,6 +1149,7 @@ def main() -> int:
     markdown_output.parent.mkdir(parents=True, exist_ok=True)
     json_output.write_text(json.dumps(report.to_dict(), indent=2), encoding="utf-8")
     markdown_output.write_text(build_markdown_report(report), encoding="utf-8")
+    _write_optional_ttm_report(repo_root, report)
     LOGGER.info(
         "External price gap fill complete. target_tickers=%s filled=%s unresolved=%s rows_added=%s",
         list(report.target_tickers),

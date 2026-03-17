@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useTradingMode } from "@/hooks/useTradingMode";
 import { TradingModeSelector } from "@/components/trader/TradingModeSelector";
 import { CompanySearch } from "@/components/trader/CompanySearch";
@@ -12,10 +12,19 @@ import {
   LiveReadinessChecklist,
   RecentRelatedEvents,
 } from "@/components/trader/TraderCards";
+import { SignalReviewPanel } from "@/components/trader/SignalReviewPanel";
+import { PortfolioMonitorPanel } from "@/components/trader/PortfolioMonitorPanel";
+import { PortfolioConstructorPanel } from "@/components/trader/PortfolioConstructorPanel";
+import { RiskEnginePanel } from "@/components/trader/RiskEnginePanel";
+import { PennyStockPanel } from "@/components/trader/PennyStockPanel";
+import type { PortfolioAllocation } from "@/models";
+import { readTradingSettingsSnapshot } from "@/services/settingsService";
 
 export default function AITraderDashboard() {
   const { tradingMode, setTradingMode } = useTradingMode();
   const [selectedTicker, setSelectedTicker] = useState<string | null>(null);
+  const [allocations, setAllocations] = useState<PortfolioAllocation[]>([]);
+  const tradingSettings = useMemo(() => readTradingSettingsSnapshot(), []);
 
   return (
     <div className="space-y-5">
@@ -49,17 +58,17 @@ export default function AITraderDashboard() {
         {/* Left: company briefing (dominant) */}
         <div className="lg:col-span-8 space-y-4">
           {selectedTicker ? (
-            <CompanyBriefing ticker={selectedTicker} />
+            <CompanyBriefing ticker={selectedTicker} tradingMode={tradingMode} />
           ) : (
             <CompanyBriefingEmpty />
           )}
 
           {/* Supporting cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <TradeThesisCard ticker={selectedTicker} />
-            <EvidenceSummaryCard ticker={selectedTicker} />
-            <PaperTradeIdeaCard ticker={selectedTicker} />
-            <LiveReadinessChecklist ticker={selectedTicker} />
+            <TradeThesisCard ticker={selectedTicker} tradingMode={tradingMode} />
+            <EvidenceSummaryCard ticker={selectedTicker} tradingMode={tradingMode} />
+            <PaperTradeIdeaCard ticker={selectedTicker} tradingMode={tradingMode} />
+            <LiveReadinessChecklist ticker={selectedTicker} tradingMode={tradingMode} />
           </div>
         </div>
 
@@ -70,6 +79,18 @@ export default function AITraderDashboard() {
           <RecentRelatedEvents ticker={selectedTicker} />
         </div>
       </div>
+
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1.35fr_0.9fr]">
+        <SignalReviewPanel ticker={selectedTicker} />
+        <PortfolioMonitorPanel />
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1.2fr_1fr]">
+        <PortfolioConstructorPanel ticker={selectedTicker} onAllocationsChange={setAllocations} />
+        <RiskEnginePanel allocations={allocations} />
+      </div>
+
+      <PennyStockPanel tradingSettings={tradingSettings} />
     </div>
   );
 }

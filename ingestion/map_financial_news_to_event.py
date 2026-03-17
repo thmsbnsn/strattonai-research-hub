@@ -86,10 +86,10 @@ COMPANY_MAPPING_DECISIONS = {
     ),
     "tata motors": FinancialNewsCompanyMappingDecision(
         company_name="Tata Motors",
-        ticker="TTM",
-        canonical_entity_name="Tata Motors Limited",
-        strategy="nyse_adr",
-        notes="NYSE ADR ticker TTM is used as the deterministic tradable line because the project currently operates on exchange ticker strings without a separate home-listing convention.",
+        ticker=None,
+        canonical_entity_name=None,
+        strategy="unsupported",
+        notes="Skipped because the project is currently focused on U.S.-listed names and does not treat India-listed or ADR fallback lines as required coverage.",
     ),
     "tesla": FinancialNewsCompanyMappingDecision(
         company_name="Tesla",

@@ -1,0 +1,219 @@
+{
+  "template_metadata": {
+    "template_name": "n8n_targeted_research_template",
+    "schema_version": "1.0.0",
+    "template_only": true,
+    "purpose": "Contract between targeted_backfill_plan, n8n research collection, manual review, and final deterministic ingestion.",
+    "generated_from_plan_path": "reports/targeted_backfill_plan.json",
+    "notes": [
+      "All example values in this file are placeholders.",
+      "Do not ingest this file directly.",
+      "n8n may populate candidate examples, but review must approve them before they are copied into source-specific ingestion bundles."
+    ]
+  },
+  "workflow_contract": {
+    "source_of_truth": "Python and Supabase pipeline",
+    "n8n_role": [
+      "read ranked slice targets",
+      "run deterministic search tasks",
+      "collect candidate historical examples",
+      "document exact source evidence"
+    ],
+    "review_gate": "Every collected example stays ready_for_ingestion=false until manually or deterministically approved.",
+    "handoff_targets": [
+      "ingestion/templates/targeted_market_events_template.json",
+      "ingestion/templates/targeted_sec_filings_template.json"
+    ]
+  },
+  "research_slices": [
+    {
+      "placeholder_example": true,
+      "source_gap_key": "placeholder::Product Launch::NVDA::primary_exact",
+      "priority_rank": 1,
+      "priority_score": 34.5,
+      "gap_score": 16.0,
+      "event_category": "Product Launch",
+      "target_type": "primary_exact",
+      "primary_ticker": "NVDA",
+      "related_ticker": null,
+      "relationship_type": null,
+      "desired_sample_count": 6,
+      "current_sample_count": 2,
+      "gap_size": 4,
+      "why_this_slice_matters": "<placeholder: exact NVDA product-launch slices are still too thin for strong exact-horizon evidence>",
+      "suggested_source_type": "market-events",
+      "suggested_source_priority": [
+        "press-release",
+        "company-ir",
+        "major-news"
+      ],
+      "search_queries": [
+        {
+          "query_text": "<placeholder: NVDA product launch press release historical>",
+          "source_type": "press-release",
+          "priority": 1,
+          "notes": "<placeholder: prefer official launch announcements with publication date and product details>"
+        }
+      ],
+      "source_candidates": [
+        {
+          "candidate_id": "placeholder-nvda-product-launch-source-1",
+          "source_type": "press-release",
+          "source_name": "<placeholder-source-name>",
+          "source_url": "<placeholder-source-url>",
+          "retrieval_status": "pending_fetch",
+          "notes": "<placeholder: candidate source page or API result>"
+        }
+      ],
+      "collected_examples": [
+        {
+          "source_name": "<placeholder-source-name>",
+          "source_record_id": "<placeholder-source-record-id>",
+          "source_url": "<placeholder-source-url>",
+          "source_title": "<placeholder-source-title>",
+          "source_publisher": "<placeholder-source-publisher>",
+          "published_at": "<placeholder-published-at>",
+          "occurred_at": "<placeholder-occurred-at>",
+          "headline": "<placeholder-headline>",
+          "summary": "<placeholder-summary>",
+          "primary_ticker": "NVDA",
+          "related_companies": [],
+          "event_type_hint": "Product Launch",
+          "sentiment_hint": "positive",
+          "relationship_evidence": null,
+          "extraction_notes": "<placeholder: factual extraction notes only>",
+          "evidence_quote": "<placeholder-evidence-quote>",
+          "evidence_confidence": "unrated",
+          "duplicate_check_key": "<placeholder-source-name>|<placeholder-source-record-id>|NVDA|Product Launch|<placeholder-published-at>",
+          "ready_for_ingestion": false
+        }
+      ],
+      "review_status": "pending_research",
+      "reviewer_notes": "<placeholder-review-notes>"
+    },
+    {
+      "placeholder_example": true,
+      "source_gap_key": "placeholder::Legal/Regulatory::META::GOOGL::Sector Peer",
+      "priority_rank": 2,
+      "priority_score": 32.2,
+      "gap_score": 15.2,
+      "event_category": "Legal/Regulatory",
+      "target_type": "related_company",
+      "primary_ticker": "META",
+      "related_ticker": "GOOGL",
+      "relationship_type": "Sector Peer",
+      "desired_sample_count": 5,
+      "current_sample_count": 1,
+      "gap_size": 4,
+      "why_this_slice_matters": "<placeholder: Legal/Regulatory competitor-peer evidence is still fallback-heavy for Meta and Alphabet>",
+      "suggested_source_type": "sec-filings",
+      "suggested_source_priority": [
+        "sec-filings",
+        "major-news",
+        "regulator-release"
+      ],
+      "search_queries": [
+        {
+          "query_text": "<placeholder: Meta antitrust ruling Alphabet competitor legal regulatory historical>",
+          "source_type": "major-news",
+          "priority": 1,
+          "notes": "<placeholder: prefer sources that explicitly mention both companies or the competitive peer set>"
+        }
+      ],
+      "source_candidates": [],
+      "collected_examples": [
+        {
+          "source_name": "<placeholder-source-name>",
+          "source_record_id": "<placeholder-source-record-id>",
+          "source_url": "<placeholder-source-url>",
+          "source_title": "<placeholder-source-title>",
+          "source_publisher": "<placeholder-source-publisher>",
+          "published_at": "<placeholder-published-at>",
+          "occurred_at": "<placeholder-occurred-at>",
+          "headline": "<placeholder-headline>",
+          "summary": "<placeholder-summary>",
+          "primary_ticker": "META",
+          "related_companies": [
+            {
+              "ticker": "GOOGL",
+              "name": "<placeholder-related-company-name>",
+              "relationship": "Sector Peer"
+            }
+          ],
+          "event_type_hint": "Legal/Regulatory",
+          "sentiment_hint": "negative",
+          "relationship_evidence": "<placeholder: quote or note showing why GOOGL is the intended peer attachment>",
+          "extraction_notes": "<placeholder: explain whether the evidence is direct or only context>",
+          "evidence_quote": "<placeholder-evidence-quote>",
+          "evidence_confidence": "unrated",
+          "duplicate_check_key": "<placeholder-source-name>|<placeholder-source-record-id>|META|Legal/Regulatory|<placeholder-published-at>",
+          "ready_for_ingestion": false
+        }
+      ],
+      "review_status": "pending_review",
+      "reviewer_notes": "<placeholder-review-notes>"
+    },
+    {
+      "placeholder_example": true,
+      "source_gap_key": "placeholder::Partnership::NVDA::TSM::Supplier",
+      "priority_rank": 3,
+      "priority_score": 30.8,
+      "gap_score": 14.4,
+      "event_category": "Partnership",
+      "target_type": "relationship_slice",
+      "primary_ticker": "NVDA",
+      "related_ticker": "TSM",
+      "relationship_type": "Supplier",
+      "desired_sample_count": 6,
+      "current_sample_count": 1,
+      "gap_size": 5,
+      "why_this_slice_matters": "<placeholder: relationship-path evidence for supplier-linked partnerships is still one of the thinnest high-usage slices>",
+      "suggested_source_type": "sec-filings",
+      "suggested_source_priority": [
+        "sec-filings",
+        "company-ir",
+        "major-news"
+      ],
+      "search_queries": [
+        {
+          "query_text": "<placeholder: NVIDIA TSMC supplier partnership expansion announcement historical>",
+          "source_type": "company-ir",
+          "priority": 1,
+          "notes": "<placeholder: prefer announcements with explicit supplier wording or manufacturing dependency>"
+        }
+      ],
+      "source_candidates": [],
+      "collected_examples": [
+        {
+          "source_name": "<placeholder-source-name>",
+          "source_record_id": "<placeholder-source-record-id>",
+          "source_url": "<placeholder-source-url>",
+          "source_title": "<placeholder-source-title>",
+          "source_publisher": "<placeholder-source-publisher>",
+          "published_at": "<placeholder-published-at>",
+          "occurred_at": "<placeholder-occurred-at>",
+          "headline": "<placeholder-headline>",
+          "summary": "<placeholder-summary>",
+          "primary_ticker": "NVDA",
+          "related_companies": [
+            {
+              "ticker": "TSM",
+              "name": "<placeholder-related-company-name>",
+              "relationship": "Supplier"
+            }
+          ],
+          "event_type_hint": "Partnership",
+          "sentiment_hint": "neutral",
+          "relationship_evidence": "<placeholder: direct supplier-path evidence>",
+          "extraction_notes": "<placeholder: include the exact text linking the companies through supply/manufacturing>",
+          "evidence_quote": "<placeholder-evidence-quote>",
+          "evidence_confidence": "unrated",
+          "duplicate_check_key": "<placeholder-source-name>|<placeholder-source-record-id>|NVDA|Partnership|<placeholder-published-at>",
+          "ready_for_ingestion": false
+        }
+      ],
+      "review_status": "pending_review",
+      "reviewer_notes": "<placeholder-review-notes>"
+    }
+  ]
+}

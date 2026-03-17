@@ -9,15 +9,15 @@ As of the latest verified pass:
 - Events in Supabase: `2317`
 - Financial-news rows normalized through the deterministic pipeline: `2274`
 - Stored `financial_news_local` rows: `2235`
-- Additional normalized rows unlocked by the Tata Motors mapping expansion: `289`
-- Additional stored `financial_news_local` rows unlocked by the mapping expansion: `287`
 - Detailed event-study rows: `1217`
 - UI event-study summary rows: `40`
 - Valid forward-return observations: `17747`
 - Signals: `1620`
 - Confidence bands: `High 148`, `Moderate 213`, `Low 1259`
 - Extended local price coverage max date: `2026-03-13`
-- Events still missing primary price history: `287` (currently all `TTM`)
+- Current full-system health check status: `System Ready`
+- Migration verifier and full-system health check operator tools are now available
+- The AI Trader workspace now has a unified company-briefing payload, live order-preview, risk-gate, loop-history, and price-gap controls through the local gateway
 
 Category counts after the evidence-quality pass:
 
@@ -46,11 +46,18 @@ Category counts after the evidence-quality pass:
 - Supabase-backed service layer with graceful mock fallback
 - React Query data loading
 - Functional Settings page persisted in local storage and wired into runtime behavior
+- Database-backed company search now works on both the research-side Companies page and the AI Trader workspace
 - AI Trader dashboard shell with:
   - company search
-  - company briefing
+  - unified company briefing backed by the local gateway
   - top-signal and research widgets
   - local AI chat panel wired for grounded responses through a repo-local gateway
+  - route-based citation drill-through into Events, Companies, and Event Studies
+  - signal review with simulation approval
+  - portfolio monitor and equity-curve view
+  - portfolio constructor with mean-variance, Kelly, and risk-parity sizing
+  - deterministic risk-engine diagnostics
+  - penny-stock sandbox controls
 
 ### What is the current potential of the program? What can it do?
 
@@ -62,13 +69,13 @@ Today StrattonAI can operate as a real research workstation rather than a static
 - It can rank signals for primary and related tickers, expose those signals in the UI, and show live event-study and signal data when Supabase is available.
 - It can run coverage audits, generate targeted backfill plans, and report where the evidence base is still weak.
 - It can power a local AI-assisted trader workspace: the AI Trader shell, company briefing view, and chat panel can now read grounded research context instead of operating as an isolated mock interface.
+- It can assemble one deterministic briefing payload for a selected company, combining profile, latest price coverage, recent events, relationship graph context, study slices, signals, and live-readiness guardrails.
 
 What it still does not do by design:
 
 - It does not use opaque model scoring to replace the deterministic research pipeline.
 - It does not require live market APIs during normal research runs once local datasets are built.
 - It does not auto-trade or place broker orders as part of the current production workflow.
-- It does not yet have complete price coverage for every mapped ticker, with `TTM` still the main uncovered gap.
 
 ### Deterministic Research Pipeline
 
@@ -84,6 +91,20 @@ What it still does not do by design:
 - Coverage audit, low-confidence diagnostics, and targeted backfill planning
 - Shared local price resolver with Parquet-first loading
 - Massive-backed local historical price backfill
+- Study-universe price-gap filler with provider fallback and optional downstream recompute
+- Supabase migration verifier for schema stages `009` through `013`
+- Full-system health check covering Supabase, gateway, Ollama, price recency, migration status, and Alpaca sandbox reachability
+- Market-regime classification persisted to Supabase
+- Deterministic trader-side modules for:
+  - transaction cost modeling
+  - signal-to-trade simulation
+  - portfolio construction
+  - portfolio risk assessment
+  - unified hard risk gating
+  - order preview and buying-power validation
+  - penny-stock candidate generation
+  - paper-first trading-loop execution
+  - partnership backfill prioritization
 
 ### Local AI Layer
 
@@ -176,9 +197,9 @@ Latest dataset inspection summary:
   - `Goldman Sachs` -> `GS`
   - `JP Morgan Chase` -> `JPM`
   - `Microsoft` -> `MSFT`
-  - `Tata Motors` -> `TTM` using the NYSE ADR as the project’s canonical tradable line
   - `Tesla` -> `TSLA`
 - Currently skipped as unsupported deterministic mappings:
+  - `Tata Motors`
   - `Samsung Electronics`
   - `Reliance Industries`
 
@@ -224,7 +245,7 @@ Latest validated price coverage:
 - Backfill rows fetched: `7098`
 - Covered requested tickers after merge: `21`
 - Uncovered requested tickers after merge in the main extended dataset: none
-- Current uncovered mapped ticker during the evidence-quality pass: `TTM`
+- Current uncovered mapped ticker: none
 
 ## Key Reports
 
@@ -234,17 +255,24 @@ Generated reports are written under `reports/`. Current high-signal outputs incl
 - `massive_price_backfill.json`
 - `paperswithbacktest_price_import.json`
 - `external_price_gap_fill.json`
+- `study_universe_gap_fill.json`
+- `ttm_price_gap_fill_report.json`
+- `n8n_handoff_summary.json`
 - `financial_news_alignment_diff.json`
 - `daily_prices_load.json`
 - `coverage_audit.json`
+- `coverage_audit_diff.json`
 - `coverage_audit_after_news_alignment.json`
 - `low_confidence_diagnostics.json`
 - `targeted_backfill_plan.json`
+- `partnership_backfill_priorities.json`
+- `trading_loop_run_*.json`
 
 Useful current before/after diff:
 
 - `reports/financial_news_alignment_diff.md`
 - `reports/evidence_quality_pass_diff.md`
+- `reports/fmp_company_profiles.json`
 
 ## Main Workflows
 
@@ -288,13 +316,30 @@ python -m research.import_paperswithbacktest_prices --dry-run
 
 ### 6. Attempt to fill uncovered study tickers from external keyed providers
 
-This tries the configured provider stack in deterministic order and merges successful rows into the enriched local dataset that the shared resolver already prefers.
+This tries the configured provider stack in deterministic order and merges successful rows into the enriched local dataset that the shared resolver already prefers. The live stack now includes Massive REST, Yahoo Finance, Databento, Massive flat files, Alpaca, FMP, and Alpha Vantage.
 
 ```powershell
-python -m research.fill_external_price_gap --ticker TTM --dry-run
+python -m research.fill_external_price_gap --ticker SPY --dry-run
 ```
 
-### 7. Run the full financial-news alignment workflow
+### 7. Enrich company fundamentals and profiles from FMP
+
+This pulls fundamentals and descriptors from Financial Modeling Prep and upserts them into `company_profiles`.
+
+```powershell
+python -m research.fmp_company_profiles
+```
+
+### 8. Pull recent SEC filings into a local reusable dataset
+
+This uses the configured `SEC_API_KEY` to pull recent `8-K`, `10-Q`, and `10-K` filings for the current study universe, downloads the raw filing text, and writes a normalized JSON bundle that can go straight into the existing `sec-filings` ingestion path.
+
+```powershell
+python -m research.pull_sec_api_filings --start-date 2025-01-01 --limit-per-ticker 5 --download-text
+python -m ingestion.run_ingestion --source-type sec-filings --dry-run --input ..\data\events\secApi\sec_api_filings_2026-03-17.json
+```
+
+### 9. Run the full financial-news alignment workflow
 
 This inspects the news dataset, ingests normalized events, optionally backfills prices, recomputes studies, rescores signals, reruns the audit, and rebuilds the planner.
 
@@ -308,7 +353,7 @@ To reuse existing extended local price files without calling Massive again:
 python -m research.run_financial_news_alignment --skip-backfill
 ```
 
-### 8. Run the precision evidence-quality pass
+### 10. Run the precision evidence-quality pass
 
 This reruns the financial-news alignment inputs, applies the quality-focused targeted wave, recomputes studies, rescales signals, and regenerates diagnostics and planner outputs.
 
@@ -316,25 +361,117 @@ This reruns the financial-news alignment inputs, applies the quality-focused tar
 python -m research.run_precision_evidence_quality_pass
 ```
 
-### 9. Recompute event studies only
+### 11. Recompute event studies only
 
 ```powershell
 python -m research.recompute_all_event_studies
 ```
 
-### 10. Rescore signals only
+### 12. Rescore signals only
 
 ```powershell
 python -m research.rescore_all_recent_events
 ```
 
-### 11. Rerun audit and planner
+### 13. Rerun audit and planner
 
 ```powershell
 python -m research.generate_gap_report
 python -m research.build_targeted_backfill_plan
 python -m research.generate_low_confidence_diagnostics
 ```
+
+### 14. Fill uncovered study-universe price gaps
+
+This checks all distinct event tickers, attempts the deterministic external-provider stack for any ticker with insufficient `daily_prices` rows, and can optionally rerun the downstream research jobs after successful fills.
+
+```powershell
+python -m research.fill_study_universe_gaps --dry-run
+python -m research.fill_study_universe_gaps --ticker SPY --auto-recompute
+python -m research.fill_study_universe_gaps --min-rows 60 --auto-recompute
+```
+
+### 15. Refresh core market proxy price series
+
+```powershell
+python -m research.refresh_market_proxies
+```
+
+This refreshes `SPY/QQQ/DIA` into the enriched local dataset and `daily_prices`.
+
+### 16. Verify Supabase migrations `009` through `013`
+
+Use this before relying on portfolio allocations, market regimes, or extended paper-trade metadata.
+
+```powershell
+python -m supabase.scripts.apply_and_verify_migrations --dry-run
+python -m supabase.scripts.apply_and_verify_migrations
+```
+
+### 17. Run the full system health check
+
+```powershell
+python -m research.health_check
+python -m research.health_check --json
+```
+
+### 18. Inspect or persist the current market regime
+
+```powershell
+python -m research.market_regime --as-of 2026-03-13
+python -m research.market_regime --backfill-days 365
+```
+
+### 19. Simulate an approved signal as a paper trade
+
+```powershell
+python -m research.trade_simulator --signal-key <signal-key> --capital 1000 --dry-run --show-costs
+```
+
+### 20. Construct a deterministic portfolio from current signals
+
+```powershell
+python -m research.portfolio_constructor --method mean-variance --capital 1000 --dry-run
+python -m research.portfolio_constructor --method kelly --capital 1000 --dry-run
+python -m research.portfolio_constructor --method risk-parity --capital 1000 --dry-run
+```
+
+### 21. Inspect portfolio metrics and risk
+
+```powershell
+python -m research.portfolio_metrics
+python -m research.risk_engine --tickers NVDA,TSLA,AAPL --capital 1000
+```
+
+### 22. Build penny-stock candidates and run the sandbox loop
+
+```powershell
+python -m research.penny_stock_universe --refresh
+python -m research.penny_stock_signals --capital 15.00 --mode paper --top-n 10
+python -m research.trading_loop --universe penny --capital 15.00 --mode paper --dry-run
+```
+
+### 23. Generate a targeted Partnership backfill priority report
+
+```powershell
+python -m research.partnership_backfill_helper
+python -m research.partnership_backfill_helper --min-sample 5 --top-n 20
+```
+
+### 24. Build and ingest approved n8n targeted-backfill bundles
+
+Use this after the hosted n8n workflow has produced a reviewed bundle and a human reviewer has marked examples `ready_for_ingestion=true`.
+
+```powershell
+python -m ingestion.build_n8n_handoff_bundles
+python -m ingestion.run_ingestion --source-type market-events --input ingestion\\generated\\n8n_market_events_review_bundle.json
+python -m ingestion.run_ingestion --source-type sec-filings --input ingestion\\generated\\n8n_sec_filings_review_bundle.json
+```
+
+See:
+
+- `docs/N8N_TARGETED_BACKFILL_WORKFLOW.md`
+- `automation/n8n/strattonai_targeted_backfill_research_workflow.json`
 
 ## Desktop Launcher
 
@@ -399,6 +536,31 @@ npm run ai:stop
 - Deterministic fallback path: structured retrieval when semantic runtime dependencies are unavailable
 - The gateway health endpoint reports the active retrieval mode and semantic runtime readiness
 
+### Gateway-backed trader endpoints
+
+The same local gateway now exposes deterministic trader and portfolio endpoints used by the AI Trader dashboard:
+
+- `GET /portfolio/metrics`
+- `GET /market/regime`
+- `GET /alpaca/account`
+- `GET /alpaca/positions`
+- `GET /alpaca/orders`
+- `GET /health/migrations`
+- `GET /health/full`
+- `GET /trading/loop-history`
+- `GET /trading/loop-status/<job_id>`
+- `GET /research/fill-gaps/status`
+- `GET /research/price-coverage`
+- `GET /risk/gate-log`
+- `GET /penny-stock/candidates`
+- `POST /portfolio/construct`
+- `POST /risk/assess`
+- `POST /costs/estimate`
+- `POST /trade/simulate`
+- `POST /trading/preview-order`
+- `POST /trading/run-loop`
+- `POST /research/fill-gaps`
+
 ### Local AI runtime packages
 
 If the embedded Python runtime needs to be rebuilt on another machine, install:
@@ -438,16 +600,19 @@ npm run build
 - Secrets stay in `.env`. Do not hardcode or print them.
 - Massive is used only to build local historical files.
 - Supabase remains the first persistent backend for events, studies, signals, and UI-facing data.
+- Alpaca integration is paper-first and explicitly guarded in live mode. Live loop execution requires both `ALPACA_MODE=live` and `ALPACA_LIVE_CONFIRMED=true`.
+- The local gateway should be restarted after backend changes so migration and health endpoints reflect the current code.
 - Study and signal persistence now use full-sync recompute semantics, so stale historical rows do not survive after a clean recompute.
 - Explicit related-company rows remain preferred over inferred ones.
 - UI mock fallback is intentionally retained during this phase.
+- The AI Trader company briefing, trader cards, and chat drill-through now share one gateway-backed evidence payload instead of building separate partial views.
 
 ## Current Bottlenecks
 
 The system is now research-capable, but the evidence base is still uneven.
 
 - `Partnership` remains the thinnest category.
-- `TTM` is now mapped deterministically, but it still has no local price rows, so 287 Tata-linked events cannot yet contribute study observations.
+- Depending on your current Supabase state, migrations `009` through `013` may still need to be applied before all trader persistence paths are available.
 - `Product Launch` and `Legal/Regulatory` still generate many low-confidence signals.
 - Several exact relationship slices remain narrow:
   - `Legal/Regulatory / GOOGL / Sector Peer`
@@ -461,7 +626,7 @@ The system is now research-capable, but the evidence base is still uneven.
   - `Product Launch / TSM / Supplier`
   - `Product Launch / AMD / Competitor`
 - For several of those slices, the new diagnostics show the blocker is now weak edge quality rather than depth alone.
-- Remaining follow-up work should focus on targeted historical coverage quality and TTM price coverage, not new scoring formulas.
+- Remaining follow-up work should focus on targeted historical coverage quality and company-profile/fundamental enrichment, not new scoring formulas.
 
 ## Recommended Next Step
 
@@ -470,7 +635,7 @@ The next highest-value pass is a targeted historical expansion wave focused on:
 - remaining narrow exact relationship slices
 - deeper `Partnership` coverage
 - better `Product Launch` exact related-company slices
-- TTM local price coverage so the unlocked Tata Motors news corpus can contribute to studies and signals
+- fuller `company_profiles` and fundamentals coverage so the AI Trader briefing payload stays grounded
 
 ## Operator Notes
 

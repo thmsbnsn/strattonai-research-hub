@@ -10,7 +10,7 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 
 from research.event_study_models import StudyEvent
-from research.fill_external_price_gap import ProviderAttempt, run_fill
+from research.fill_external_price_gap import ProviderAttempt, _rows_from_databento_frame, run_fill
 from research.massive_price_backfill import HistoricalPriceRow
 from research.price_dataset import resolve_price_dataset_path
 
@@ -34,6 +34,28 @@ def _write_base_prices(path: Path) -> None:
 
 
 class ExternalPriceGapFillTests(unittest.TestCase):
+    def test_rows_from_databento_frame_normalizes_rows(self) -> None:
+        class _FakeTimestamp:
+            def __init__(self, year: int, month: int, day: int) -> None:
+                self._date = date(year, month, day)
+
+            def date(self):
+                return self._date
+
+        class _FakeFrame:
+            empty = False
+
+            def iterrows(self):
+                yield _FakeTimestamp(2024, 1, 2), {"open": 10.0, "high": 11.0, "low": 9.5, "close": 10.5, "volume": 1000}
+                yield _FakeTimestamp(2024, 1, 3), {"open": 10.6, "high": 11.1, "low": 10.2, "close": 10.9, "volume": 1200}
+
+        rows = _rows_from_databento_frame(_FakeFrame(), "ba")
+
+        self.assertEqual(len(rows), 2)
+        self.assertEqual(rows[0].ticker, "BA")
+        self.assertEqual(rows[0].trade_date, "2024-01-02")
+        self.assertEqual(rows[1].close, 10.9)
+
     def test_run_fill_writes_enriched_dataset_on_first_successful_provider(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)

@@ -9,6 +9,24 @@ type ChatRequest = {
   conversation?: AIChatTurn[];
 };
 
+type GatewayEnvelope<T> = {
+  success: boolean;
+  data: T;
+  error: string | null;
+};
+
+async function parseGatewayResponse<T>(response: Response): Promise<T> {
+  const payload = (await response.json()) as GatewayEnvelope<T> | T;
+  if (payload && typeof payload === "object" && "success" in payload) {
+    const envelope = payload as GatewayEnvelope<T>;
+    if (!envelope.success) {
+      throw new Error(envelope.error || "Gateway request failed.");
+    }
+    return envelope.data;
+  }
+  return payload as T;
+}
+
 function offlineHealth(detail: string): AIChatHealth {
   return {
     status: "offline",
@@ -31,7 +49,7 @@ export async function getAIHealth() {
       return offlineHealth(`Gateway health check failed with status ${response.status}.`);
     }
 
-    return (await response.json()) as AIChatHealth;
+    return await parseGatewayResponse<AIChatHealth>(response);
   } catch (error) {
     return offlineHealth(
       error instanceof Error
@@ -63,7 +81,7 @@ export async function sendAIChatMessage(request: ChatRequest): Promise<AIChatRes
       throw new Error(`Gateway chat failed with status ${response.status}.`);
     }
 
-    return (await response.json()) as AIChatResponse;
+    return await parseGatewayResponse<AIChatResponse>(response);
   } catch (error) {
     return {
       answer:

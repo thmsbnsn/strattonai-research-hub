@@ -40,6 +40,8 @@ This produces:
 - `reports/targeted_backfill_plan.md`
 - `ingestion/templates/targeted_market_events_template.json`
 - `ingestion/templates/targeted_sec_filings_template.json`
+- `docs/N8N_TARGETED_BACKFILL_WORKFLOW.md`
+- `ingestion/templates/n8n_targeted_research_template.json`
 
 ## Plan Fields
 
@@ -77,8 +79,12 @@ They are not meant to be ingested unchanged.
    - `python -m research.build_targeted_backfill_plan`
 3. Export starter templates:
    - `python -m research.export_backfill_templates`
-4. Fill the template records with real historical examples.
-5. Run the normal backfill workflow again.
+4. If n8n is being used for assisted collection, populate `ingestion/templates/n8n_targeted_research_template.json` first and review candidates there.
+5. Convert approved n8n examples into source-specific bundles:
+   - `python -m ingestion.build_n8n_handoff_bundles`
+6. Run the normal backfill workflow again against:
+   - `ingestion/generated/n8n_market_events_review_bundle.json`
+   - `ingestion/generated/n8n_sec_filings_review_bundle.json`
 
 ## Future Use
 

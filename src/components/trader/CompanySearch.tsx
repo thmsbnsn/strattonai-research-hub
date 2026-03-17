@@ -1,16 +1,21 @@
-import { useCallback, useDeferredValue, useMemo, useState } from "react";
+import { useCallback, useDeferredValue, useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Search } from "lucide-react";
 import { searchCompanies } from "@/services/companyService";
 
 interface CompanySearchProps {
   onSearch: (query: string) => void;
+  initialQuery?: string;
 }
 
-export function CompanySearch({ onSearch }: CompanySearchProps) {
-  const [query, setQuery] = useState("");
+export function CompanySearch({ onSearch, initialQuery = "" }: CompanySearchProps) {
+  const [query, setQuery] = useState(initialQuery);
   const trimmedQuery = query.trim();
   const deferredQuery = useDeferredValue(trimmedQuery);
+
+  useEffect(() => {
+    setQuery(initialQuery);
+  }, [initialQuery]);
 
   const suggestionsQuery = useQuery({
     queryKey: ["companies", "search", deferredQuery],

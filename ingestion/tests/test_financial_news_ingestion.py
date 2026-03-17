@@ -16,7 +16,7 @@ class FinancialNewsIngestionTests(unittest.TestCase):
     def test_company_mapping_is_deterministic(self) -> None:
         self.assertEqual(resolve_financial_news_company_ticker("Microsoft"), "MSFT")
         self.assertEqual(resolve_financial_news_company_ticker("JP Morgan Chase"), "JPM")
-        self.assertEqual(resolve_financial_news_company_ticker("Tata Motors"), "TTM")
+        self.assertIsNone(resolve_financial_news_company_ticker("Tata Motors"))
         self.assertIsNone(resolve_financial_news_company_ticker("Samsung Electronics"))
         self.assertIsNone(resolve_financial_news_company_ticker("Reliance Industries"))
 
@@ -24,9 +24,10 @@ class FinancialNewsIngestionTests(unittest.TestCase):
         tata = get_financial_news_company_mapping_decision("Tata Motors")
         samsung = get_financial_news_company_mapping_decision("Samsung Electronics")
 
-        self.assertEqual(tata.ticker, "TTM")
-        self.assertEqual(tata.strategy, "nyse_adr")
+        self.assertFalse(tata.is_supported)
+        self.assertEqual(tata.strategy, "unsupported")
         self.assertFalse(samsung.is_supported)
+        self.assertIn("U.S.-listed names", tata.notes)
         self.assertIn("canonical foreign-listing convention", samsung.notes)
 
     def test_source_record_id_is_stable_for_reruns(self) -> None:
@@ -112,7 +113,7 @@ class FinancialNewsIngestionTests(unittest.TestCase):
             map_financial_news_to_event_payload(row, 1)
         self.assertIn("canonical foreign-listing convention", str(error.exception))
 
-    def test_tata_motors_maps_through_shared_classifier(self) -> None:
+    def test_tata_motors_is_skipped_when_india_linked_names_are_out_of_scope(self) -> None:
         row = {
             "Date": "2025-06-17",
             "Headline": "Automaker signs an electric commercial vehicle software partnership to scale fleet deployments",
@@ -124,10 +125,9 @@ class FinancialNewsIngestionTests(unittest.TestCase):
             "Related_Company": "Tata Motors",
         }
 
-        normalized = normalize_event_record(map_financial_news_to_event_payload(row, 3))
-        self.assertEqual(normalized.ticker, "TTM")
-        self.assertEqual(normalized.category, "Partnership")
-        self.assertEqual(normalized.sentiment, "positive")
+        with self.assertRaises(FinancialNewsMappingError) as error:
+            map_financial_news_to_event_payload(row, 3)
+        self.assertIn("U.S.-listed names", str(error.exception))
 
     def test_batch_normalization_skips_unsupported_rows_without_failing_the_run(self) -> None:
         records = [

@@ -1,5 +1,5 @@
 {
-  "base_price_path": "C:\\Users\\tlben\\Bentlas\\StrattonAI\\data\\prices\\all_stock_data_extended.parquet",
+  "base_price_path": "C:\\Users\\tlben\\Bentlas\\StrattonAI\\data\\prices\\all_stock_data_extended_enriched.parquet",
   "base_price_format": "parquet",
   "enriched_parquet_path": "C:\\Users\\tlben\\Bentlas\\StrattonAI\\data\\prices\\all_stock_data_extended_enriched.parquet",
   "enriched_csv_path": "C:\\Users\\tlben\\Bentlas\\StrattonAI\\data\\prices\\all_stock_data_extended_enriched.csv",
@@ -13,18 +13,20 @@
     "TTM"
   ],
   "total_rows_added": 0,
-  "cumulative_backfill_rows": 0,
-  "previous_price_max_date": "2026-03-13",
-  "new_price_max_date": "2026-03-13",
+  "cumulative_backfill_rows": 1611,
+  "previous_price_max_date": "2023-01-23",
+  "new_price_max_date": "2023-01-23",
   "supabase_rows_upserted": 0,
   "results": [
     {
       "ticker": "TTM",
-      "start_date": "2025-02-01",
-      "end_date": "2025-09-28",
-      "selected_provider": null,
-      "rows_found": 0,
+      "start_date": "2018-01-01",
+      "end_date": "2026-03-17",
+      "selected_provider": "databento",
+      "rows_found": 1191,
       "rows_added": 0,
+      "missing_dates_count": 951,
+      "supabase_rows_written": 0,
       "attempts": [
         {
           "provider": "massive_rest",
@@ -35,39 +37,23 @@
           "last_date": null
         },
         {
-          "provider": "massive_flatfiles",
-          "status": "restricted",
-          "row_count": 0,
-          "message": "Massive flat-file credentials can list day_aggs_v1 keys but cannot download objects (403 Forbidden).",
-          "first_date": null,
-          "last_date": null
-        },
-        {
-          "provider": "alpaca",
+          "provider": "yfinance",
           "status": "no_rows",
           "row_count": 0,
-          "message": "Alpaca returned no bars. Asset status=inactive tradable=False exchange=NYSE.",
+          "message": "Yahoo Finance returned no rows for the requested ticker.",
           "first_date": null,
           "last_date": null
         },
         {
-          "provider": "fmp",
-          "status": "restricted",
-          "row_count": 0,
-          "message": "Premium Query Parameter: 'Special Endpoint : This value set for 'symbol' is not available under your current subscription please visit our subscription page to upgrade your plan at https://financialmodelingprep.com/",
-          "first_date": null,
-          "last_date": null
-        },
-        {
-          "provider": "alpha_vantage",
-          "status": "restricted",
-          "row_count": 0,
-          "message": "Thank you for using Alpha Vantage! The outputsize=full parameter value is a premium feature for the TIME_SERIES_DAILY endpoint. You may subscribe to any of the premium plans at https://www.alphavantage.co/premium/ to instantly unlock all premium features",
-          "first_date": null,
-          "last_date": null
+          "provider": "databento",
+          "status": "success",
+          "row_count": 1191,
+          "message": "Databento returned historical OHLCV rows from XNYS.PILLAR.",
+          "first_date": "2018-05-01",
+          "last_date": "2023-01-23"
         }
       ]
     }
   ],
-  "completed_at": "2026-03-16T17:35:36.230172+00:00"
+  "completed_at": "2026-03-17T05:05:39.474201+00:00"
 }

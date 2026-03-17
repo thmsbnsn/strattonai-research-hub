@@ -71,3 +71,4 @@ class SignalScore:
     median_return: Decimal
     win_rate: Decimal
     origin_type: SignalOriginType
+    metadata: dict[str, Any] = field(default_factory=dict)

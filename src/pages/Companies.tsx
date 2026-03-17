@@ -1,16 +1,28 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Search } from "lucide-react";
+import { useSearchParams } from "react-router-dom";
 import { AppLayout } from "@/components/AppLayout";
 import { ChartCard } from "@/components/ChartCard";
 import { CardSkeleton, ChartSkeleton, ListSkeleton } from "@/components/LoadingSkeletons";
 import { ErrorState } from "@/components/StateDisplays";
+import { RelationshipStudyTable } from "@/components/research/RelationshipStudyTable";
+import { CompanySearch } from "@/components/trader/CompanySearch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getCompanyProfile, getCompanyRelationships, getPriceHistory, getEventMarkers } from "@/services/companyService";
 import { getEvents } from "@/services/eventService";
+import { getCategorySummaryStudies } from "@/services/eventStudyStatisticsService";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from "recharts";
 
 export default function Companies() {
-  const [search, setSearch] = useState("NVDA");
+  const [searchParams] = useSearchParams();
+  const [search, setSearch] = useState((searchParams.get("search") || "NVDA").trim().toUpperCase());
+
+  useEffect(() => {
+    const nextSearch = (searchParams.get("search") || "NVDA").trim().toUpperCase();
+    if (nextSearch && nextSearch !== search) {
+      setSearch(nextSearch);
+    }
+  }, [search, searchParams]);
 
   const profile = useQuery({ queryKey: ["company", "profile", search], queryFn: () => getCompanyProfile(search) });
   const relationships = useQuery({ queryKey: ["company", "relationships"], queryFn: getCompanyRelationships });
@@ -25,6 +37,17 @@ export default function Companies() {
   const companyRelationships = relationships.data?.filter(
     (e) => e.source === profile.data?.ticker || e.target === profile.data?.ticker
   );
+  const mostCommonCategory = useMemo(() => {
+    const counts = new Map<string, number>();
+    (companyEvents ?? []).forEach((event) => counts.set(event.category, (counts.get(event.category) ?? 0) + 1));
+    return Array.from(counts.entries()).sort((left, right) => right[1] - left[1])[0]?.[0] ?? null;
+  }, [companyEvents]);
+  const studySummaryQuery = useQuery({
+    queryKey: ["studies", "category-summary", mostCommonCategory ?? "none", profile.data?.ticker ?? search],
+    queryFn: () => getCategorySummaryStudies(mostCommonCategory || ""),
+    enabled: Boolean(mostCommonCategory),
+  });
+  const compactSummary = ["1D", "3D", "5D", "10D", "20D"].map((horizon) => studySummaryQuery.data?.find((row) => row.horizon === horizon));
 
   return (
     <AppLayout>
@@ -34,15 +57,8 @@ export default function Companies() {
           <p className="text-sm text-muted-foreground mt-1">Deep-dive into company events and relationships</p>
         </div>
 
-        <div className="relative max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value.toUpperCase())}
-            placeholder="Search ticker..."
-            className="w-full pl-10 pr-4 py-2.5 bg-muted border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary font-mono"
-          />
+        <div className="max-w-2xl">
+          <CompanySearch onSearch={setSearch} initialQuery={search} />
         </div>
 
         {/* Company Overview */}
@@ -97,58 +113,95 @@ export default function Companies() {
           </ChartCard>
         ) : null}
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {/* Related Companies */}
-          <div className="terminal-card p-5">
-            <h3 className="text-sm font-semibold text-foreground mb-4">Related Companies</h3>
-            {relationships.isLoading ? (
-              <ListSkeleton count={3} />
-            ) : (
-              <div className="space-y-2">
-                {companyRelationships?.map((edge, i) => {
-                  const related = edge.source === profile.data?.ticker ? edge.target : edge.source;
-                  return (
-                    <div key={i} className="flex items-center justify-between p-2 rounded-lg bg-muted/30">
-                      <div className="flex items-center gap-2">
-                        <span className="font-mono text-xs font-bold text-primary">{related}</span>
-                        <span className="text-xs text-muted-foreground">{edge.relationship}</span>
-                      </div>
-                      <div className="w-20 h-1.5 rounded-full bg-muted overflow-hidden">
-                        <div className="h-full rounded-full bg-primary" style={{ width: `${edge.strength * 100}%` }} />
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-
-          {/* Recent Events */}
-          <div className="terminal-card p-5">
-            <h3 className="text-sm font-semibold text-foreground mb-4">Recent Events</h3>
-            {events.isLoading ? (
-              <ListSkeleton count={3} />
-            ) : (
-              <div className="space-y-2">
-                {companyEvents?.map((evt) => (
-                  <div key={evt.id} className="p-3 rounded-lg bg-muted/30">
-                    <p className="text-sm text-foreground leading-snug line-clamp-2">{evt.headline}</p>
-                    <div className="flex items-center gap-2 mt-1.5">
-                      <span className="text-xs bg-muted px-2 py-0.5 rounded text-muted-foreground">{evt.category}</span>
-                      <span className={`text-xs px-2 py-0.5 rounded-full ${
-                        evt.sentiment === "positive" ? "bg-success/10 text-success" :
-                        evt.sentiment === "negative" ? "bg-danger/10 text-danger" :
-                        "bg-muted text-muted-foreground"
-                      }`}>
-                        {evt.sentiment}
-                      </span>
-                    </div>
+        <Tabs defaultValue="overview" className="space-y-4">
+          <TabsList className="grid w-full max-w-sm grid-cols-2">
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="studies">Studies</TabsTrigger>
+          </TabsList>
+          <TabsContent value="overview">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <div className="terminal-card p-5">
+                <h3 className="text-sm font-semibold text-foreground mb-4">Related Companies</h3>
+                {relationships.isLoading ? (
+                  <ListSkeleton count={3} />
+                ) : (
+                  <div className="space-y-2">
+                    {companyRelationships?.map((edge, i) => {
+                      const related = edge.source === profile.data?.ticker ? edge.target : edge.source;
+                      return (
+                        <div key={i} className="flex items-center justify-between p-2 rounded-lg bg-muted/30">
+                          <div className="flex items-center gap-2">
+                            <span className="font-mono text-xs font-bold text-primary">{related}</span>
+                            <span className="text-xs text-muted-foreground">{edge.relationship}</span>
+                          </div>
+                          <div className="w-20 h-1.5 rounded-full bg-muted overflow-hidden">
+                            <div className="h-full rounded-full bg-primary" style={{ width: `${edge.strength * 100}%` }} />
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
-                ))}
+                )}
               </div>
-            )}
-          </div>
-        </div>
+
+              <div className="terminal-card p-5">
+                <h3 className="text-sm font-semibold text-foreground mb-4">Recent Events</h3>
+                {events.isLoading ? (
+                  <ListSkeleton count={3} />
+                ) : (
+                  <div className="space-y-2">
+                    {companyEvents?.map((evt) => (
+                      <div key={evt.id} className="p-3 rounded-lg bg-muted/30">
+                        <p className="text-sm text-foreground leading-snug line-clamp-2">{evt.headline}</p>
+                        <div className="flex items-center gap-2 mt-1.5">
+                          <span className="text-xs bg-muted px-2 py-0.5 rounded text-muted-foreground">{evt.category}</span>
+                          <span className={`text-xs px-2 py-0.5 rounded-full ${
+                            evt.sentiment === "positive" ? "bg-success/10 text-success" :
+                            evt.sentiment === "negative" ? "bg-danger/10 text-danger" :
+                            "bg-muted text-muted-foreground"
+                          }`}>
+                            {evt.sentiment}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </TabsContent>
+          <TabsContent value="studies">
+            <div className="space-y-4">
+              <div className="terminal-card p-4">
+                <div className="mb-3 flex items-center justify-between gap-3">
+                  <div>
+                    <h3 className="text-sm font-semibold text-foreground">Study Summary</h3>
+                    <p className="text-xs text-muted-foreground">
+                      {mostCommonCategory ? `Most common category: ${mostCommonCategory}` : "No category summary available yet."}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => studySummaryQuery.refetch()}
+                    className="rounded-md border border-border bg-muted/30 px-3 py-2 text-xs text-foreground hover:bg-muted/50"
+                  >
+                    Refresh Studies
+                  </button>
+                </div>
+                <div className="grid grid-cols-5 gap-2">
+                  {compactSummary.map((row, index) => (
+                    <div key={["1D", "3D", "5D", "10D", "20D"][index]} className="rounded-md bg-muted/30 p-3 text-center">
+                      <div className="text-[10px] text-muted-foreground">{["1D", "3D", "5D", "10D", "20D"][index]}</div>
+                      <div className={`font-mono text-sm font-semibold ${!row || row.avgReturn >= 0 ? "text-success" : "text-danger"}`}>
+                        {row ? `${row.avgReturn >= 0 ? "+" : ""}${row.avgReturn.toFixed(2)}%` : "—"}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <RelationshipStudyTable ticker={profile.data?.ticker || search} />
+            </div>
+          </TabsContent>
+        </Tabs>
       </div>
     </AppLayout>
   );

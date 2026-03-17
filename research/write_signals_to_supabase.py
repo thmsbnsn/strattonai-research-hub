@@ -4,7 +4,7 @@ from collections import defaultdict
 from datetime import UTC, datetime
 from decimal import Decimal
 from pathlib import Path
-from typing import Any
+from typing import Any, Iterable
 
 from psycopg.types.json import Jsonb
 
@@ -29,6 +29,12 @@ def _to_decimal(value: Any) -> Decimal:
 class SignalSupabaseWriter(SupabaseWriter):
     def __init__(self, repo_root: Path):
         super().__init__(repo_root)
+
+    @staticmethod
+    def _normalize_ticker_scope(tickers: Iterable[str] | None) -> tuple[str, ...]:
+        if not tickers:
+            return ()
+        return tuple(sorted({str(ticker).strip().upper() for ticker in tickers if str(ticker).strip()}))
 
     def current_distribution(self) -> tuple[int, dict[str, int]]:
         with self.connect() as connection:
@@ -177,10 +183,26 @@ class SignalSupabaseWriter(SupabaseWriter):
             ) in rows
         ]
 
-    def upsert_signal_scores(self, signals: list[SignalScore]) -> int:
+    def upsert_signal_scores(
+        self,
+        signals: list[SignalScore],
+        *,
+        ticker_scope: Iterable[str] | None = None,
+    ) -> int:
+        scoped_tickers = self._normalize_ticker_scope(ticker_scope)
         with self.connect() as connection:
             with connection.cursor() as cursor:
-                cursor.execute("delete from public.signal_scores")
+                if scoped_tickers:
+                    cursor.execute(
+                        """
+                        delete from public.signal_scores
+                        where upper(coalesce(primary_ticker, '')) = any(%s)
+                           or upper(coalesce(target_ticker, '')) = any(%s)
+                        """,
+                        (list(scoped_tickers), list(scoped_tickers)),
+                    )
+                else:
+                    cursor.execute("delete from public.signal_scores")
                 for signal in signals:
                     cursor.execute(
                         """
@@ -197,15 +219,16 @@ class SignalSupabaseWriter(SupabaseWriter):
                           horizon,
                           score,
                           confidence_band,
-                          evidence_summary,
-                          rationale,
-                          sample_size,
-                          avg_return,
-                          median_return,
+                      evidence_summary,
+                      rationale,
+                      metadata,
+                      sample_size,
+                      avg_return,
+                      median_return,
                           win_rate,
                           origin_type
                         )
-                        values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                        values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                         on conflict (signal_key) do update
                         set
                           source_study_key = excluded.source_study_key,
@@ -220,6 +243,7 @@ class SignalSupabaseWriter(SupabaseWriter):
                           confidence_band = excluded.confidence_band,
                           evidence_summary = excluded.evidence_summary,
                           rationale = excluded.rationale,
+                          metadata = excluded.metadata,
                           sample_size = excluded.sample_size,
                           avg_return = excluded.avg_return,
                           median_return = excluded.median_return,
@@ -242,6 +266,7 @@ class SignalSupabaseWriter(SupabaseWriter):
                             signal.confidence_band,
                             signal.evidence_summary,
                             Jsonb(signal.rationale),
+                            Jsonb(signal.metadata),
                             signal.sample_size,
                             signal.avg_return,
                             signal.median_return,

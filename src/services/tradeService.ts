@@ -12,6 +12,11 @@ type PaperTradeRow = {
   entry_date?: string | null;
   quantity?: number | null;
   status?: string | null;
+  mode?: string | null;
+  metadata?: Record<string, unknown> | null;
+  alpaca_order_id?: string | null;
+  realized_pnl?: number | null;
+  universe?: string | null;
 };
 
 function normalizeDirection(value: string | null | undefined): PaperTrade["direction"] {
@@ -19,7 +24,11 @@ function normalizeDirection(value: string | null | undefined): PaperTrade["direc
 }
 
 function normalizeStatus(value: string | null | undefined): PaperTrade["status"] {
-  return value === "Closed" ? "Closed" : "Open";
+  const normalized = (value || "").toLowerCase();
+  if (normalized === "closed") return "Closed";
+  if (normalized === "simulated") return "Simulated";
+  if (normalized === "risk-blocked") return "Risk-Blocked";
+  return "Open";
 }
 
 function toPaperTrade(row: PaperTradeRow): PaperTrade {
@@ -33,6 +42,11 @@ function toPaperTrade(row: PaperTradeRow): PaperTrade {
     entryDate: row.entry_date || new Date().toISOString().slice(0, 10),
     quantity: row.quantity ?? 0,
     status: normalizeStatus(row.status),
+    mode: row.mode === "live" ? "live" : row.mode === "paper" ? "paper" : "simulated",
+    realizedPnl: row.realized_pnl ?? undefined,
+    universe: row.universe === "penny" ? "penny" : "main",
+    metadata: row.metadata || undefined,
+    alpacaOrderId: row.alpaca_order_id || undefined,
   };
 }
 

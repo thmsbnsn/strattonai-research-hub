@@ -1,6 +1,7 @@
 import { FlaskConical, Bot } from "lucide-react";
 import type { DashboardMode } from "@/hooks/useDashboardMode";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { RegimeIndicator } from "@/components/shared/RegimeIndicator";
 
 interface AppHeaderProps {
   mode: DashboardMode;
@@ -42,7 +43,8 @@ export function AppHeader({ mode, onToggle }: AppHeaderProps) {
           </span>
         </div>
 
-        <div className="justify-self-end hidden sm:flex items-center gap-1.5 text-[11px] text-muted-foreground font-medium tracking-wide uppercase">
+        <div className="justify-self-end hidden sm:flex items-center gap-2 text-[11px] text-muted-foreground font-medium tracking-wide uppercase">
+          <RegimeIndicator />
           {isTrader ? (
             <>
               <Bot className="h-3.5 w-3.5 text-primary" />

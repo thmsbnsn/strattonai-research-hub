@@ -4,6 +4,7 @@ export type SignalConfidenceBand = "Low" | "Moderate" | "High";
 
 export interface SignalScore {
   id: string;
+  signalKey?: string;
   eventId: string;
   eventCategory: string;
   primaryTicker: string;
@@ -20,4 +21,6 @@ export interface SignalScore {
   medianReturn: number;
   winRate: number;
   originType: SignalOriginType;
+  rationale?: Record<string, unknown>;
+  metadata?: Record<string, unknown>;
 }

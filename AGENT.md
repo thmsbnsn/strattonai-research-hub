@@ -39,7 +39,7 @@ Agents working in this repo should preserve that design:
 
 ### Research
 
-- `research/`: price loading, local backfills, event studies, signal scoring, coverage audits, targeted backfill planning, AI grounding, and local model gateway support
+- `research/`: price loading, local backfills, event studies, signal scoring, coverage audits, targeted backfill planning, AI grounding, migration verification, health checks, risk gating, order preview, and local model gateway support
 
 ### Database
 
@@ -63,14 +63,14 @@ Agents working in this repo should preserve that design:
 
 1. UI services query Supabase
 2. If live tables are unavailable or empty, services fall back to mock data where supported
-3. AI Trader components use grounded research context from the local AI gateway
+3. AI Trader components use grounded research context from the local AI gateway, and the company briefing / trader cards should prefer the shared gateway briefing payload over ad hoc parallel queries.
 
 ## Important Current Constraints
 
-- `TTM` is still mapped but missing reliable local price coverage.
 - `Partnership` remains the thinnest major event category.
 - `Product Launch` and `Legal/Regulatory` still generate many low-confidence slices.
 - The local AI layer is active, but the system should still function without the gateway running.
+- Trader-side schema stages `009` through `013` may exist in code before they exist in the connected Supabase instance. Use the verifier before assuming those tables/columns are present.
 
 ## Useful Commands
 
@@ -83,6 +83,11 @@ python -m research.rescore_all_recent_events
 python -m research.generate_gap_report
 python -m research.build_targeted_backfill_plan
 python -m research.generate_low_confidence_diagnostics
+python -m supabase.scripts.apply_and_verify_migrations --dry-run
+python -m research.health_check
+python -m research.fill_study_universe_gaps --ticker SPY --auto-recompute
+python -m research.partnership_backfill_helper
+python -m ingestion.build_n8n_handoff_bundles
 npm run build
 npm test
 npm run ai:start
@@ -98,3 +103,4 @@ npm run ai:stop
 - `docs/EVENT_STUDY_ENGINE.md`
 - `docs/SIGNAL_SCORING_ENGINE.md`
 - `docs/RELATIONSHIP_GRAPH_AND_ENTITY_EXPANSION.md`
+- `docs/N8N_TARGETED_BACKFILL_WORKFLOW.md`

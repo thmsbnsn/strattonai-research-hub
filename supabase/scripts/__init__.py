@@ -1,0 +1,1 @@
+"""Executable Supabase operator scripts."""

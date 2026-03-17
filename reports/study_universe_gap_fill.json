@@ -1,0 +1,13 @@
+{
+  "min_rows": 60,
+  "tickers_attempted": [
+    "TTM"
+  ],
+  "tickers_successfully_filled": [
+    "TTM"
+  ],
+  "tickers_still_missing": [],
+  "auto_recompute": true,
+  "total_rows_added": 1273,
+  "completed_at": "2026-03-16T20:36:32.864019+00:00"
+}

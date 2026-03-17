@@ -1,0 +1,10 @@
+{
+  "ticker": "TTM",
+  "rows_added": 0,
+  "date_range_start": "2018-05-01",
+  "date_range_end": "2023-01-23",
+  "missing_dates_count": 951,
+  "provider_used": "databento",
+  "supabase_rows_written": 0,
+  "timestamp": "2026-03-17T05:05:39.474201+00:00"
+}

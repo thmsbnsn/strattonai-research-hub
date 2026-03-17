@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useSearchParams } from "react-router-dom";
 import { AppLayout } from "@/components/AppLayout";
 import { EventCard } from "@/components/EventCard";
 import { ListSkeleton } from "@/components/LoadingSkeletons";
@@ -7,11 +8,24 @@ import { ErrorState, EmptyState } from "@/components/StateDisplays";
 import { getEvents } from "@/services/eventService";
 
 export default function EventFeed() {
+  const [searchParams] = useSearchParams();
+  const initialCategory = searchParams.get("category") || "All";
+  const initialTicker = (searchParams.get("ticker") || "").trim().toUpperCase();
   const [filter, setFilter] = useState("All");
   const { data: events, isLoading, isError, refetch } = useQuery({ queryKey: ["events"], queryFn: getEvents });
 
   const categories = ["All", ...new Set(events?.map((e) => e.category) ?? [])];
-  const filtered = filter === "All" ? events : events?.filter((e) => e.category === filter);
+  const filtered = (filter === "All" ? events : events?.filter((e) => e.category === filter))?.filter((event) =>
+    initialTicker
+      ? event.ticker === initialTicker || event.relatedCompanies.some((company) => company.ticker === initialTicker)
+      : true
+  );
+
+  useEffect(() => {
+    if (categories.includes(initialCategory)) {
+      setFilter(initialCategory);
+    }
+  }, [categories, initialCategory]);
 
   useEffect(() => {
     if (!categories.includes(filter)) {
@@ -24,7 +38,10 @@ export default function EventFeed() {
       <div className="space-y-6">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Event Feed</h1>
-          <p className="text-sm text-muted-foreground mt-1">Real-time detected market events</p>
+          <p className="text-sm text-muted-foreground mt-1">
+            Real-time detected market events
+            {initialTicker ? ` · filtered for ${initialTicker}` : ""}
+          </p>
         </div>
 
         {/* Filters */}

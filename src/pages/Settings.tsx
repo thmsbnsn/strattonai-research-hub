@@ -8,6 +8,14 @@ import { ErrorState } from "@/components/StateDisplays";
 import { toast } from "@/components/ui/sonner";
 import type { AppSettings, RelationshipMapping, SettingsDataSourceKey } from "@/types";
 import {
+  getFillGapStatus,
+  getMigrationHealth,
+  getPriceCoverage,
+  getRefreshMarketProxiesStatus,
+  refreshMarketProxies,
+  runFillGaps,
+} from "@/services/traderGatewayService";
+import {
   getSettings,
   saveSettings,
   updateDataSourceToggle,
@@ -32,6 +40,10 @@ export default function SettingsPage() {
   const [draft, setDraft] = useState<AppSettings | null>(null);
   const [isDirty, setIsDirty] = useState(false);
   const loadedUpdatedAt = settingsQuery.data?.settings.updatedAt;
+  const priceCoverageQuery = useQuery({ queryKey: ["gateway", "price-coverage"], queryFn: getPriceCoverage, retry: 0 });
+  const migrationHealthQuery = useQuery({ queryKey: ["gateway", "migration-health"], queryFn: getMigrationHealth, retry: 0 });
+  const fillGapStatusQuery = useQuery({ queryKey: ["gateway", "fill-gap-status"], queryFn: getFillGapStatus, retry: 0 });
+  const refreshProxiesStatusQuery = useQuery({ queryKey: ["gateway", "refresh-proxies-status"], queryFn: getRefreshMarketProxiesStatus, retry: 0 });
 
   useEffect(() => {
     if (!settingsQuery.data) {
@@ -60,6 +72,27 @@ export default function SettingsPage() {
       toast.error("Failed to save settings", {
         description: "The Settings page could not persist your changes.",
       });
+    },
+  });
+  const fillGapsMutation = useMutation({
+    mutationFn: () => runFillGaps(true),
+    onSuccess: () => {
+      toast.success("Gap fill job started");
+      fillGapStatusQuery.refetch();
+    },
+    onError: (error) => {
+      toast.error("Gap fill failed to start", { description: error instanceof Error ? error.message : "Gateway request failed." });
+    },
+  });
+  const refreshProxiesMutation = useMutation({
+    mutationFn: () => refreshMarketProxies(),
+    onSuccess: () => {
+      toast.success("Market proxy refresh started");
+      refreshProxiesStatusQuery.refetch();
+      queryClient.invalidateQueries({ queryKey: ["gateway", "price-coverage"] });
+    },
+    onError: (error) => {
+      toast.error("Proxy refresh failed to start", { description: error instanceof Error ? error.message : "Gateway request failed." });
     },
   });
 
@@ -234,6 +267,49 @@ export default function SettingsPage() {
         </div>
 
         <div className="terminal-card p-5">
+          <div className="mb-4 flex items-center justify-between gap-3">
+            <div>
+              <h3 className="text-sm font-semibold text-foreground">Price Coverage</h3>
+              <p className="text-xs text-muted-foreground mt-1">Event tickers mapped against live `daily_prices` row counts and migration health.</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => refreshProxiesMutation.mutate()}
+                disabled={refreshProxiesMutation.isPending}
+                className="rounded-md border border-border px-3 py-2 text-xs font-medium text-foreground hover:bg-muted/60 disabled:opacity-60"
+              >
+                Refresh Proxies
+              </button>
+              <button
+                onClick={() => fillGapsMutation.mutate()}
+                disabled={fillGapsMutation.isPending}
+                className="rounded-md bg-primary px-3 py-2 text-xs font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-60"
+              >
+                Fill Gaps
+              </button>
+            </div>
+          </div>
+          <div className="mb-3 text-xs text-muted-foreground space-y-1">
+            <div>Migrations: {migrationHealthQuery.data?.all_verified ? "verified" : "pending"} · Gap status: {String(fillGapStatusQuery.data?.job ?? "idle")}</div>
+            <div>Proxy refresh: {String(refreshProxiesStatusQuery.data?.job ?? "idle")}</div>
+          </div>
+          <div className="space-y-2">
+            {(priceCoverageQuery.data ?? []).slice(0, 20).map((row) => (
+              <div key={row.ticker} className="flex items-center justify-between rounded-md bg-muted/30 px-3 py-2 text-xs">
+                <span className="font-mono text-foreground">{row.ticker}</span>
+                <span
+                  className={`rounded-full px-2 py-0.5 ${
+                    row.row_count >= 252 ? "bg-success/10 text-success" : row.row_count >= 60 ? "bg-warning/10 text-warning" : "bg-danger/10 text-danger"
+                  }`}
+                >
+                  {row.row_count} rows
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="terminal-card p-5">
           <h3 className="text-sm font-semibold text-foreground mb-4">Event Classification</h3>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
             {draft.classification.map((toggle) => (
@@ -321,6 +397,108 @@ export default function SettingsPage() {
                 </button>
               </div>
             ))}
+          </div>
+        </div>
+
+        <div className="terminal-card p-5">
+          <h3 className="text-sm font-semibold text-foreground mb-4">Trading</h3>
+          <div className="space-y-4">
+            <div className="grid gap-3 md:grid-cols-2">
+              <label className="rounded-lg bg-muted/30 p-3">
+                <span className="mb-2 block text-xs text-muted-foreground">Alpaca Mode</span>
+                <div className="flex gap-2">
+                  {(["paper", "live"] as const).map((mode) => (
+                    <button
+                      key={mode}
+                      type="button"
+                      onClick={() =>
+                        updateDraft((current) => ({
+                          ...current,
+                          trading: {
+                            ...current.trading,
+                            alpacaMode: mode,
+                          },
+                        }))
+                      }
+                      className={`rounded-md px-3 py-2 text-xs font-medium ${
+                        draft.trading.alpacaMode === mode
+                          ? mode === "paper"
+                            ? "bg-primary text-primary-foreground"
+                            : "bg-danger text-white"
+                          : "bg-background/50 text-muted-foreground"
+                      }`}
+                    >
+                      {mode === "paper" ? "Paper" : "Live"}
+                    </button>
+                  ))}
+                </div>
+              </label>
+
+              <label className="rounded-lg bg-muted/30 p-3">
+                <span className="mb-2 block text-xs text-muted-foreground">Starting Capital</span>
+                <input
+                  type="number"
+                  min={0}
+                  step={10}
+                  value={draft.trading.startingCapital}
+                  onChange={(event) =>
+                    updateDraft((current) => ({
+                      ...current,
+                      trading: {
+                        ...current.trading,
+                        startingCapital: Number(event.target.value) || 0,
+                      },
+                    }))
+                  }
+                  className="w-full rounded-md border border-border bg-background/50 px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                />
+              </label>
+            </div>
+
+            <label className="flex items-start gap-3 rounded-lg bg-muted/30 p-3">
+              <input
+                type="checkbox"
+                checked={draft.trading.liveTradingConfirmed}
+                onChange={() =>
+                  updateDraft((current) => ({
+                    ...current,
+                    trading: {
+                      ...current.trading,
+                      liveTradingConfirmed: !current.trading.liveTradingConfirmed,
+                    },
+                  }))
+                }
+                className="mt-0.5 rounded border-border accent-primary"
+              />
+              <span className="text-sm text-foreground">
+                I understand this uses real money. Starting capital is limited to the amount I deposited.
+              </span>
+            </label>
+
+            <div className="flex items-center justify-between rounded-lg bg-muted/30 p-3">
+              <div>
+                <p className="text-sm text-foreground">Penny Stock Universe</p>
+                <p className="text-xs text-muted-foreground">Enables the separate Alpaca-backed penny-stock sandbox.</p>
+              </div>
+              <button
+                type="button"
+                onClick={() =>
+                  updateDraft((current) => ({
+                    ...current,
+                    trading: {
+                      ...current.trading,
+                      pennyStockUniverseEnabled: !current.trading.pennyStockUniverseEnabled,
+                    },
+                  }))
+                }
+                className={`w-10 h-5 rounded-full flex items-center transition-colors ${
+                  draft.trading.pennyStockUniverseEnabled ? "bg-primary justify-end" : "bg-muted justify-start"
+                }`}
+                aria-label="Toggle penny stock universe"
+              >
+                <span className="w-4 h-4 rounded-full bg-foreground mx-0.5" />
+              </button>
+            </div>
           </div>
         </div>
 

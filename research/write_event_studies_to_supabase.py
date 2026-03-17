@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from collections import defaultdict
 from datetime import datetime
+from typing import Iterable
 from uuid import NAMESPACE_URL, uuid5
 
 from psycopg.types.json import Jsonb
@@ -18,6 +19,12 @@ SUMMARY_NAMESPACE = uuid5(NAMESPACE_URL, "strattonai/event-study-summary")
 
 
 class EventStudySupabaseWriter(SupabaseWriter):
+    @staticmethod
+    def _normalize_ticker_scope(tickers: Iterable[str] | None) -> tuple[str, ...]:
+        if not tickers:
+            return ()
+        return tuple(sorted({str(ticker).strip().upper() for ticker in tickers if str(ticker).strip()}))
+
     def current_counts(self) -> tuple[int, int]:
         with self.connect() as connection:
             with connection.cursor() as cursor:
@@ -77,10 +84,41 @@ class EventStudySupabaseWriter(SupabaseWriter):
 
         return events
 
-    def upsert_event_study_aggregates(self, aggregates: list[EventStudyAggregate]) -> int:
+    def upsert_event_study_aggregates(
+        self,
+        aggregates: list[EventStudyAggregate],
+        *,
+        ticker_scope: Iterable[str] | None = None,
+    ) -> int:
+        scoped_tickers = self._normalize_ticker_scope(ticker_scope)
+        if scoped_tickers:
+            # Scoped recomputes must never overwrite global relationship/category summary slices.
+            aggregates = [
+                aggregate
+                for aggregate in aggregates
+                if aggregate.study_target_type in {"primary", "related"}
+                and (
+                    (aggregate.primary_ticker or "").upper() in scoped_tickers
+                    or (aggregate.related_ticker or "").upper() in scoped_tickers
+                )
+            ]
+
         with self.connect() as connection:
             with connection.cursor() as cursor:
-                cursor.execute("delete from public.event_study_statistics")
+                if scoped_tickers:
+                    cursor.execute(
+                        """
+                        delete from public.event_study_statistics
+                        where study_target_type in ('primary', 'related')
+                          and (
+                            upper(coalesce(primary_ticker, '')) = any(%s)
+                            or upper(coalesce(related_ticker, '')) = any(%s)
+                          )
+                        """,
+                        (list(scoped_tickers), list(scoped_tickers)),
+                    )
+                else:
+                    cursor.execute("delete from public.event_study_statistics")
                 for aggregate in aggregates:
                     cursor.execute(
                         """
@@ -139,7 +177,14 @@ class EventStudySupabaseWriter(SupabaseWriter):
 
         return len(aggregates)
 
-    def upsert_ui_summary_rows(self, aggregates: list[EventStudyAggregate]) -> int:
+    def upsert_ui_summary_rows(
+        self,
+        aggregates: list[EventStudyAggregate],
+        *,
+        ticker_scope: Iterable[str] | None = None,
+    ) -> int:
+        if self._normalize_ticker_scope(ticker_scope):
+            return 0
         category_summaries = [aggregate for aggregate in aggregates if aggregate.study_target_type == "category_summary"]
 
         with self.connect() as connection:

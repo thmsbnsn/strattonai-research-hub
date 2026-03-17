@@ -32,6 +32,13 @@ export interface NotificationPreferences {
   weeklyReport: boolean;
 }
 
+export interface TradingSettings {
+  alpacaMode: "paper" | "live";
+  liveTradingConfirmed: boolean;
+  startingCapital: number;
+  pennyStockUniverseEnabled: boolean;
+}
+
 export interface AppSettings {
   version: number;
   updatedAt: string;
@@ -39,6 +46,7 @@ export interface AppSettings {
   classification: ClassificationToggle[];
   relationshipMappings: RelationshipMapping[];
   notifications: NotificationPreferences;
+  trading: TradingSettings;
 }
 
 export interface SettingsEnvelope {

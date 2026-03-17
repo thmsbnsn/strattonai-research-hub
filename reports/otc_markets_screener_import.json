@@ -1,0 +1,20 @@
+{
+  "generatedAt": "2026-03-17T04:54:46.892349+00:00",
+  "inputFile": "C:\\Users\\tlben\\OneDrive\\Documents\\Downloads\\Stock_Screener.csv",
+  "rowsRead": 8,
+  "tickers": [
+    "FMCC",
+    "FNMA",
+    "FTCO",
+    "GBAT",
+    "HZEN",
+    "LTCN",
+    "MRAI",
+    "NLCP"
+  ],
+  "tiers": [
+    "OTCQB",
+    "OTCQX"
+  ],
+  "universeFile": "C:\\Users\\tlben\\Bentlas\\StrattonAI\\ui\\reports\\otc_markets_universe.json"
+}

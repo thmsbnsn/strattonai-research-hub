@@ -1,196 +1,179 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import {
-  Building2,
-  Users,
+  Activity,
   AlertTriangle,
   BarChart3,
+  Building2,
+  ExternalLink,
+  Layers,
   Shield,
   Target,
-  Layers,
-  Activity,
+  Users,
 } from "lucide-react";
-import { getSignalsForTicker } from "@/services/signalService";
-import { getEvents } from "@/services/eventService";
-import { getCompanyProfile, getCompanyRelationships } from "@/services/companyService";
 import { ListSkeleton } from "@/components/LoadingSkeletons";
+import { RelationshipStudyTable } from "@/components/research/RelationshipStudyTable";
+import { EvidenceSliceDrawer } from "@/components/research/EvidenceSliceDrawer";
+import { getCompanyBriefing } from "@/services/traderGatewayService";
+import type { CompanyBriefingPayload } from "@/models";
 
 interface CompanyBriefingProps {
   ticker: string;
+  tradingMode?: "paper" | "live";
 }
 
-export function CompanyBriefing({ ticker }: CompanyBriefingProps) {
-  const profile = useQuery({
-    queryKey: ["companies", "profile", ticker],
-    queryFn: () => getCompanyProfile(ticker),
+function ConfidenceBadge({ band }: { band: "High" | "Moderate" | "Low" }) {
+  return (
+    <span
+      className={`text-[10px] px-2 py-0.5 rounded-full font-medium uppercase tracking-wider ${
+        band === "High"
+          ? "bg-success/10 text-success"
+          : band === "Moderate"
+          ? "bg-warning/10 text-warning"
+          : "bg-muted text-muted-foreground"
+      }`}
+    >
+      {band} Confidence
+    </span>
+  );
+}
+
+function RiskFlags({ briefing }: { briefing: CompanyBriefingPayload }) {
+  if (briefing.riskFlags.length === 0) {
+    return (
+      <p className="text-xs text-muted-foreground">
+        No immediate structural warnings were detected for the current evidence bundle.
+      </p>
+    );
+  }
+
+  return (
+    <div className="space-y-2">
+      {briefing.riskFlags.map((flag) => (
+        <div key={flag} className="p-2 rounded-md bg-warning/10 border border-warning/20">
+          <div className="flex items-center gap-1.5">
+            <AlertTriangle className="h-3 w-3 text-warning shrink-0" />
+            <p className="text-[11px] text-warning">{flag}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export function CompanyBriefing({ ticker, tradingMode = "paper" }: CompanyBriefingProps) {
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const navigate = useNavigate();
+  const briefingQuery = useQuery({
+    queryKey: ["trader", "company-briefing", ticker, tradingMode],
+    queryFn: () => getCompanyBriefing(ticker, tradingMode),
   });
 
-  const signals = useQuery({
-    queryKey: ["signals", "company", ticker],
-    queryFn: () => getSignalsForTicker(ticker),
-  });
+  if (briefingQuery.isLoading) {
+    return <ListSkeleton count={5} />;
+  }
 
-  const events = useQuery({ queryKey: ["events"], queryFn: getEvents });
-  const relationships = useQuery({
-    queryKey: ["companies", "relationships"],
-    queryFn: getCompanyRelationships,
-  });
+  const briefing = briefingQuery.data;
+  if (!briefing) {
+    return (
+      <div className="terminal-card p-5">
+        <p className="text-xs text-muted-foreground">No company briefing data is available for {ticker}.</p>
+      </div>
+    );
+  }
 
-  const companyEvents =
-    events.data
-      ?.filter((event) =>
-        event.ticker === ticker ||
-        event.relatedCompanies.some((company) => company.ticker === ticker)
-      )
-      .slice(0, 4) ?? [];
-  const topSignals = signals.data?.slice(0, 4) ?? [];
-  const bestSignal = topSignals[0];
-  const relatedCompanies =
-    relationships.data
-      ?.filter((relationship) => relationship.source === ticker || relationship.target === ticker)
-      .slice(0, 6) ?? [];
-  const profileName = profile.data?.name || ticker;
-  const profileContext = [profile.data?.sector, profile.data?.industry].filter(Boolean).join(" · ");
+  const bestSignal = briefing.topSignals[0];
+  const profileContext = [briefing.profile.sector, briefing.profile.industry].filter(Boolean).join(" · ");
 
   return (
     <div className="space-y-4">
-      {/* Company identity header */}
       <div className="terminal-card p-5">
         <div className="flex items-center gap-4">
           <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
             <Building2 className="h-6 w-6 text-primary" />
           </div>
           <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-3">
-              <h2 className="text-xl font-bold text-foreground font-mono tracking-wide">
-                {ticker}
-              </h2>
-              {bestSignal && (
-                <span
-                  className={`text-[10px] px-2 py-0.5 rounded-full font-medium uppercase tracking-wider ${
-                    bestSignal.confidenceBand === "High"
-                      ? "bg-success/10 text-success"
-                      : bestSignal.confidenceBand === "Moderate"
-                      ? "bg-warning/10 text-warning"
-                      : "bg-muted text-muted-foreground"
-                  }`}
-                >
-                  {bestSignal.confidenceBand} Confidence
-                </span>
-              )}
+            <div className="flex items-center gap-3 flex-wrap">
+              <h2 className="text-xl font-bold text-foreground font-mono tracking-wide">{briefing.ticker}</h2>
+              {bestSignal ? <ConfidenceBadge band={bestSignal.confidenceBand} /> : null}
             </div>
-            <p className="text-sm text-foreground mt-0.5">{profileName}</p>
+            <p className="text-sm text-foreground mt-0.5">{briefing.profile.name}</p>
             <p className="text-xs text-muted-foreground mt-0.5">
               Intelligence Briefing
               {profileContext ? ` · ${profileContext}` : ""}
-              {" · "}
-              {new Date().toLocaleDateString("en-US", {
-                month: "short",
-                day: "numeric",
-              })}
+              {briefing.latestPrice.tradeDate ? ` · price as of ${briefing.latestPrice.tradeDate}` : ""}
             </p>
+          </div>
+          <div className="text-right text-xs text-muted-foreground">
+            <div>Price rows: <span className="font-mono text-foreground">{briefing.latestPrice.rowCount}</span></div>
+            <div>
+              Last close:{" "}
+              <span className="font-mono text-foreground">
+                {typeof briefing.latestPrice.close === "number" ? briefing.latestPrice.close.toFixed(2) : "N/A"}
+              </span>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Outlook & projection — full width hero */}
       <div className="terminal-card p-5">
         <div className="flex items-center gap-2 mb-3">
           <Target className="h-4 w-4 text-primary" />
-          <h4 className="text-sm font-semibold text-foreground">
-            Outlook & Forward Projection
-          </h4>
+          <h4 className="text-sm font-semibold text-foreground">Outlook & Forward Projection</h4>
         </div>
-        {signals.isLoading ? (
-          <ListSkeleton count={2} />
-        ) : bestSignal ? (
-          <div className="space-y-3">
-            <p className="text-sm text-foreground leading-relaxed">
-              {ticker} has{" "}
-              <span className="font-mono font-semibold text-primary">
-                {topSignals.length}
-              </span>{" "}
-              active signal(s). The strongest scores{" "}
-              <span className="font-mono font-semibold">
-                {bestSignal.score.toFixed(1)}
-              </span>{" "}
-              on a{" "}
-              <span className="font-mono">{bestSignal.horizon}</span>{" "}
-              horizon with{" "}
-              <span className="font-semibold">
-                {bestSignal.confidenceBand}
-              </span>{" "}
-              confidence, driven by {bestSignal.eventCategory} activity around {profileName}.
-            </p>
-            <div className="grid grid-cols-3 gap-3">
+        <div className="space-y-3">
+          <p className="text-sm text-foreground leading-relaxed">{briefing.thesisSummary}</p>
+          <p className="text-xs text-muted-foreground">{briefing.evidenceSummary}</p>
+          {bestSignal ? (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               <div className="rounded-lg bg-muted/30 p-3 text-center">
-                <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">
-                  Avg Return
-                </p>
-                <p
-                  className={`font-mono text-sm font-bold ${
-                    bestSignal.avgReturn >= 0
-                      ? "text-success"
-                      : "text-danger"
-                  }`}
-                >
-                  {bestSignal.avgReturn >= 0 ? "+" : ""}
-                  {bestSignal.avgReturn.toFixed(2)}%
+                <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Score</p>
+                <p className="font-mono text-sm font-bold text-foreground">{bestSignal.score.toFixed(1)}</p>
+              </div>
+              <div className="rounded-lg bg-muted/30 p-3 text-center">
+                <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Avg Return</p>
+                <p className={`font-mono text-sm font-bold ${bestSignal.avgReturn >= 0 ? "text-success" : "text-danger"}`}>
+                  {bestSignal.avgReturn >= 0 ? "+" : ""}{bestSignal.avgReturn.toFixed(2)}%
                 </p>
               </div>
               <div className="rounded-lg bg-muted/30 p-3 text-center">
-                <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">
-                  Win Rate
-                </p>
-                <p className="font-mono text-sm font-bold text-foreground">
-                  {(bestSignal.winRate * 100).toFixed(0)}%
-                </p>
+                <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Win Rate</p>
+                <p className="font-mono text-sm font-bold text-foreground">{bestSignal.winRate.toFixed(1)}%</p>
               </div>
               <div className="rounded-lg bg-muted/30 p-3 text-center">
-                <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">
-                  Sample Size
-                </p>
-                <p className="font-mono text-sm font-bold text-foreground">
-                  n={bestSignal.sampleSize}
-                </p>
+                <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Sample Size</p>
+                <p className="font-mono text-sm font-bold text-foreground">n={bestSignal.sampleSize}</p>
               </div>
             </div>
-          </div>
-        ) : (
-          <p className="text-xs text-muted-foreground">
-            No scored signals available for {ticker}. Monitor the event feed
-            for emerging catalysts.
-          </p>
-        )}
+          ) : null}
+        </div>
       </div>
 
-      {/* 2×2 detail grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Recent Events */}
         <div className="terminal-card p-4">
-          <div className="flex items-center gap-2 mb-3">
-            <Activity className="h-4 w-4 text-primary" />
-            <h4 className="text-sm font-semibold text-foreground">
-              Current Event Context
-            </h4>
+          <div className="flex items-center justify-between gap-2 mb-3">
+            <div className="flex items-center gap-2">
+              <Activity className="h-4 w-4 text-primary" />
+              <h4 className="text-sm font-semibold text-foreground">Current Event Context</h4>
+            </div>
+            <button
+              onClick={() => navigate(`/events?ticker=${encodeURIComponent(briefing.ticker)}`)}
+              className="inline-flex items-center gap-1 text-[11px] text-primary hover:text-primary/80"
+            >
+              Open Feed <ExternalLink className="h-3 w-3" />
+            </button>
           </div>
-          {events.isLoading ? (
-            <ListSkeleton count={2} />
-          ) : companyEvents.length === 0 ? (
-            <p className="text-xs text-muted-foreground">
-              No recent events detected for {ticker}.
-            </p>
+          {briefing.recentEvents.length === 0 ? (
+            <p className="text-xs text-muted-foreground">No recent primary events detected for {briefing.ticker}.</p>
           ) : (
             <div className="space-y-2">
-              {companyEvents.map((evt) => (
-                <div key={evt.id} className="p-2.5 rounded-md bg-muted/30">
-                  <p className="text-xs text-foreground leading-snug line-clamp-2">
-                    {evt.headline}
-                  </p>
+              {briefing.recentEvents.map((event) => (
+                <div key={event.id} className="p-2.5 rounded-md bg-muted/30">
+                  <p className="text-xs text-foreground leading-snug line-clamp-2">{event.headline}</p>
                   <div className="mt-1 flex items-center gap-2 text-[10px] text-muted-foreground">
-                    <span>{evt.category}</span>
-                    <span>
-                      {evt.ticker === ticker ? "Primary" : "Related exposure"}
-                    </span>
+                    <span>{event.category}</span>
+                    <span>{event.sentiment}</span>
                   </div>
                 </div>
               ))}
@@ -198,164 +181,123 @@ export function CompanyBriefing({ ticker }: CompanyBriefingProps) {
           )}
         </div>
 
-        {/* Active Signals */}
         <div className="terminal-card p-4">
-          <div className="flex items-center gap-2 mb-3">
-            <BarChart3 className="h-4 w-4 text-primary" />
-            <h4 className="text-sm font-semibold text-foreground">
-              Active Signals
-            </h4>
+          <div className="flex items-center justify-between gap-2 mb-3">
+            <div className="flex items-center gap-2">
+              <BarChart3 className="h-4 w-4 text-primary" />
+              <h4 className="text-sm font-semibold text-foreground">Active Signals</h4>
+            </div>
+            <button
+              onClick={() => navigate(`/studies?ticker=${encodeURIComponent(briefing.ticker)}`)}
+              className="inline-flex items-center gap-1 text-[11px] text-primary hover:text-primary/80"
+            >
+              Open Studies <ExternalLink className="h-3 w-3" />
+            </button>
           </div>
-          {signals.isLoading ? (
-            <ListSkeleton count={2} />
-          ) : topSignals.length === 0 ? (
-            <p className="text-xs text-muted-foreground">
-              No signals scored for {ticker}.
-            </p>
+          {briefing.topSignals.length === 0 ? (
+            <p className="text-xs text-muted-foreground">No signals scored for {briefing.ticker}.</p>
           ) : (
             <div className="space-y-2">
-              {topSignals.map((sig) => (
-                <div
-                  key={sig.id}
-                  className="flex items-center justify-between p-2.5 rounded-md bg-muted/30"
+              {briefing.topSignals.slice(0, 4).map((signal) => (
+                <button
+                  key={signal.id}
+                  onClick={() =>
+                    navigate(
+                      `/studies?ticker=${encodeURIComponent(briefing.ticker)}&category=${encodeURIComponent(signal.eventCategory)}`
+                    )
+                  }
+                  className="flex w-full items-center justify-between p-2.5 rounded-md bg-muted/30 text-left hover:bg-muted/50"
                 >
                   <div>
-                    <p className="text-xs text-foreground">
-                      {sig.eventCategory}
-                    </p>
+                    <p className="text-xs text-foreground">{signal.eventCategory}</p>
                     <span className="text-[10px] text-muted-foreground">
-                      {sig.horizon} · {sig.confidenceBand}
+                      {signal.horizon} · {signal.confidenceBand}
                     </span>
                   </div>
-                  <span className="font-mono text-sm font-semibold text-foreground">
-                    {sig.score.toFixed(1)}
-                  </span>
-                </div>
+                  <span className="font-mono text-sm font-semibold text-foreground">{signal.score.toFixed(1)}</span>
+                </button>
               ))}
             </div>
           )}
         </div>
 
-        {/* Related Companies */}
         <div className="terminal-card p-4">
           <div className="flex items-center gap-2 mb-3">
             <Users className="h-4 w-4 text-primary" />
-            <h4 className="text-sm font-semibold text-foreground">
-              Peers & Related Companies
-            </h4>
+            <h4 className="text-sm font-semibold text-foreground">Peers & Related Companies</h4>
           </div>
-          {relationships.isLoading ? (
-            <ListSkeleton count={2} />
-          ) : relatedCompanies.length === 0 ? (
-            <p className="text-xs text-muted-foreground">
-              No company-graph relationships are available for {ticker}.
-            </p>
+          {briefing.relationships.length === 0 ? (
+            <p className="text-xs text-muted-foreground">No company-graph relationships are available for {briefing.ticker}.</p>
           ) : (
             <div className="space-y-2">
-              {relatedCompanies.map((relationship, index) => {
-                const counterpart =
-                  relationship.source === ticker ? relationship.target : relationship.source;
-
-                return (
-                  <div key={`${counterpart}-${index}`} className="flex items-center justify-between rounded-md bg-muted/30 px-3 py-2">
-                    <div>
-                      <p className="font-mono text-xs font-semibold text-foreground">
-                        {counterpart}
-                      </p>
-                      <p className="text-[10px] text-muted-foreground">
-                        {relationship.relationship}
-                      </p>
-                    </div>
-                    <span className="font-mono text-[11px] text-muted-foreground">
-                      {(relationship.strength * 100).toFixed(0)}%
-                    </span>
+              {briefing.relationships.map((relationship) => (
+                <button
+                  key={`${relationship.counterpartyTicker}:${relationship.relationshipType}`}
+                  onClick={() => navigate(`/companies?search=${encodeURIComponent(relationship.counterpartyTicker)}`)}
+                  className="flex w-full items-center justify-between rounded-md bg-muted/30 px-3 py-2 text-left hover:bg-muted/50"
+                >
+                  <div>
+                    <p className="font-mono text-xs font-semibold text-foreground">{relationship.counterpartyTicker}</p>
+                    <p className="text-[10px] text-muted-foreground">{relationship.relationshipType}</p>
                   </div>
-                );
-              })}
+                  <span className="font-mono text-[11px] text-muted-foreground">{(relationship.strength * 100).toFixed(0)}%</span>
+                </button>
+              ))}
             </div>
           )}
         </div>
 
-        {/* Evidence Strength & Risk */}
         <div className="terminal-card p-4">
           <div className="flex items-center gap-2 mb-3">
             <Layers className="h-4 w-4 text-primary" />
-            <h4 className="text-sm font-semibold text-foreground">
-              Evidence & Confidence
-            </h4>
+            <h4 className="text-sm font-semibold text-foreground">Evidence & Confidence</h4>
           </div>
-          {topSignals.length > 0 ? (
-            <div className="space-y-2.5">
-              {topSignals.some((s) => s.confidenceBand === "Low") && (
-                <div className="p-2 rounded-md bg-warning/10 border border-warning/20">
-                  <div className="flex items-center gap-1.5">
-                    <AlertTriangle className="h-3 w-3 text-warning shrink-0" />
-                    <p className="text-[11px] text-warning">
-                      Some signals have low confidence — limited evidence depth.
-                    </p>
-                  </div>
-                </div>
-              )}
-              <div className="text-xs text-muted-foreground space-y-1">
-                <p>
-                  <span className="text-foreground font-medium">
-                    {topSignals.filter((s) => s.confidenceBand === "High").length}
-                  </span>{" "}
-                  High ·{" "}
-                  <span className="text-foreground font-medium">
-                    {topSignals.filter((s) => s.confidenceBand === "Moderate").length}
-                  </span>{" "}
-                  Moderate ·{" "}
-                  <span className="text-foreground font-medium">
-                    {topSignals.filter((s) => s.confidenceBand === "Low").length}
-                  </span>{" "}
-                  Low
-                </p>
-                <p>
-                  Median sample depth:{" "}
-                  <span className="font-mono text-foreground">
-                    n=
-                    {Math.round(
-                      topSignals.reduce((a, s) => a + s.sampleSize, 0) /
-                        topSignals.length
-                    )}
-                  </span>
-                </p>
-              </div>
+          <div className="space-y-3">
+            <RiskFlags briefing={briefing} />
+            <div className="text-xs text-muted-foreground space-y-1">
+              <p>
+                <span className="text-foreground font-medium">{briefing.outlook.signalCount}</span> active signal(s)
+              </p>
+              <p>
+                <span className="text-foreground font-medium">{briefing.studySlices.length}</span> related study slice(s)
+              </p>
+              <p>
+                <span className="text-foreground font-medium">{briefing.relationships.length}</span> relationship edge(s)
+              </p>
             </div>
-          ) : (
-            <p className="text-xs text-muted-foreground">
-              No evidence data available for {ticker}.
-            </p>
-          )}
+          </div>
         </div>
       </div>
+
+      <div className="space-y-2">
+        <RelationshipStudyTable ticker={briefing.ticker} compact maxRows={5} />
+        <button onClick={() => setDrawerOpen(true)} className="text-xs text-primary hover:text-primary/80">
+          See all studies →
+        </button>
+      </div>
+      <EvidenceSliceDrawer ticker={briefing.ticker} open={drawerOpen} onOpenChange={setDrawerOpen} />
     </div>
   );
 }
 
-/* Polished empty state shown when no ticker is selected */
 export function CompanyBriefingEmpty() {
   return (
     <div className="terminal-card p-8 flex flex-col items-center justify-center text-center min-h-[360px]">
       <div className="w-14 h-14 rounded-2xl bg-primary/5 border border-border flex items-center justify-center mb-4">
         <Shield className="h-6 w-6 text-muted-foreground" />
       </div>
-      <h3 className="text-sm font-semibold text-foreground mb-1">
-        Company Intelligence Briefing
-      </h3>
+      <h3 className="text-sm font-semibold text-foreground mb-1">Company Intelligence Briefing</h3>
       <p className="text-xs text-muted-foreground max-w-sm leading-relaxed">
-        Search for a ticker above to load a full intelligence briefing — including
-        outlook projections, active signals, peer context, evidence strength, and
-        risk flags.
+        Search for a ticker above to load a full intelligence briefing including outlook, active signals, peer context,
+        evidence strength, and live-readiness guardrails.
       </p>
       <div className="flex gap-2 mt-5 flex-wrap justify-center">
-        {["NVDA", "AAPL", "TSLA", "MSFT"].map((t) => (
+        {["NVDA", "AAPL", "TSLA", "MSFT"].map((ticker) => (
           <span
-            key={t}
+            key={ticker}
             className="font-mono text-[10px] px-2.5 py-1 rounded-md bg-muted/40 text-muted-foreground border border-border"
           >
-            {t}
+            {ticker}
           </span>
         ))}
       </div>

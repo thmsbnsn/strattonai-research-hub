@@ -7,3 +7,4 @@ export * from "./ResearchInsight";
 export * from "./Settings";
 export * from "./Signal";
 export * from "./AIChat";
+export * from "./Trader";

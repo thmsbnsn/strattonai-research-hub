@@ -353,6 +353,27 @@ def run_load(
     return summary
 
 
+def load_ticker_prices(
+    ticker: str,
+    *,
+    repo_root: Path | None = None,
+    price_file: str | None = None,
+    bootstrap_schema: bool = False,
+    schema_file: str | None = None,
+    dry_run: bool = False,
+) -> LoadSummary:
+    root = repo_root or Path(__file__).resolve().parent.parent
+    return run_load(
+        root,
+        price_file=price_file,
+        bootstrap_schema=bootstrap_schema,
+        schema_file=schema_file or str(root / "supabase" / "sql" / "008_add_daily_prices.sql"),
+        ticker_filters=[ticker],
+        study_universe=False,
+        dry_run=dry_run,
+    )
+
+
 def main() -> int:
     args = parse_args()
     configure_logging(args.verbose)

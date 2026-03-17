@@ -1,6 +1,6 @@
 # StrattonAI Roadmap
 
-This roadmap reflects the current state of the repository after the research-capable backend, AI Trader shell, local AI gateway, and local-model retrieval stack were added.
+This roadmap reflects the current state of the repository after the research-capable backend, AI Trader workspace wiring, local AI gateway, semantic retrieval stack, and the first deterministic trader-side modules were added.
 
 ## Current Stage
 
@@ -11,23 +11,52 @@ StrattonAI is beyond mock-dashboard status. It now has:
 - local-first historical price workflows
 - coverage auditing and targeted backfill planning
 - a grounded local AI chat layer attached to the AI Trader dashboard
+- trader-side deterministic modules for:
+  - signal review and simulation
+  - portfolio monitoring
+  - portfolio construction
+  - risk assessment
+  - hard risk gating
+  - order preview
+  - transaction cost estimation
+  - paper-first penny-stock loop scaffolding
+- operator tooling for:
+  - migration verification
+  - full-system health checks
+  - study-universe gap-fill automation
+  - partnership backfill prioritization
+  - loop history and rejection-reason reporting
 
-The next work should focus on deepening evidence quality and tightening end-to-end operator workflows, not reinventing the core architecture.
+The next work should focus on deepening evidence quality, tightening operator workflows, and safely wiring the trader workspace to richer live context, not reinventing the core architecture.
 
-## Priority 1: Finish The AI Trader Data Wiring
+## Newly Completed In This Stage
 
-Goal: turn the AI Trader shell into a truly grounded operator workspace.
+These items are now current capabilities and should not be treated as future roadmap work:
+
+- migration verifier for Supabase schema stages `009` through `013`
+- gateway migration-health and full-health endpoints
+- targeted gap-fill pipeline with optional recompute and rescoring
+- background trading-loop execution with status and history endpoints
+- unified hard risk gate across simulation, portfolio construction, and loop entry
+- deterministic order preview with buying-power and fee checks
+- evidence-slice drill-through and live relationship-study views across Event Studies, Companies, and AI Trader
+- semantic retrieval cache support
+- partnership backfill helper reports
+- n8n-assisted targeted-backfill workflow contract plus reviewed-example handoff into source-specific ingestion bundles
+
+## Priority 1: Unify The AI Trader Briefing Payload
+
+Goal: make the AI Trader dashboard consume one coherent backend-facing evidence payload instead of several parallel queries.
 
 Main tasks:
 
-- unify company briefing data into one backend-facing payload
-- wire trader cards to deterministic signal and event-study outputs
-- add citation drill-through from chat responses into studies, events, and signals
-- improve company search and selection flows for real operator use
+- extend the shared briefing payload with deeper profile/fundamental coverage and richer evidence slices
+- keep reusing that payload in company briefing, trader cards, and chat grounding
+- keep route-based citation drill-through current as new evidence surfaces are added
 
 Success condition:
 
-- the AI Trader dashboard stops feeling like a shell and becomes a usable research cockpit
+- the AI Trader dashboard behaves like one operator workspace instead of a set of loosely connected panels
 
 ## Priority 2: Improve Coverage Quality
 
@@ -44,19 +73,19 @@ Success condition:
 
 - a larger share of active signals moves from `Low` to `Moderate` or `High` for the right reasons
 
-## Priority 3: Close Price Coverage Gaps
+## Priority 3: Expand Profile And Fundamental Coverage
 
-Goal: eliminate remaining study-blocking ticker gaps.
+Goal: make company briefings and trader workflows less fallback-heavy.
 
 Main tasks:
 
-- solve `TTM` historical price coverage
-- continue using deterministic external gap-fill workflows only when local sources miss needed tickers
-- keep `daily_prices` aligned with the preferred local resolved dataset
+- populate `company_profiles` more completely
+- add cleaner market cap, sector, industry, and business-description coverage
+- prefer structured vendor/API sources that keep determinism and provenance intact
 
 Success condition:
 
-- unlocked Tata-linked events begin contributing to event studies and downstream signals
+- AI Trader briefings and Companies page views stop relying on placeholder profile fields for covered names
 
 ## Priority 4: Expand Structured Source Coverage
 
@@ -72,15 +101,15 @@ Success condition:
 
 - company briefing and AI-grounding payloads become richer without weakening determinism
 
-## Priority 5: Trader Workflow Safety
+## Priority 5: Trader Workflow Safety And Execution Guardrails
 
 Goal: keep the project useful for sandbox trading without creating unsafe automation.
 
 Main tasks:
 
 - keep paper trading as the first-class execution path
-- add Alpaca account-state and order-preview workflows before any live execution
-- require explicit live-mode guardrails and operator confirmation
+- add Alpaca account-state, positions, and order-preview workflows before any broader execution features
+- keep explicit live-mode guardrails and operator confirmation in both settings and backend checks
 - keep AI advisory and retrieval separate from execution authority
 
 Success condition:
@@ -93,9 +122,10 @@ Goal: make the system faster and easier to run repeatedly.
 
 Main tasks:
 
-- cache semantic retrieval for repeated company queries
+- keep and tune the semantic retrieval cache for repeated company queries
+- cache or memoize repeated portfolio/risk calculations where appropriate
 - continue using Parquet-first local data paths
-- improve background operator scripts and health checks
+- continue improving background operator scripts, health checks, and audit diff reporting
 - keep reports easy to compare across passes
 
 Success condition:

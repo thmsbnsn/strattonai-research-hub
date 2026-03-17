@@ -4,6 +4,7 @@ import { fetchSupabaseWithFallback } from "./supabaseService";
 
 type SignalRow = {
   id?: string | null;
+  signal_key?: string | null;
   event_id?: string | null;
   event_category?: string | null;
   primary_ticker?: string | null;
@@ -20,6 +21,8 @@ type SignalRow = {
   median_return?: number | null;
   win_rate?: number | null;
   origin_type?: string | null;
+  rationale?: Record<string, unknown> | null;
+  metadata?: Record<string, unknown> | null;
 };
 
 function normalizeConfidenceBand(value: string | null | undefined): SignalScore["confidenceBand"] {
@@ -49,6 +52,7 @@ function toSignalScore(row: SignalRow): SignalScore {
 
   return {
     id: row.id || `${targetTicker}-${row.horizon || "unknown"}`,
+    signalKey: row.signal_key || row.id || `${targetTicker}-${row.horizon || "unknown"}`,
     eventId: row.event_id || "",
     eventCategory: row.event_category || "Unknown",
     primaryTicker: row.primary_ticker || "N/A",
@@ -65,6 +69,8 @@ function toSignalScore(row: SignalRow): SignalScore {
     medianReturn: row.median_return ?? 0,
     winRate: row.win_rate ?? 0,
     originType: normalizeOriginType(row.origin_type),
+    rationale: row.rationale || {},
+    metadata: row.metadata || {},
   };
 }
 

@@ -1,5 +1,5 @@
 export type TradeDirection = "Long" | "Short";
-export type TradeStatus = "Open" | "Closed";
+export type TradeStatus = "Open" | "Closed" | "Simulated" | "Risk-Blocked";
 
 export interface PaperTrade {
   id: string;
@@ -11,4 +11,9 @@ export interface PaperTrade {
   entryDate: string;
   quantity: number;
   status: TradeStatus;
+  mode?: "simulated" | "paper" | "live";
+  realizedPnl?: number;
+  universe?: "main" | "penny";
+  metadata?: Record<string, unknown>;
+  alpacaOrderId?: string;
 }

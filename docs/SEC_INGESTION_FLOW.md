@@ -122,6 +122,13 @@ Compatibility fallback still checks natural keys if a legacy row already exists 
 
 ## Running SEC Mode
 
+Live pull + dry-run validation:
+
+```powershell
+python -m research.pull_sec_api_filings --start-date 2025-01-01 --limit-per-ticker 5 --download-text
+python -m ingestion.run_ingestion --source-type sec-filings --dry-run --input ..\data\events\secApi\sec_api_filings_2026-03-17.json
+```
+
 Dry run:
 
 ```powershell
